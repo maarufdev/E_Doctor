@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="dashboard-cards-grid">
+    <!-- Card 1: Patients Overview -->
+    <div class="card card-blue">
+        <h2>Total Patients</h2>
+        <p class="data data-blue">1,245</p>
+        <p class="update-info">Last updated: Today</p>
+    </div>
+
+    <!-- Card 2: Upcoming Appointments -->
+    <div class="card card-green">
+        <h2>Upcoming Appointments</h2>
+        <p class="data data-green">18</p>
+        <p class="update-info">Next 24 hours</p>
+    </div>
+
+    <!-- Card 3: Doctors On Duty -->
+    <div class="card card-purple">
+        <h2>Doctors On Duty</h2>
+        <p class="data data-purple">7</p>
+        <p class="update-info">Currently available</p>
+    </div>
+</div>
+
+<!-- Recent Activity Section -->
+<div class="recent-activity-section">
+    <h2>Recent Activity</h2>
+    <ul class="activity-list">
+        <li>
+            <div class="activity-details">
+                <span class="activity-time">10:30 AM</span>
+                <p class="activity-description"><span class="font-medium">Patient John Doe</span> checked in for appointment.</p>
+            </div>
+            <span class="activity-status status-completed">Completed</span>
+        </li>
+        <li>
+            <div class="activity-details">
+                <span class="activity-time">09:45 AM</span>
+                <p class="activity-description"><span class="font-medium">Dr. Emily White</span> updated patient records.</p>
+            </div>
+            <span class="activity-status status-updated">Updated</span>
+        </li>
+        <li>
+            <div class="activity-details">
+                <span class="activity-time">08:00 AM</span>
+                <p class="activity-description"><span class="font-medium">New Patient Sarah Lee</span> registered.</p>
+            </div>
+            <span class="activity-status status-new">New</span>
+        </li>
+        <li>
+            <div class="activity-details">
+                <span class="activity-time">Yesterday, 04:00 PM</span>
+                <p class="activity-description"><span class="font-medium">Appointment</span> with Mr. David Brown cancelled.</p>
+            </div>
+            <span class="activity-status status-cancelled">Cancelled</span>
+        </li>
+    </ul>
+</div>

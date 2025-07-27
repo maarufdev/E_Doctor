@@ -1,0 +1,333 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+/* Custom styles for the font and overall body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background-color: #f3f4f6;
+}
+/* Ensure the main container takes full viewport height */
+#app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+/* Main content area to allow scrolling if content overflows */
+.main-content-area {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 1.5rem;
+}
+    /* Custom scrollbar for a cleaner look */
+    .main-content-area::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .main-content-area::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .main-content-area::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+        .main-content-area::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+/* Header Styles */
+.header {
+    background: linear-gradient(to right, #2563eb, #06b6d4);
+    color: white;
+    padding: 1.7rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.header-container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.header-icon {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.75rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-welcome-text {
+    margin-right: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    display: none;
+}
+
+@media (min-width: 640px) {
+    .user-welcome-text {
+        display: block;
+    }
+}
+
+.user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: white;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Main Content Layout */
+.main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 16rem;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        color: #4b5563;
+        border-radius: 0.375rem;
+        transition-property: background-color, color;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+    }
+
+        .sidebar-nav a:hover {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .sidebar-nav a.active {
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+        /* Combined SVG styling for all sidebar nav links */
+        .sidebar-nav a svg,
+        .sidebar-footer a svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.75rem;
+        }
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+    .sidebar-footer a {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        color: #4b5563;
+        border-radius: 0.375rem;
+        transition-property: background-color, color;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .sidebar-footer a:hover {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .sidebar-footer a.logout {
+            color: #dc2626;
+            margin-top: 0.5rem;
+        }
+
+            .sidebar-footer a.logout:hover {
+                background-color: #fee2e2;
+                color: #b91c1c;
+            }
+
+/* Dashboard Cards */
+.dashboard-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .dashboard-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-top-width: 4px;
+}
+
+.card-blue {
+    border-top-color: #3b82f6;
+}
+
+.card-green {
+    border-top-color: #22c55e;
+}
+
+.card-purple {
+    border-top-color: #a855f7;
+}
+
+.card h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.card p.data {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.card p.data-green {
+    color: #16a34a;
+}
+
+.card p.data-purple {
+    color: #9333ea;
+}
+
+.card p.update-info {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Recent Activity Section */
+.recent-activity-section {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+    .recent-activity-section h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+    .activity-list li {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+
+.activity-details {
+    display: flex;
+    align-items: center;
+}
+
+.activity-time {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-right: 0.75rem;
+}
+
+.activity-description {
+    color: #374151;
+}
+
+    .activity-description .font-medium {
+        font-weight: 500;
+    }
+
+.activity-status {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    color: #22c55e;
+}
+
+.status-updated {
+    color: #3b82f6;
+}
+
+.status-new {
+    color: #a855f7;
+}
+
+.status-cancelled {
+    color: #ef4444;
+}
+

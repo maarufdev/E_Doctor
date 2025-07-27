@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - E_Doctor.Web</title>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+</head>
+<body>
+    <div id="app-container">
+        <!-- Header Section -->
+        <partial name="_Header" />
+
+        <!-- Main Content Area: Sidebar and Dashboard Content -->
+        <div class="main-layout">
+            <!-- Sidebar Navigation -->
+            <partial name="_Sidebar" />
+            <!-- Main Content Area -->
+            <main class="main-content-area">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
