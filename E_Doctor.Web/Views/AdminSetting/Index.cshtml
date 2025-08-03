@@ -1,0 +1,15 @@
+﻿<div id="settings" class="page-content">
+    <h2 class="text-2xl font-semibold mb-4">Settings</h2>
+    <div class="settings-tabs">
+        <button class="settings-tab-btn active" data-tab="symptoms-tab">Symptoms</button>
+        <button class="settings-tab-btn" data-tab="diseases-tab">Diseases</button>
+    </div>
+
+    <div id="symptoms-tab" class="sub-page active">
+        <partial name="AdminSettingPartials/_SymptomsTab.cshtml" />
+    </div>
+
+    <div id="diseases-tab" class="sub-page">
+        <partial name="AdminSettingPartials/_DiseasesTab.cshtml" />
+    </div>
+</div>
