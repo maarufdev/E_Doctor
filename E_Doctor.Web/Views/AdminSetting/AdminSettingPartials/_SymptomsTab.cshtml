@@ -10,3 +10,24 @@
         </table>
     </div>
 </div>
+
+<div id="symptom-modal" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 28rem;">
+        <div class="modal-header">
+            <h3 id="symptom-modal-title" class="text-xl font-semibold">New Symptom</h3>
+            <button class="modal-close-btn" id="close-symptom-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="symptom-id-input">
+            <div>
+                <label for="symptom-name-input" class="font-semibold">Symptom Name</label>
+                <input type="text" id="symptom-name-input" class="form-input mt-2" placeholder="e.g., High Fever">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="save-symptom-btn" class="btn btn-primary">Save Symptom</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/features/admin/settings/js/symptoms-setting.js" asp-append-version="true"></script>
