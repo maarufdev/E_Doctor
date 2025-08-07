@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E_Doctor.Application\E_Doctor.Application.csproj" />
+    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\features\common\" />
+    <Folder Include="wwwroot\features\patient\" />
   </ItemGroup>
 
 </Project>

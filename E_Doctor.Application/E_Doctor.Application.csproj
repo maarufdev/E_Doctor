@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Admin\DTOs\" />
-    <Folder Include="Admin\Services\" />
-    <Folder Include="Common\DTOs\" />
-    <Folder Include="Common\Services\" />
-    <Folder Include="Patient\DTOs\" />
-    <Folder Include="Patient\Services\" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\E_Doctor.Core\E_Doctor.Core.csproj" />
+    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>
