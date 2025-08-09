@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Settings.Symptoms;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Settings;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +8,11 @@ namespace E_Doctor.Web.Controllers
     public class AdminSettingController(ISymptomService symptomService) : Controller
     {
         private readonly ISymptomService _symptomService = symptomService;
-        public IActionResult Index()
+
+        public IActionResult Index(SettingTab? tabName = SettingTab.Symptom)
         {
+            ViewBag.ActiveTab = tabName;
+
             return View();
         }
 
