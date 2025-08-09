@@ -1,14 +1,11 @@
 (function () {
-    const SAMPLE = {
-        symptoms: [
-            { id: 1, name: 'Fever' }, { id: 2, name: 'Cough' }, { id: 3, name: 'Sore Throat' },
-            { id: 4, name: 'Headache' }, { id: 5, name: 'Body Aches' }, { id: 6, name: 'Rash' },
-            { id: 7, name: 'Itchiness' }, { id: 8, name: 'Fatigue' }, { id: 9, name: 'Difficulty Breathing' },
-            { id: 10, name: 'Nausea' }, { id: 11, name: 'Vomiting' }
-        ]
-    }
-    const URLS = {
+    const SYMPTOM_BASE_URL = "AdminSetting";
 
+    const URLS = {
+        getSymptoms: `${SYMPTOM_BASE_URL}/GetSymptoms`,
+        getSymptomById: `${SYMPTOM_BASE_URL}/GetSymptomById`,
+        saveSymptom: `${SYMPTOM_BASE_URL}/SaveSymptom`,
+        deleteSymptom: `${SYMPTOM_BASE_URL}/RemoveSymptom`,
     }
     const stateHolders = {
         commandQueries: {
@@ -67,10 +64,9 @@
             handleOnClickEditSymptom: async function (symptomId) {
                 const { apiService, eventHandlers } = services;
                 const symptom = await apiService.getSymptomById(symptomId);
-                eventHandlers.toggleSymptomsModal(true, true);
-            },
-            updateSymptomForm: function () {
+                this.populateSymptomForm(symptom);
 
+                eventHandlers.toggleSymptomsModal(true, true);
             },
             renderSymptomsTable: async function () {
                 const { eventHandlers } = services;
@@ -79,7 +75,6 @@
                 const symptomsTableBody = document.querySelector(table.symptomsTblBody);
 
                 if (IsNullUndefinedEmpty(symptomsTableBody)) {
-
                     return;
                 }
 
@@ -90,29 +85,69 @@
                 symptoms.forEach(symptom => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${symptom.name}</td>
+                        <td>${symptom.symptomName}</td>
                         <td class="actions-cell">
-                            <button class="btn btn-warning edit-symptom-btn" style="padding: 0.5rem;" data-id="${symptom.id}" title="Edit"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                            <button class="btn btn-danger delete-symptom-btn" style="padding: 0.5rem;" data-id="${symptom.id}" title="Delete"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            <button class="btn btn-warning edit-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Edit"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                            <button class="btn btn-danger delete-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Delete"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </td>
                     `;
 
                     row.querySelector('.edit-symptom-btn').addEventListener('click', (e) => {
-                        const symptomId = e.currentTarget.dataset.id;
+                        const { symptomId } = e.currentTarget.dataset;
                         eventHandlers.handleOnClickEditSymptom(symptomId);
                     });
 
                     row.querySelector('.delete-symptom-btn').addEventListener('click', (e) => {
+                        const { symptomId } = e.currentTarget.dataset;
+                        if (!symptomId) return;
+
                         const isYes = confirm("Are you sure? Deleting a symptom will also affect disease rules");
 
                         if (isYes) {
-                            alert("Symptom was deleted!");
+                            this.handleOnDeleteSymptom(symptomId);
                         }
-
                     });
                     symptomsTableBody.appendChild(row);
                 });
             },
+            handleOnSaveSymptom: async function () {
+                const { symptomsModal } = elementHolders.modals;
+                const { apiService } = services;
+
+                const $symptomIdField = $(symptomsModal.fields.symptomId);
+                const $symptomNameField = $(symptomsModal.fields.symptomName);
+
+                const symptomId = $symptomIdField.val();
+                const symptomName = $symptomNameField.val();
+
+                const command = {
+                    symptomId: symptomId ? parseInt(symptomId) : 0,
+                    symptomName: symptomName
+                };
+
+                if (IsNullUndefinedEmpty(symptomName)) return;
+
+                const isSuccess = await apiService.saveSymptom(command);
+
+                if (isSuccess) {
+                    await this.renderSymptomsTable();
+                    this.toggleSymptomsModal(false);
+                    this.clearSymptomModal();
+                }
+            },
+            handleOnDeleteSymptom: async function (symptomId) {
+                const { apiService } = services;
+                const isDeleted = await apiService.deleteSymptom(symptomId);
+
+                if (!isDeleted) return;
+
+                await this.renderSymptomsTable();
+            },
+            clearSymptomModal: function () {
+                const { symptomsModal } = elementHolders.modals;
+                $(symptomsModal.fields.symptomId).val("");
+                $(symptomsModal.fields.symptomName).val("");
+            }
         },
         events: {
             initMain: function () {
@@ -121,28 +156,45 @@
 
                 $(buttons.newSymptom).off("click").on("click", function () {
                     eventHandlers.toggleSymptomsModal(true);
+                    eventHandlers.clearSymptomModal();
                 });
                 $(modals.symptomsModal.buttons.close).off("click").on("click", function () {
                     eventHandlers.toggleSymptomsModal(false);
                 });
 
                 $(modals.symptomsModal.buttons.save).off("click").on("click", function () {
-                    eventHandlers.toggleSymptomsModal(false);
+                    eventHandlers.handleOnSaveSymptom();
                 });
             }
         },
         apiService: {
             getSymptoms: async () => {
-                return SAMPLE.symptoms;
+                return await apiFetch(URLS.getSymptoms);
             },
             getSymptomById: async (symptomId) => {
-                return SAMPLE.symptoms.find(s => s.id == symptomId);
+                const symptom = await apiFetch(URLS.getSymptomById, {
+                    params: {
+                        symptomId: symptomId 
+                    },
+                })
+
+                return symptom;
             },
-            saveSymptom: async () => {
-                
+            saveSymptom: async (command) => {
+                const isSuccess = await apiFetch(URLS.saveSymptom, {
+                    method: "POST",
+                    body: command
+                });
+
+                return isSuccess;
             },
             deleteSymptom: async (symptomId) => {
-                console.log(`deleting symptom`)
+                return await apiFetch(URLS.deleteSymptom, {
+                    method: "DELETE",
+                    params: {
+                        symptomId: symptomId,
+                    }
+                });
             }
         }
     }

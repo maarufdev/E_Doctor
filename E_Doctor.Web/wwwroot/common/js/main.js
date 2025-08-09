@@ -1,35 +1,52 @@
 ﻿async function apiFetch(url, { method = 'GET', params = null, body = null } = {}) {
-    if (params) {
-        const queryString = new URLSearchParams(params).toString();
-        url = `${url}?${queryString}`;
-    }
+    const $loader = $("#app-loader");
 
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+
+        $loader.addClass("active");
+
+        if (params) {
+            const queryString = new URLSearchParams(params).toString();
+            url = `${url}?${queryString}`;
         }
-    };
 
-    if (body) {
-        options.body = JSON.stringify(body);
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            console.error(`HTTP ${response.status}: ${response.statusText}`);
+            return null;
+        }
+
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
+            return await response.json();
+        } else {
+            return await response.text();
+        }
+
+        return null; 
     }
-
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-        console.error(`HTTP ${response.status}: ${response.statusText}`);
+    catch (error) {
+        console.error('Fetch failed:', error);
         return null;
     }
-
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-        return await response.json();
-    } else {
-        return await response.text(); // fallback for plain string
+    finally {
+        setTimeout(() => {
+            $loader.removeClass("active");
+        }, 500);
     }
-
-    return null; // For NoContent (204) responses
 }
 
 function IsNullUndefinedEmpty(value) {

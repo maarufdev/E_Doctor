@@ -430,7 +430,7 @@ body {
     }
 
 /* Loader */
-#loader {
+#app-loader {
     position: fixed;
     top: 0;
     left: 0;
@@ -441,7 +441,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#app-loader.active {
+    opacity: 1;
+    pointer-events: auto; /* clickable when visible */
 }
 
 .spinner {
