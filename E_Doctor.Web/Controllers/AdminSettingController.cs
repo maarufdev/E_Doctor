@@ -31,7 +31,8 @@ namespace E_Doctor.Web.Controllers
             return Ok(symptom);
         }
 
-        public async Task<IActionResult> SaveSymptom(SaveSymptomDTO saveSymptomDto)
+        [HttpPost]
+        public async Task<IActionResult> SaveSymptom([FromBody] SaveSymptomDTO saveSymptomDto)
         {
             var isSuccess = await _symptomService.SaveSymptom(saveSymptomDto);
 
@@ -40,6 +41,7 @@ namespace E_Doctor.Web.Controllers
             return Ok(isSuccess);
         }
 
+        [HttpDelete]
         public async Task<IActionResult> RemoveSymptom(int symptomId)
         {
             var isSuccess = await _symptomService.RemoveSymptom(symptomId);
