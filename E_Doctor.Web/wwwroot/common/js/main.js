@@ -65,3 +65,11 @@ function IsNullUndefinedEmpty(value) {
     return false;
 }
 
+
+function registerEvent(root, type, callback) {
+    $(root).off(type).on(type, function (event) {
+        if (callback) {
+            callback(event);
+        }
+    })
+}
