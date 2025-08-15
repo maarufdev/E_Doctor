@@ -3,7 +3,6 @@ const DISEASES = [
     { id: 2, name: 'Influenza (Flu)', description: 'A contagious respiratory illness caused by influenza viruses.', rules: [{ symptomId: 1, condition: 'equal', value: 1 }, { symptomId: 4, condition: 'equal', value: 1 }, { symptomId: 5, condition: 'more_than', value: 2 }] },
     { id: 3, name: 'Allergic Reaction', description: 'The body\'s reaction to a normally harmless substance.', rules: [{ symptomId: 6, condition: 'equal', value: 1 }, { symptomId: 7, condition: 'equal', value: 1 }] }
 ];
-
 const SYMPTOMS = [
     { id: 1, name: 'Fever' },
     { id: 2, name: 'Cough' },
