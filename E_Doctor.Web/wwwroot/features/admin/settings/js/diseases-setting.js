@@ -3,6 +3,7 @@ const DISEASES = [
     { id: 2, name: 'Influenza (Flu)', description: 'A contagious respiratory illness caused by influenza viruses.', rules: [{ symptomId: 1, condition: 'equal', value: 1 }, { symptomId: 4, condition: 'equal', value: 1 }, { symptomId: 5, condition: 'more_than', value: 2 }] },
     { id: 3, name: 'Allergic Reaction', description: 'The body\'s reaction to a normally harmless substance.', rules: [{ symptomId: 6, condition: 'equal', value: 1 }, { symptomId: 7, condition: 'equal', value: 1 }] }
 ];
+
 const SYMPTOMS = [
     { id: 1, name: 'Fever' },
     { id: 2, name: 'Cough' },
@@ -34,10 +35,11 @@ const SYMPTOMS = [
                 diseaseId: 0,
                 diseaseName: "",
                 description: "",
-                rules: stateHolders.selectedRules
+                rules: []
             },
             diseaseId: null,
-        }
+        },
+        symptoms: []
     }
     const elementHolders = {
         table: {
@@ -51,6 +53,11 @@ const SYMPTOMS = [
             disease: {
                 root: "#disease-modal",
                 title: "disease-modal-title",
+                fields: {
+                    diseaseId: "#editing-disease-id",
+                    diseaseName: "#disease-name-input",
+                    description: "#disease-desc-input"
+                },
                 rulesContainer: "#disease-rules-container",
                 ddSymptom: "#symptom-select",
                 btnAddDiseaseRule: "#add-disease-rule-btn",
@@ -151,7 +158,7 @@ const SYMPTOMS = [
                 const $ruleFieldsContainer = $(forms.disease.rulesContainer);
 
                 $ruleFieldsContainer.append(this.createRuleFieldConfig(symptom));
-                stateHolders.selectedRules.push(symptom);
+                stateHolders.commandQueries.saveDisease.rules.push(symptom);
 
                 this.populateSymptomSelect();
             },
@@ -164,19 +171,49 @@ const SYMPTOMS = [
                 const $defaultOption = $(`<option value="0">-- Select -- </option>`);
                 $ddSymptom.append($defaultOption);
 
-                const filteredSymptoms = SYMPTOMS.filter(s => !stateHolders.selectedRules.some(r => r.symptomId == s.id));
+                const filteredSymptoms = SYMPTOMS.filter(s => !stateHolders.commandQueries.saveDisease.rules.some(r => r.symptomId == s.id));
                 const symptomOptions = filteredSymptoms.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
                 $ddSymptom.append(symptomOptions);
             },
             handleOnRemoveSymptomRule: function ($row) {
                 const symptomId = $row.data("symptom-id");
-                const currentSelectedSymptomRules = stateHolders.selectedRules.filter(x => x.symptomId != symptomId);
-                stateHolders.selectedRules = currentSelectedSymptomRules;
+                const currentSelectedSymptomRules = stateHolders.commandQueries.saveDisease.rules.filter(x => x.symptomId != symptomId);
+                stateHolders.commandQueries.saveDisease.rules = currentSelectedSymptomRules;
 
                 $row.remove();
 
                 this.populateSymptomSelect();
             },
+            resetSaveDiseaseParams: function () {
+                const { commandQueries } = stateHolders;
+                commandQueries.saveDisease = {
+                    diseaseId: 0,
+                    diseaseName: "",
+                    description: "",
+                    rules: []
+                };
+                commandQueries.selectedRules = [];
+            },
+            handleOnSaveDisease: function () {
+                const valid = this.validateDiseaseFields();
+
+                if (!valid) return;
+
+                this.toggleDiseasesModal(false);
+                this.resetSaveDiseaseParams();
+            },
+            validateDiseaseFields: function () {
+                const { commandQueries } = stateHolders;
+                let result = true;
+
+                result = ValidateInput(commandQueries.saveDisease.name, "Disease Name is required.");
+                if (!result) return false;
+
+                result = ValidateInput(commandQueries.saveDisease.rules, "Rules Fields is required. Please add config at least 1");
+                if (!result) return false;
+
+                return result;
+            }
         },
         events: {
             initMain: function () {
@@ -188,18 +225,31 @@ const SYMPTOMS = [
                     "click",
                     function (e) {
                         eventHandlers.toggleDiseasesModal(true, false);
+                        eventHandlers.resetSaveDiseaseParams();
+                        eventHandlers.populateSymptomSelect();
                     }
                 )
             },
             disease: function () {
                 const { forms } = elementHolders;
                 const { eventHandlers } = services;
+                const { commandQueries } = stateHolders;
 
                 registerEvent(
                     forms.disease.closeBtn,
                     "click",
                     function (e) {
                         eventHandlers.toggleDiseasesModal(false);
+                        eventHandlers.resetSaveDiseaseParams();
+                        eventHandlers.populateSymptomSelect();
+                    }
+                );
+
+                registerEvent(
+                    forms.disease.saveBtn,
+                    "click",
+                    function (e) {
+                        eventHandlers.handleOnSaveDisease();
                     }
                 );
 
@@ -221,6 +271,24 @@ const SYMPTOMS = [
                             const $row = $target.closest("[data-symptom-id]");
                             eventHandlers.handleOnRemoveSymptomRule($row);
                         }
+                    }
+                );
+
+                registerEvent(
+                    forms.disease.fields.diseaseName,
+                    "input",
+                    function (e) {
+                        const $target = $(e.target);
+                        commandQueries.saveDisease.name = $target.val(); 
+                    }
+                );
+
+                registerEvent(
+                    forms.disease.fields.description,
+                    "input",
+                    function (e) {
+                        const $target = $(e.target);
+                        commandQueries.saveDisease.description = $target.val(); 
                     }
                 );
             }
