@@ -26,14 +26,17 @@ const SYMPTOMS = [
         saveSymptom: `${SYMPTOM_BASE_URL}/SaveSymptom`,
         deleteSymptom: `${SYMPTOM_BASE_URL}/RemoveSymptom`,
     }
+
     const stateHolders = {
         selectedRules: [],
         commandQueries: {
-            saveSymptom: {
-                symptomId: null,
-                symptomName: ""
+            saveDisease: {
+                diseaseId: 0,
+                diseaseName: "",
+                description: "",
+                rules: stateHolders.selectedRules
             },
-            symptomId: null,
+            diseaseId: null,
         }
     }
     const elementHolders = {
@@ -223,7 +226,21 @@ const SYMPTOMS = [
             }
         },
         apiService: {
-           
+            getDiseases: async function () {
+
+            },
+            getDiseaseById: async function () {
+
+            },
+            saveDisease: async function () {
+
+            },
+            removeDisease: async function () {
+
+            },
+            getSymptoms: async function () {
+
+            },
         }
     }
     document.addEventListener("DOMContentLoaded", services.initialize);
