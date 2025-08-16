@@ -1,15 +1,27 @@
-﻿<div id="settings" class="page-content">
+﻿@using E_Doctor.Application.Constants
+@{
+    SettingTab activeTab = ViewBag.ActiveTab ?? SettingTab.Symptom;
+}
+
+<div id="settings" class="page-content">
     <h2 class="text-2xl font-semibold mb-4">Settings</h2>
     <div class="settings-tabs">
-        <button class="settings-tab-btn active" data-tab="symptoms-tab">Symptoms</button>
-        <button class="settings-tab-btn" data-tab="diseases-tab">Diseases</button>
+        <a asp-action="Index" asp-route-tabName="@(SettingTab.Symptom)" class="settings-tab-btn @(activeTab == SettingTab.Symptom ? "active": "")" data-tab="symptoms-tab">Symptoms</a>
+        <a asp-action="Index" asp-route-tabName="@(SettingTab.Disease)" class="settings-tab-btn @(activeTab == SettingTab.Disease ? "active": "")" data-tab="diseases-tab">Diseases</a>
     </div>
 
     <div id="symptoms-tab" class="sub-page active">
-        <partial name="AdminSettingPartials/_SymptomsTab.cshtml" />
-    </div>
-
-    <div id="diseases-tab" class="sub-page">
-        <partial name="AdminSettingPartials/_DiseasesTab.cshtml" />
+        @switch (activeTab)
+        {
+            case SettingTab.Symptom:
+                <partial name="AdminSettingPartials/_SymptomsTab.cshtml" />
+                break;
+            case SettingTab.Disease:
+                <partial name="AdminSettingPartials/_DiseasesTab.cshtml" />
+                break;
+            default:
+                <h1>Page is not found!</h1>
+                break;
+        }
     </div>
 </div>

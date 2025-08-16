@@ -65,3 +65,32 @@ function IsNullUndefinedEmpty(value) {
     return false;
 }
 
+function registerEvent(root, type, callback) {
+    $(root).off(type).on(type, function (event) {
+        if (callback) {
+            callback(event);
+        }
+    })
+}
+
+function ValidateInput(input, message) {
+
+    if (IsNullUndefinedEmpty(input)) {
+        alert(message);
+
+        return false;
+    }
+
+    return true;
+}
+
+function ValidateInput(input = [], message) {
+
+    if (input.length == 0) {
+        alert(message);
+
+        return false;
+    }
+
+    return true;
+}
