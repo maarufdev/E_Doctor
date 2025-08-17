@@ -1,4 +1,6 @@
-﻿using E_Doctor.Application.Interfaces.Features.Settings;
+﻿using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Settings;
+using E_Doctor.Application.Services.Common;
 using E_Doctor.Application.Services.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +17,9 @@ namespace E_Doctor.Application
 
         private static IServiceCollection RegisterServices(this IServiceCollection services)
         {
+            services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ISymptomService, SymptomService>();
+            services.AddScoped<IRuleManagementService, RuleManagementService>();
 
             return services;
         }

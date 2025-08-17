@@ -1,13 +1,27 @@
 ﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
+using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
-    public class AdminSettingController(ISymptomService symptomService) : Controller
+    public class AdminSettingController : Controller
     {
-        private readonly ISymptomService _symptomService = symptomService;
+        private readonly ISymptomService _symptomService;
+        private readonly IRuleManagementService _ruleManager;
+        private readonly ICommonService _commonService;
+        public AdminSettingController(
+            ISymptomService symptomService,
+            IRuleManagementService ruleManager,
+            ICommonService commonService
+            )
+        {
+            _symptomService = symptomService;
+            _ruleManager = ruleManager;
+            _commonService = commonService;
+        }
 
         public IActionResult Index(SettingTab? tabName = SettingTab.Symptom)
         {
@@ -16,12 +30,19 @@ namespace E_Doctor.Web.Controllers
             return View();
         }
 
+        #region common
+        public IActionResult GetRuleConditions()
+        {
+            return Ok(_commonService.GetRuleConditions());
+        }
+        #endregion
+
         #region Symptoms Settings
         public async Task<IActionResult> GetSymptoms()
         {
             var symptoms = await _symptomService.GetSymptoms();
 
-            if(symptoms is null) return BadRequest();
+            if (symptoms is null) return BadRequest();
 
             return Ok(symptoms);
         }
@@ -54,7 +75,50 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(isSuccess);
         }
-        
+
+        #endregion
+
+        #region Disease Rule Management
+        public async Task<IActionResult> GetDiseaseList()
+        {
+            return Ok(await _ruleManager.GetDiseaseList());
+        }
+
+        public async Task<IActionResult> GetDiseaseById(int id)
+        {
+            if (id == 0) return BadRequest();
+
+            var result = await _ruleManager.GetDiseaseRule(id);
+
+            if (result == null) return NotFound();
+
+            return Ok(result);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveDisease([FromBody] DiseaseDTO diseaseDTO)
+        {
+            if (diseaseDTO == null) return BadRequest();
+
+            var result = await _ruleManager.SaveDisease(diseaseDTO);
+
+            if (!result) return BadRequest();
+
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRuleById(int id)
+        {
+            if(id == 0) return BadRequest();
+
+            var result = await _ruleManager.DeleteDisease(id);
+            
+            if (!result) return BadRequest();
+
+            return Ok(result);
+        }
         #endregion
     }
 }
