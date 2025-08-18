@@ -3,5 +3,6 @@
     public class SymptomEntity : BaseEntity
     {
         public string Name { get; set; } = string.Empty;
+        public ICollection<DiseaseRuleEntity>? Rules { get; set; }
     }
 }
