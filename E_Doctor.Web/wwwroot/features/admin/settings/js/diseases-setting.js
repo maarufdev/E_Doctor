@@ -70,12 +70,15 @@
             renderDiseaseTable: async function () {
                 const { table } = elementHolders;
                 const diseaseModal = this.toggleDiseasesModal;
+                const eventHandlers = this;
 
                 const $diseasesTableBody = $(table.diseasesTableBody);
                 $diseasesTableBody.empty();
 
                 const result = await services.apiService.getDiseases();
                 result.forEach(disease => {
+                    const { diseaseId } = disease;
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${disease.diseaseName}</td>
@@ -88,7 +91,7 @@
                     `;
                     row.querySelector(table.actionBtns.edit).addEventListener('click', async (e) => {
                         if (disease) {
-                            const result = await services.apiService.getDiseaseById(disease.diseaseId);
+                            const result = await services.apiService.getDiseaseById(diseaseId);
 
                             if (!result) {
                                 alert("something went wrong!");
@@ -99,9 +102,16 @@
                             diseaseModal(true, true);
                         }
                     });
-                    row.querySelector(table.actionBtns.delete).addEventListener('click', (e) => {
+                    row.querySelector(table.actionBtns.delete).addEventListener('click', async (e) => {
                         if (confirm('Are you sure?')) {
-                           alert("Successfully deleted!")
+                            const result = await services.apiService.removeDisease(diseaseId);
+
+                            if (!result) {
+                                alert("something went wrong!");
+                                return;
+                            }
+
+                            await eventHandlers.renderDiseaseTable();
                         }
                     });
                     $diseasesTableBody.append(row);
@@ -174,7 +184,7 @@
                 ruleRow.dataset.symptomId = data.symptomId;
                 ruleRow.innerHTML = `
                         <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
-                        ${this.createRulesOption()}
+                        ${this.createRulesOption(data.condition)}
                         <input type="number" value="${data.days}" min="1" class="form-input rule-symptom-days" style="width: 6rem;">
                         <button class="remove-rule-btn" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:1.5rem; line-height:1;">&times;</button>
                     `;

@@ -88,7 +88,7 @@ namespace E_Doctor.Web.Controllers
         {
             if (id == 0) return BadRequest();
 
-            var result = await _ruleManager.GetDiseaseRule(id);
+            var result = await _ruleManager.GetDiseaseById(id);
 
             if (result == null) return NotFound();
 

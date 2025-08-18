@@ -4,7 +4,7 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
 {
     public static class RuleManagementDTOMapper
     {
-        public static DiseaseDTO ToDTO(this DiseaseEntity entity)
+        public static DiseaseDTO? ToDTO(this DiseaseEntity? entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
