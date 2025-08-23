@@ -39,6 +39,11 @@ a {
     /*visibility: hidden;*/
 }
 
+
+.hidden {
+    display: none !important;
+}
+
 /*#app-container.loaded {
     visibility: visible;
 }
@@ -376,7 +381,7 @@ a {
 }
 
 /* Searchable Dropdown */
-.searchable-dropdown {
+/*.searchable-dropdown {
     position: relative;
 }
 
@@ -426,13 +431,13 @@ a {
     font-size: 0.875rem;
 }
 
-    .symptom-tag button {
-        background: none;
-        border: none;
-        color: var(--primary-hover);
-        cursor: pointer;
-        font-weight: bold;
-    }
+.symptom-tag button {
+    background: none;
+    border: none;
+    color: var(--primary-hover);
+    cursor: pointer;
+    font-weight: bold;
+}*/
 
 /* Loader */
 #app-loader {

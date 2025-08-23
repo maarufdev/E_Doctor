@@ -1,0 +1,72 @@
+﻿.searchable-dropdown {
+    position: relative;
+    z-index: 10000;
+}
+
+.searchable-dropdown-list {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1001;
+    display: none;
+}
+
+.searchable-dropdown-list.visible {
+    display: block;
+}
+
+.searchable-dropdown-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+}
+
+.searchable-dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+.selected-symptoms-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    min-height: 40px;
+}
+
+.symptom-tag {
+    background-color: #dbeafe;
+    color: var(--primary-hover);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.symptom-tag button {
+    background: none;
+    border: none;
+    color: var(--primary-hover);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.selected-symtoms-message:has(+ .symptom-tag) {
+    display: none;
+}
+
+.consultation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#consultation-modal-body {
+    min-height: 300px;
+}

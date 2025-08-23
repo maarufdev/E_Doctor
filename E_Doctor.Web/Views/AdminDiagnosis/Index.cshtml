@@ -1,4 +1,6 @@
-﻿<div id="test" class="page-content">
+﻿<link rel="stylesheet" href="~/features/admin/diagnosis/css/diagnosis.css" asp-append-version="true" />
+
+<div id="test" class="page-content">
     <div class="card">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-semibold">Consultation Results</h3>
@@ -7,8 +9,48 @@
         <div class="table-container">
             <table class="data-table">
                 <thead><tr><th>Date</th><th>Symptoms</th><th>Result</th></tr></thead>
-                <tbody id="history-table-body"></tbody>
+                <tbody id="history-table-body">
+                    <tr>
+                        <td>8/21/2025, 6:56:41 PM</td>
+                        <td style="white-space: normal;">Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)</td>
+                        <td>Common Cold (100%)</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<div id="consultation-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">New Consultation</h3>
+            <button id="close-consultation-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div id="consultation-modal-body" class="modal-body">
+            <div class="consultation-content select-symptoms-content active">
+                <p class="mb-2 font-semibold">Please select all symptoms you are experiencing.</p>
+                <div class="searchable-dropdown" id="symptom-search-parent">
+                    <input type="text" autocomplete="off" id="symptom-search-input" class="form-input" placeholder="Search for a symptom...">
+                    <div id="symptom-search-list" class="searchable-dropdown-list">
+                    </div>
+                </div>
+                <div id="selected-symptoms-container" class="selected-symptoms-container mt-2">
+                    <p class="text-gray-500 selected-symtoms-message">No symptoms selected.</p>
+                </div>
+            </div>
+            <div class="consultation-content selected-symptoms-durations hidden">
+                <div class="flex items-center justify-between">
+                    <label class="font-semibold">${s.name}</label>
+                    <input type="number" min="1" value="1" class="form-input symptom-duration-input" style="width: 8rem;" data-symptom-id="${s.id}">
+                </div>
+            </div>
+        </div>
+        <div id="consultation-modal-footer" class="modal-footer">
+            <button id="next-step-btn" class="btn btn-primary">Next</button>
+            <button id="run-diagnosis-btn" class="btn btn-primary hidden">Run Diagnosis</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/features/admin/diagnosis/js/diagnosis.js" asp-append-version="true"></script>
