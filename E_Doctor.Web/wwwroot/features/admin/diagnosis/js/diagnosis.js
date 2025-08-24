@@ -5,6 +5,57 @@
     { id: 10, name: 'Nausea' }, { id: 11, name: 'Vomiting' }
 ];
 
+const CONSULTATION_HISTORY = [
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Common Cold (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+    {
+        diagnosisId: 1,
+        diagnosisDate: "8/21/2025, 6:56:41 PM",
+        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
+        diagnosisResult: "Flu (100%)",
+    },
+];
+
 (function () {
     const SYMPTOM_BASE_URL = "";
     const SETTINGS_BASE_URL = "AdminSetting";
@@ -25,7 +76,7 @@
         tables: {
             diagnosis: {
                 root: "",
-                body: ""
+                body: "#history-table-body"
             }
         },
         modals: {
@@ -39,8 +90,13 @@
                 symptomSelectedItemsParent: "#selected-symptoms-container",
                 buttons: {
                     close: "#close-consultation-modal",
-                    next: "",
-                    runDiagnosis: "",
+                    next: "#next-step-btn",
+                    runDiagnosis: "#run-diagnosis-btn",
+                    finish: "#finish-diagnosis-btn",
+                },
+                modalContents: {
+                    symptoms: ".select-symptoms-content",
+                    durations: ".selected-symptoms-durations"
                 }
             }
         },
@@ -48,14 +104,110 @@
     const services = {
         initialize: function () {
             services.eventHandlers.setSymptoms();
-
+            services.eventHandlers.renderDiagnosisTable();
             services.events.initMain();
         },
         eventHandlers: {
-            toggleDiseasesModal: function (toOpen, toEdit) {
+            toggleDiagnosisModal: function (toOpen) {
                 const modal = elementHolders.modals.consultation;
                 $(modal.root).toggleClass("visible", toOpen);
-                $(modal.title).text(toEdit ? "Step 1: Select Symptoms" : "Specify Durations");
+                $(modal.title).text("Step 1: Select Symptoms");
+            },
+            renderDiagnosisTable: async function () {
+                const { diagnosis } = elementHolders.tables;
+                const $diagnosisTblBody = $(diagnosis.body);
+                $diagnosisTblBody.empty();
+
+                CONSULTATION_HISTORY.forEach(item => {
+                    const $tr = $(`
+                        <tr>
+                            <td>${item.diagnosisDate}</td>
+                            <td style="white-space: normal;">${item.diagnosisSymptoms}</td>
+                            <td>${item.diagnosisResult}</td>
+                        </tr>
+                    `);
+
+                    $diagnosisTblBody.append($tr);
+                });
+            },
+            handleOnRunDiagnosis: function () {
+                const command = this.getSymptomDurationData() ?? [];
+
+                if (command.length == 0) {
+                    alert("Invalid data.")
+                    return;
+                }
+
+                const result = services.apiService.runDiagnosis(command);
+
+                if (!result) return;
+
+                $(".consultation-content").addClass("hidden");
+                $(".diagnosis-result-content").removeClass("hidden");
+                $(".diagnosis-btn").addClass("hidden");
+                $("#finish-diagnosis-btn").removeClass("hidden");
+                $("#consultation-modal-title").text("Diagnosis Result");
+            },
+            getSymptomDurationData: function () {
+
+                const command = [...document.querySelectorAll(".symptom-duration-input")]
+                    .map(item => {
+                        return {
+                            symptomId: parseInt(item.dataset.symptomId),
+                            duration: parseInt(item.value)
+                        }
+                    });
+                return command
+            },
+
+            handleOnCreateSymptomsDurations: function () {
+                const { consultation } = elementHolders.modals;
+
+                const $durationContainer = $("#duration-fields");
+
+                stateHolders.selectedSymptoms.forEach(s => {
+                    const duration = $(`
+                    <div class="flex items-center justify-between">
+                        <label class="font-semibold">${s.symptomName}</label>
+                        <input type="number" min="1" value="1" class="form-input symptom-duration-input" style="width: 8rem;" data-symptom-id="${s.symptomId}">
+                    </div>
+                    `);
+
+                    const $symptomInput = $(duration).find(".symptom-duration-input");
+                    $symptomInput.off("input").on("input", function (e) {
+                        const val = e.target.value;
+                        if (!val || parseInt(val) <= 0) {
+                            e.target.value = 1;
+                        }
+                    });
+
+                    $symptomInput.off("keydown").on("keydown", function (e) {
+                        if (['e', 'E', '.', '+', '-'].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    $durationContainer.append(duration);
+                });
+            },
+
+            handleOnClickedNext: function () {
+                const { consultation } = elementHolders.modals;
+
+                if (stateHolders.selectedSymptoms.length == 0) {
+                    alert("Please select at least one symptom.");
+                    return;
+                }
+
+                $(consultation.modalContents.symptoms).addClass("hidden");
+                $(consultation.modalContents.durations).removeClass("hidden");
+
+                $(".diagnosis-btn").addClass("hidden");
+                $(consultation.buttons.runDiagnosis).removeClass("hidden");
+
+                $(consultation.title).text("Step 2: Specify Duration");
+
+                this.handleOnCreateSymptomsDurations();
             },
             setSymptoms: async function () {
                 const symptoms = await services.apiService.getSymptoms();
@@ -70,7 +222,7 @@
                 const $symptomSearchList = $(consultation.symptomSearchList);
                 $symptomSearchList.empty();
 
-                const $selectedSymptomList = $(consultation.symptomSelectedItemsParent);
+                const $selectedSymptomList = $(".symptom-tags");
                 const selectedSymptomIds = stateHolders.selectedSymptoms.map(x => x.symptomId);
                 const filteredSymptoms = symptoms.filter(s => !selectedSymptomIds.includes(s.symptomId));
 
@@ -152,20 +304,38 @@
                     symptomId: $item.data("id"),
                     symptomName: $item.text(),
                 }
+            },
+            clearConsultations: function () {
+                const { consultation } = elementHolders.modals;
+
+                stateHolders.selectedSymptoms = [];
+
+                $("#duration-fields").empty();
+                $(".symptom-tags").empty();
+            },
+            handleOnCloseDiagnosisModal: function () {
+                this.toggleDiagnosisModal(false);
+                $(".consultation-content").addClass("hidden");
+                $(".select-symptoms-content").removeClass("hidden");
+                $(".diagnosis-btn").addClass("hidden");
+                $("#next-step-btn").removeClass("hidden");
+
+                this.clearConsultations();
             }
         },
         events: {
             initMain: function () {
                 const { common } = elementHolders;
                 const { consultation } = elementHolders.modals;
-                const $symptomSearchParent = $(consultation.symptomSearchParent);
                 const symptomSearchParent = document.querySelector(consultation.symptomSearchParent);
+
 
                 registerEvent(
                     common.buttons.newConsultation,
                     "click",
                     function (event) {
-                        services.eventHandlers.toggleDiseasesModal(true, false);
+                        services.eventHandlers.toggleDiagnosisModal(true);
+                        services.eventHandlers.pupulateSearchSymptomList();
                     }
                 );
 
@@ -173,7 +343,14 @@
                     consultation.buttons.close,
                     "click",
                     function (event) {
-                        services.eventHandlers.toggleDiseasesModal(false);
+                        const isDurationOpen = !$(consultation.modalContents.durations).hasClass("hidden");
+
+                        if (isDurationOpen) {
+                            const yes = confirm("Are you sure you don't want to continue with your diagnosis?");
+
+                            if (!yes) return;
+                        }
+                        services.eventHandlers.handleOnCloseDiagnosisModal();
                     }
                 );
 
@@ -208,12 +385,38 @@
                     }
                 );
 
+                registerEvent(
+                    consultation.buttons.next,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.handleOnClickedNext();
+                    }
+                );
+
+                registerEvent(
+                    consultation.buttons.runDiagnosis,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.handleOnRunDiagnosis();
+                    }
+                );
+
+                registerEvent(
+                    consultation.buttons.finish,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.handleOnCloseDiagnosisModal();
+                    }
+                );
             }
         },
         apiService: {
             getSymptoms: async function () {
                 return await apiFetch(URLS.getSymptoms);
             },
+            runDiagnosis: async () => {
+                return true;
+            }
         }
     };
     document.addEventListener("DOMContentLoaded", services.initialize);

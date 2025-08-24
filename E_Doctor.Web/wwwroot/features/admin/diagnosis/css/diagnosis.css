@@ -38,6 +38,12 @@
     min-height: 40px;
 }
 
+.symptom-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
 .symptom-tag {
     background-color: #dbeafe;
     color: var(--primary-hover);
@@ -57,7 +63,7 @@
     font-weight: bold;
 }
 
-.selected-symtoms-message:has(+ .symptom-tag) {
+.selected-symtoms-message:has( + .symptom-tags > .symptom-tag) {
     display: none;
 }
 
@@ -67,6 +73,12 @@
     gap: 10px;
 }
 
-#consultation-modal-body {
+#consultation-modal-body:has( > .diagnosis-result-content.hidden) {
     min-height: 300px;
+}
+
+.duration-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
