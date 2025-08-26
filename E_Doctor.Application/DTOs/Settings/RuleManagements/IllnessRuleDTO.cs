@@ -1,8 +1,8 @@
 ﻿using E_Doctor.Core.Constants.Enums;
 namespace E_Doctor.Application.DTOs.Settings.RuleManagements;
 
-public sealed record DiseaseRuleDTO(
+public sealed record IllnessRuleDTO(
     int SymptomId, 
-    DiseaseRuleConditionEnum Condition,
+    IllnessRuleConditionEnum Condition,
     int Days
 );

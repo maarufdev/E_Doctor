@@ -9,8 +9,8 @@ namespace E_Doctor.Application.Helpers
     {
         public static List<ConditionRuleDTO> GetDiseaseRuleConditions()
         {
-            return Enum.GetValues(typeof(DiseaseRuleConditionEnum))
-                .Cast<DiseaseRuleConditionEnum>()
+            return Enum.GetValues(typeof(IllnessRuleConditionEnum))
+                .Cast<IllnessRuleConditionEnum>()
                 .Select(e => new ConditionRuleDTO
                 {
                     Id = (int)e,

@@ -78,17 +78,17 @@ namespace E_Doctor.Web.Controllers
 
         #endregion
 
-        #region Disease Rule Management
-        public async Task<IActionResult> GetDiseaseList()
+        #region Illness Rule Management
+        public async Task<IActionResult> GetIllnessList()
         {
-            return Ok(await _ruleManager.GetDiseaseList());
+            return Ok(await _ruleManager.GetIllnessList());
         }
 
-        public async Task<IActionResult> GetDiseaseById(int id)
+        public async Task<IActionResult> GetIllnessById(int id)
         {
             if (id == 0) return BadRequest();
 
-            var result = await _ruleManager.GetDiseaseById(id);
+            var result = await _ruleManager.GetIllnessById(id);
 
             if (result == null) return NotFound();
 
@@ -97,11 +97,11 @@ namespace E_Doctor.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveDisease([FromBody] DiseaseDTO diseaseDTO)
+        public async Task<IActionResult> SaveIllness([FromBody] IllnessDTO diseaseDTO)
         {
             if (diseaseDTO == null) return BadRequest();
 
-            var result = await _ruleManager.SaveDisease(diseaseDTO);
+            var result = await _ruleManager.SaveIllness(diseaseDTO);
 
             if (!result) return BadRequest();
 
@@ -109,11 +109,11 @@ namespace E_Doctor.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteRuleById(int id)
+        public async Task<IActionResult> DeleteIllnessById(int id)
         {
             if(id == 0) return BadRequest();
 
-            var result = await _ruleManager.DeleteDisease(id);
+            var result = await _ruleManager.DeleteIllnessById(id);
             
             if (!result) return BadRequest();
 

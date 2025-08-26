@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace E_Doctor.Core.Constants.Enums;
-public enum DiseaseRuleConditionEnum
+public enum IllnessRuleConditionEnum
 {
     [Description("IsEqual")]
     IsEqual = 1,

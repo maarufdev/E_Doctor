@@ -1,8 +1,8 @@
 ﻿namespace E_Doctor.Application.DTOs.Settings.RuleManagements;
 
-public sealed record DiseaseSummaryDTO(
-    int DiseaseId,
-    string DiseaseName,
+public sealed record IllnessSummaryDTO(
+    int IllnessId,
+    string IllnessName,
     string Description,
     int RuleCount
     );

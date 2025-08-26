@@ -1,11 +1,18 @@
 ﻿<div class="card">
     <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-semibold">Manage Diseases</h3>
-        <button id="new-disease-btn" class="btn btn-primary">Create New Disease</button>
+        <h3 class="text-xl font-semibold">Manage Illnesses</h3>
+        <button id="new-disease-btn" class="btn btn-primary">Create New Illness</button>
     </div>
     <div class="table-container">
         <table class="data-table">
-            <thead><tr><th>Disease Name</th><th>Description</th><th>Rule Count</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Illness Name</th>
+                    <th>Description</th>
+                    <th>Rule Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody id="diseases-table-body">
                
             </tbody>
@@ -17,19 +24,19 @@
 <div id="disease-modal" class="modal-backdrop">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="disease-modal-title" class="text-xl font-semibold">Create New Disease</h3>
+            <h3 id="disease-modal-title" class="text-xl font-semibold">Create New Illness</h3>
             <button id="close-disease-modal"class="modal-close-btn">&times;</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editing-disease-id">
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div>
-                    <label for="disease-name-input" class="font-semibold">Disease Name</label>
+                    <label for="disease-name-input" class="font-semibold">Illness Name</label>
                     <input type="text" id="disease-name-input" class="form-input mt-1" placeholder="e.g., Influenza">
                 </div>
                 <div>
                     <label for="disease-desc-input" class="font-semibold">Description</label>
-                    <textarea id="disease-desc-input" class="form-textarea mt-1" placeholder="Brief description of the disease"></textarea>
+                    <textarea id="disease-desc-input" class="form-textarea mt-1" placeholder="Brief description of the illness"></textarea>
                 </div>
                 <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
                     <h4 class="font-semibold mb-2">Rule Configuration</h4>
@@ -50,4 +57,4 @@
     </div>
 </div>
 
-<script src="~/features/admin/settings/js/diseases-setting.js" asp-append-version="true"></script>
+<script src="~/features/admin/settings/js/illness-setting.js" asp-append-version="true"></script>

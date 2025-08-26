@@ -9,8 +9,8 @@ public class AppDbContext : DbContext
         
     }
     public DbSet<SymptomEntity> Symptoms { get; set; }
-    public DbSet<DiseaseEntity> Diseases { get; set; }
-    public DbSet<DiseaseRuleEntity> DiseaseRules { get; set; }
+    public DbSet<IllnessEntity> Illnesses { get; set; }
+    public DbSet<IllnessRuleEntity> IllnessRules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,18 +30,18 @@ public class AppDbContext : DbContext
         });
         #endregion
 
-        #region Disease Entity Seeding and Config
-        modelBuilder.Entity<DiseaseEntity>(entity =>
+        #region Illness Entity Seeding and Config
+        modelBuilder.Entity<IllnessEntity>(entity =>
         {
             entity.HasKey(s => s.Id);
 
             // Seeding
 
             entity.HasData(
-                new DiseaseEntity
+                new IllnessEntity
                 {
                     Id = 1,
-                    DiseaseName = "Flu",
+                    IllnessName = "Flu",
                     Description = "Common",
                     CreatedOn = new DateTime(2025, 8, 9),
                     IsActive = true,
@@ -50,24 +50,24 @@ public class AppDbContext : DbContext
         #endregion
 
         #region DiseaseRules
-        modelBuilder.Entity<DiseaseRuleEntity>(entity =>
+        modelBuilder.Entity<IllnessRuleEntity>(entity =>
         {
-            entity.HasKey(dr => new { dr.DiseaseId, dr.SymptomId });
+            entity.HasKey(dr => new { dr.IllnessId, dr.SymptomId });
 
-            entity.HasOne(dr => dr.Disease)
+            entity.HasOne(dr => dr.Illness)
             .WithMany(d => d.Rules)
-            .HasForeignKey(dr => dr.DiseaseId);
+            .HasForeignKey(dr => dr.IllnessId);
 
             entity.HasOne(dr => dr.Symptom)
             .WithMany(d => d.Rules)
             .HasForeignKey(dr => dr.SymptomId);
 
             entity.HasData(
-                new DiseaseRuleEntity
+                new IllnessRuleEntity
                 {
-                    DiseaseId = 1,
+                    IllnessId = 1,
                     SymptomId = 1,
-                    Condition = Core.Constants.Enums.DiseaseRuleConditionEnum.IsLessThan,
+                    Condition = Core.Constants.Enums.IllnessRuleConditionEnum.IsLessThan,
                     Days = 2,
                     IsActive = true,
                 });
