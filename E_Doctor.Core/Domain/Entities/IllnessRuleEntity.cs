@@ -9,5 +9,6 @@ public class IllnessRuleEntity
     public virtual IllnessEntity? Illness { get; set; }
     public IllnessRuleConditionEnum Condition { get; set; }
     public int Days { get; set; }
+    public IllnessRuleWeightEnum Weight { get; set; }
     public bool IsActive { get; set; }
 }

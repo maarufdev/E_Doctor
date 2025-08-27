@@ -7,7 +7,7 @@ namespace E_Doctor.Application.Helpers
 {
     internal static class EnumHelper
     {
-        public static List<ConditionRuleDTO> GetDiseaseRuleConditions()
+        public static List<ConditionRuleDTO> GetIllnessRuleConditions()
         {
             return Enum.GetValues(typeof(IllnessRuleConditionEnum))
                 .Cast<IllnessRuleConditionEnum>()
@@ -15,6 +15,18 @@ namespace E_Doctor.Application.Helpers
                 {
                     Id = (int)e,
                     ConditionName = GetEnumDescription(e)
+                })
+                .ToList();
+        }
+
+        public static List<WeightRuleDTO> GetIllnessRuleWeights()
+        {
+            return Enum.GetValues(typeof(IllnessRuleWeightEnum))
+                .Cast<IllnessRuleWeightEnum>()
+                .Select(e => new WeightRuleDTO
+                {
+                    Id = (int)e,
+                    Name = GetEnumDescription(e)
                 })
                 .ToList();
         }

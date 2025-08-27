@@ -79,6 +79,7 @@ namespace E_Doctor.Application.Services.Settings
                             SymptomId = rule.SymptomId,
                             Condition = rule.Condition,
                             Days = rule.Days,
+                            Weight = rule.Weight,
                             IsActive = true,
                         };
 
@@ -119,6 +120,7 @@ namespace E_Doctor.Application.Services.Settings
                             existingRule.IsActive = true;
                             existingRule.Condition = rule.Condition;
                             existingRule.Days = rule.Days;
+                            existingRule.Weight = rule.Weight;
                         }
                         else
                         {
@@ -128,6 +130,7 @@ namespace E_Doctor.Application.Services.Settings
                                 IllnessId = illnessId,
                                 Condition = rule.Condition,
                                 Days = rule.Days,
+                                Weight = rule.Weight,
                                 IsActive = true
                             };
 

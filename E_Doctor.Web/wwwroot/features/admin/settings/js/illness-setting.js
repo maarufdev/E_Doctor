@@ -7,6 +7,7 @@
         getIllnessById: `${SETTINGS_BASE_URL}/GetIllnessById`,
         saveIllness: `${SETTINGS_BASE_URL}/SaveIllness`,
         deleteIllnessById: `${SETTINGS_BASE_URL}/DeleteIllnessById`,
+        getWeightRules: `${SETTINGS_BASE_URL}/GetWeightRules`,
     }
     const stateHolders = {
         tempSelectedRules: [],
@@ -21,6 +22,7 @@
         },
         symptoms: [],
         ruleConditions: [],
+        ruleWeights: []
     }
     const elementHolders = {
         table: {
@@ -55,10 +57,11 @@
         initialize: function () {
             services.eventHandlers.setSymptomsList();
             services.eventHandlers.setRuleConditions();
+            services.eventHandlers.setWeightRules();
 
             services.events.initMain();
             services.eventHandlers.populateSymptomSelect();
-            services.events.disease();
+            services.events.illnessEvent();
             services.eventHandlers.renderIllnessTable();
         },
         eventHandlers: {
@@ -150,6 +153,7 @@
                         symptomName: symptoms.find(s => s.symptomId == rule.symptomId)?.symptomName ?? "",
                         condition: rule.condition,
                         days: rule.days,
+                        weight: rule.weight
                     }
 
                     tempSelectedRules.push(transformedRule);
@@ -166,11 +170,21 @@
             },
             renderDiseaseRules: function () {
             },
-            createRulesOption: function (selectedCondition) {
+            createRulesConditionOption: function (selectedCondition) {
                 const $select = $(`<select class="form-select rule-symptom-condition-select" style="width: 10rem;">`);
 
                 const $options = stateHolders.ruleConditions.map(
                     c => `<option value="${c.id}" ${c.id == selectedCondition ? "selected" : ""}>${c.text}</option>`).join("");
+
+                $select.append($options);
+
+                return $select[0].outerHTML;
+            },
+            createRulesWeightOption: function (selectedWeight) {
+                const $select = $(`<select class="form-select rule-symptom-weight-select" style="width: 10rem;">`);
+
+                const $options = stateHolders.ruleWeights.map(
+                    c => `<option value="${c.id}" ${c.id == selectedWeight ? "selected" : ""}>${c.text}</option>`).join("");
 
                 $select.append($options);
 
@@ -184,8 +198,9 @@
                 ruleRow.dataset.symptomId = data.symptomId;
                 ruleRow.innerHTML = `
                         <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
-                        ${this.createRulesOption(data.condition)}
+                        ${this.createRulesConditionOption(data.condition)}
                         <input type="number" value="${data.days}" min="1" class="form-input rule-symptom-days" style="width: 6rem;">
+                        ${this.createRulesWeightOption(data.weight)}
                         <button class="remove-rule-btn" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:1.5rem; line-height:1;">&times;</button>
                     `;
                 return ruleRow;
@@ -208,7 +223,7 @@
 
                 const $ruleFieldsContainer = $(forms.illness.rulesContainer);
 
-                $ruleFieldsContainer.append(this.createRuleFieldConfig(symptom));
+                $ruleFieldsContainer.prepend(this.createRuleFieldConfig(symptom));
                 stateHolders.tempSelectedRules.push(symptom);
 
                 this.populateSymptomSelect();
@@ -219,7 +234,7 @@
                 $ddSymptom.val("");
                 $ddSymptom.empty();
 
-                const $defaultOption = $(`<option value="0">-- Select -- </option>`);
+                const $defaultOption = $(`<option value="0">-- Select Symptom -- </option>`);
                 $ddSymptom.append($defaultOption);
 
                 const filteredSymptoms = stateHolders.symptoms.filter(s => !stateHolders.tempSelectedRules.some(r => r.symptomId == s.symptomId));
@@ -257,17 +272,19 @@
                 };
                 stateHolders.tempSelectedRules = [];
             },
-            getDiseaseRules: function () {
+            getIllnessRules: function () {
                 const $diseaseSymptomRules = $("#disease-rules-container").find(".rule-symptom-config-container");
                 const rules = [...$diseaseSymptomRules].map(field => {
                     const symptomId = parseInt($(field).data("symptomId"));
                     const condition = parseInt($(field).find(".rule-symptom-condition-select").val());
                     const days = parseInt($(field).find(".rule-symptom-days").val());
+                    const weight = parseInt($(field).find(".rule-symptom-weight-select").val());
 
                     return {
                         symptomId,
                         condition,
-                        days
+                        days,
+                        weight
                     }
                 });
 
@@ -277,7 +294,7 @@
                 const { commandQueries, tempSelectedRules } = stateHolders;
                 const { fields } = elementHolders.forms.illness;
 
-                commandQueries.saveIllness.rules = this.getDiseaseRules();
+                commandQueries.saveIllness.rules = this.getIllnessRules();
                 const valid = this.validateDiseaseFields();
 
                 if (!valid) return;
@@ -314,6 +331,10 @@
                 const response = await services.apiService.getRuleConditions() ?? [];
                 stateHolders.ruleConditions = response.map(x => ({ id: x.id, text: x.conditionName }));
             },
+            setWeightRules: async function () {
+                const response = await services.apiService.getWeightRules() ?? [];
+                stateHolders.ruleWeights = response.map(x => ({ id: x.id, text: x.name }));
+            }
         },
         events: {
             initMain: function () {
@@ -330,7 +351,7 @@
                     }
                 )
             },
-            disease: function () {
+            illnessEvent: function () {
                 const { forms } = elementHolders;
                 const { eventHandlers } = services;
                 const { commandQueries } = stateHolders;
@@ -432,6 +453,9 @@
                         }
                     });
             },
+            getWeightRules: async function () {
+                return await apiFetch(URLS.getWeightRules);
+            }
         }
     }
     document.addEventListener("DOMContentLoaded", services.initialize);

@@ -16,7 +16,8 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
                 .Select(r => new IllnessRuleDTO(
                     r.SymptomId,
                     r.Condition,
-                    r.Days
+                    r.Days,
+                    r.Weight
                 ))
                 .ToList();
             }

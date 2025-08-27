@@ -35,6 +35,12 @@ namespace E_Doctor.Web.Controllers
         {
             return Ok(_commonService.GetRuleConditions());
         }
+        
+        public IActionResult GetWeightRules()
+        {
+            return Ok(_commonService.GetWeightRules());
+        }
+
         #endregion
 
         #region Symptoms Settings
