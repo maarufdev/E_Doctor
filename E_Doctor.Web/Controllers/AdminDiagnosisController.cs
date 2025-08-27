@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using E_Doctor.Application.DTOs.Diagnosis;
+using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
@@ -7,6 +8,11 @@ namespace E_Doctor.Web.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public async Task<IActionResult> RunDiagnosis([FromBody] IEnumerable<RunDiagnosisDTO> requestDTO)
+        {
+            return Ok(requestDTO);
         }
     }
 }

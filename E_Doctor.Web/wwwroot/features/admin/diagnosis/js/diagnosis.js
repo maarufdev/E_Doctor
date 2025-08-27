@@ -57,11 +57,11 @@ const CONSULTATION_HISTORY = [
 ];
 
 (function () {
-    const SYMPTOM_BASE_URL = "";
+    const DIAGNOSIS_BASE_URL = "AdminDiagnosis";
     const SETTINGS_BASE_URL = "AdminSetting";
     const URLS = {
         getSymptoms: `${SETTINGS_BASE_URL}/GetSymptoms`,
-
+        runDiagnosis: `${DIAGNOSIS_BASE_URL}/RunDiagnosis`,
     }
     const stateHolders = {
         symptoms: [],
@@ -414,8 +414,14 @@ const CONSULTATION_HISTORY = [
             getSymptoms: async function () {
                 return await apiFetch(URLS.getSymptoms);
             },
-            runDiagnosis: async () => {
-                return true;
+            runDiagnosis: async (command) => {
+                return await apiFetch(
+                    URLS.runDiagnosis,
+                    {
+                        body: command,
+                        method: "POST"
+                    },
+                );
             }
         }
     };
