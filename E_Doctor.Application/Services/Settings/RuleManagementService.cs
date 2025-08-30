@@ -9,28 +9,28 @@ namespace E_Doctor.Application.Services.Settings
     internal class RuleManagementService(AppDbContext context) : IRuleManagementService
     {
         private readonly AppDbContext _context = context;
-        public async Task<bool> DeleteDisease(int id)
+        public async Task<bool> DeleteIllnessById(int id)
         {
-            var disease = await _context.Diseases.FirstOrDefaultAsync(d => d.Id == id);
+            var illness = await _context.Illnesses.FirstOrDefaultAsync(d => d.Id == id);
 
-            if (disease is null) return false;
+            if (illness is null) return false;
 
-            disease.IsActive = false;
-            disease.UpdatedOn = DateTime.UtcNow;
+            illness.IsActive = false;
+            illness.UpdatedOn = DateTime.UtcNow;
 
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<DiseaseSummaryDTO>> GetDiseaseList()
+        public async Task<IEnumerable<IllnessSummaryDTO>> GetIllnessList()
         {
-            var result = await _context.Diseases
+            var result = await _context.Illnesses
                 .AsNoTracking()
                 .Include(d => d.Rules)
                 .Where(d => d.IsActive)
                 .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
-                .Select(d => new DiseaseSummaryDTO(
+                .Select(d => new IllnessSummaryDTO(
                         d.Id,
-                        d.DiseaseName,
+                        d.IllnessName,
                         d.Description ?? string.Empty,
                         d.Rules != null ? d.Rules.Count(x => x.IsActive) : 0
                     ))
@@ -39,32 +39,32 @@ namespace E_Doctor.Application.Services.Settings
             return result;
         }
 
-        public async Task<DiseaseDTO> GetDiseaseById(int id)
+        public async Task<IllnessDTO> GetIllnessById(int id)
         {
-            var disease = await _context.Diseases
+            var disease = await _context.Illnesses
                 .AsNoTracking()
                 .Include(d => d.Rules.Where(x => x.IsActive == true))
                 .Where(x => x.Id == id && x.IsActive)
                 .FirstOrDefaultAsync();
 
-            var result = disease.ToDTO() as DiseaseDTO;
+            var result = disease.ToDTO() as IllnessDTO;
 
             return result;
         }
 
-        public async Task<bool> SaveDisease(DiseaseDTO requestDto)
+        public async Task<bool> SaveIllness(IllnessDTO requestDto)
         {
             try
             {
-                ValidateSaveDiseaseRequestDto(requestDto);
+                ValidateSaveIllnessRequestDto(requestDto);
 
-                var diseaseId = requestDto.DiseaseId;
+                var illnessId = requestDto.IllnessId;
 
-                if (diseaseId == 0)
+                if (illnessId == 0)
                 {
-                    var diseaseEntity = new DiseaseEntity
+                    var illnessEntity = new IllnessEntity
                     {
-                        DiseaseName = requestDto.DiseaseName,
+                        IllnessName = requestDto.IllnessName,
                         Description = requestDto.Description,
                         Rules = [],
                         IsActive = true,
@@ -73,37 +73,38 @@ namespace E_Doctor.Application.Services.Settings
 
                     foreach (var rule in requestDto.Rules)
                     {
-                        var newRuleEntity = new DiseaseRuleEntity
+                        var newRuleEntity = new IllnessRuleEntity
                         {
-                            DiseaseId = diseaseEntity.Id,
+                            IllnessId = illnessEntity.Id,
                             SymptomId = rule.SymptomId,
                             Condition = rule.Condition,
                             Days = rule.Days,
+                            Weight = rule.Weight,
                             IsActive = true,
                         };
 
-                        diseaseEntity.Rules.Add(newRuleEntity);
+                        illnessEntity.Rules.Add(newRuleEntity);
                     }
 
-                    await _context.Diseases.AddAsync(diseaseEntity);
+                    await _context.Illnesses.AddAsync(illnessEntity);
                 }
                 else
                 {
-                    var disease = await _context.Diseases
+                    var illness = await _context.Illnesses
                         .Include(x => x.Rules)
-                        .Where(x => x.Id == requestDto.DiseaseId && x.IsActive == true)
+                        .Where(x => x.Id == requestDto.IllnessId && x.IsActive == true)
                         .FirstOrDefaultAsync();
 
-                    if (disease == null) return false;
+                    if (illness == null) return false;
 
-                    disease.DiseaseName = requestDto.DiseaseName;
-                    disease.Description = requestDto.Description;
-                    disease.UpdatedOn = DateTime.UtcNow;
+                    illness.IllnessName = requestDto.IllnessName;
+                    illness.Description = requestDto.Description;
+                    illness.UpdatedOn = DateTime.UtcNow;
 
-                    var existingRules = disease.Rules?.ToList() ?? [];
+                    var existingRules = illness.Rules?.ToList() ?? [];
 
                     var toRemoveRules = existingRules
-                        .Where(x => !requestDto.Rules.Any(r => r.SymptomId == x.SymptomId && diseaseId == x.DiseaseId));
+                        .Where(x => !requestDto.Rules.Any(r => r.SymptomId == x.SymptomId && illnessId == x.IllnessId));
 
                     foreach (var rule in toRemoveRules)
                     {
@@ -112,26 +113,28 @@ namespace E_Doctor.Application.Services.Settings
 
                     foreach (var rule in requestDto.Rules)
                     {
-                        var existingRule = disease.Rules?.FirstOrDefault(r => r.SymptomId == rule.SymptomId);
+                        var existingRule = illness.Rules?.FirstOrDefault(r => r.SymptomId == rule.SymptomId);
                         
                         if (existingRule is not null)
                         {
                             existingRule.IsActive = true;
                             existingRule.Condition = rule.Condition;
                             existingRule.Days = rule.Days;
+                            existingRule.Weight = rule.Weight;
                         }
                         else
                         {
-                            var newRule = new DiseaseRuleEntity
+                            var newRule = new IllnessRuleEntity
                             {
                                 SymptomId = rule.SymptomId,
-                                DiseaseId = diseaseId,
+                                IllnessId = illnessId,
                                 Condition = rule.Condition,
                                 Days = rule.Days,
+                                Weight = rule.Weight,
                                 IsActive = true
                             };
 
-                            disease.Rules.Add(newRule);
+                            illness.Rules.Add(newRule);
                         }
                     }
                 }
@@ -157,9 +160,9 @@ namespace E_Doctor.Application.Services.Settings
             }
         }
 
-        private static void ValidateSaveDiseaseRequestDto(DiseaseDTO requestDto)
+        private static void ValidateSaveIllnessRequestDto(IllnessDTO requestDto)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.DiseaseName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.IllnessName);
             ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.Description);
             ArgumentNullException.ThrowIfNull(requestDto.Rules);
             ArgumentOutOfRangeException.ThrowIfEqual(0, requestDto.Rules.Count);

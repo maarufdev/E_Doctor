@@ -8,7 +8,12 @@ namespace E_Doctor.Application.Services.Common
     {
         public IEnumerable<ConditionRuleDTO> GetRuleConditions()
         {
-            return EnumHelper.GetDiseaseRuleConditions();
+            return EnumHelper.GetIllnessRuleConditions();
+        }
+
+        public IEnumerable<WeightRuleDTO> GetWeightRules()
+        {
+            return EnumHelper.GetIllnessRuleWeights();
         }
     }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250816122709_AddDiseaseAndDiseaseRuleEntity")]
-    partial class AddDiseaseAndDiseaseRuleEntity
+    [Migration("20250830150346_AddedDiganosisEntity")]
+    partial class AddedDiganosisEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,33 @@ namespace E_Doctor.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiseaseEntity", b =>
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiagnosisEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IllnessName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Symptoms")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Diagnosis");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.IllnessEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,10 +56,9 @@ namespace E_Doctor.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DiseaseName")
+                    b.Property<string>("IllnessName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -45,12 +70,22 @@ namespace E_Doctor.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Diseases");
+                    b.ToTable("Illnesses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedOn = new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Common",
+                            IllnessName = "Flu",
+                            IsActive = true
+                        });
                 });
 
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiseaseRuleEntity", b =>
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.IllnessRuleEntity", b =>
                 {
-                    b.Property<int>("DiseaseId")
+                    b.Property<int>("IllnessId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("SymptomId")
@@ -65,11 +100,25 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DiseaseId", "SymptomId");
+                    b.Property<int>("Weight")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("IllnessId", "SymptomId");
 
                     b.HasIndex("SymptomId");
 
-                    b.ToTable("DiseaseRules");
+                    b.ToTable("IllnessRules");
+
+                    b.HasData(
+                        new
+                        {
+                            IllnessId = 1,
+                            SymptomId = 1,
+                            Condition = 1,
+                            Days = 2,
+                            IsActive = true,
+                            Weight = 0
+                        });
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.SymptomEntity", b =>
@@ -105,11 +154,11 @@ namespace E_Doctor.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiseaseRuleEntity", b =>
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.IllnessRuleEntity", b =>
                 {
-                    b.HasOne("E_Doctor.Core.Domain.Entities.DiseaseEntity", "Disease")
+                    b.HasOne("E_Doctor.Core.Domain.Entities.IllnessEntity", "Illness")
                         .WithMany("Rules")
-                        .HasForeignKey("DiseaseId")
+                        .HasForeignKey("IllnessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -119,12 +168,12 @@ namespace E_Doctor.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Disease");
+                    b.Navigation("Illness");
 
                     b.Navigation("Symptom");
                 });
 
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiseaseEntity", b =>
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.IllnessEntity", b =>
                 {
                     b.Navigation("Rules");
                 });

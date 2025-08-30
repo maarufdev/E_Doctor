@@ -3,6 +3,7 @@ using System;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,38 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250826132555_IntialMigration")]
+    partial class IntialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
-
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.DiagnosisEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("IllnessName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Symptoms")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Diagnosis");
-                });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.IllnessEntity", b =>
                 {
@@ -97,9 +74,6 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("IllnessId", "SymptomId");
 
                     b.HasIndex("SymptomId");
@@ -111,10 +85,9 @@ namespace E_Doctor.Infrastructure.Migrations
                         {
                             IllnessId = 1,
                             SymptomId = 1,
-                            Condition = 1,
+                            Condition = 3,
                             Days = 2,
-                            IsActive = true,
-                            Weight = 0
+                            IsActive = true
                         });
                 });
 

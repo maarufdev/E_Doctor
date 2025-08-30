@@ -4,31 +4,32 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
 {
     public static class RuleManagementDTOMapper
     {
-        public static DiseaseDTO? ToDTO(this DiseaseEntity? entity)
+        public static IllnessDTO? ToDTO(this IllnessEntity? entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var rulesDTO = new List<DiseaseRuleDTO>();
+            var rulesDTO = new List<IllnessRuleDTO>();
 
             if (entity.Rules?.Count > 0)
             {
                 rulesDTO = entity.Rules
-                .Select(r => new DiseaseRuleDTO(
+                .Select(r => new IllnessRuleDTO(
                     r.SymptomId,
                     r.Condition,
-                    r.Days
+                    r.Days,
+                    r.Weight
                 ))
                 .ToList();
             }
 
-            var diseaseDTO = new DiseaseDTO(
+            var illnessDTO = new IllnessDTO(
                 entity.Id,
-                entity.DiseaseName,
+                entity.IllnessName,
                 entity.Description ?? string.Empty,
                 rulesDTO
                 );
 
-            return diseaseDTO;
+            return illnessDTO;
         }
     }
 }

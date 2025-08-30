@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\features\common\" />
-    <Folder Include="wwwroot\features\patient\" />
   </ItemGroup>
 
   <ItemGroup>
