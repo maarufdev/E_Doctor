@@ -8,9 +8,11 @@ public class AppDbContext : DbContext
     {
         
     }
+
     public DbSet<SymptomEntity> Symptoms { get; set; }
     public DbSet<IllnessEntity> Illnesses { get; set; }
     public DbSet<IllnessRuleEntity> IllnessRules { get; set; }
+    public DbSet<DiagnosisEntity> Diagnosis { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

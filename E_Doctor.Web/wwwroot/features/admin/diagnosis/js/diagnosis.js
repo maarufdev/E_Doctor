@@ -62,6 +62,7 @@ const CONSULTATION_HISTORY = [
     const URLS = {
         getSymptoms: `${SETTINGS_BASE_URL}/GetSymptoms`,
         runDiagnosis: `${DIAGNOSIS_BASE_URL}/RunDiagnosis`,
+        getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`
     }
     const stateHolders = {
         symptoms: [],
@@ -118,19 +119,30 @@ const CONSULTATION_HISTORY = [
                 const $diagnosisTblBody = $(diagnosis.body);
                 $diagnosisTblBody.empty();
 
-                CONSULTATION_HISTORY.forEach(item => {
+                const diagnosisReponse = await services.apiService.getDiagnosis() ?? [];
+
+                diagnosisReponse.forEach(item => {
                     const $tr = $(`
                         <tr>
-                            <td>${item.diagnosisDate}</td>
-                            <td style="white-space: normal;">${item.diagnosisSymptoms}</td>
-                            <td>${item.diagnosisResult}</td>
+                            <td>${item.diagnoseDate}</td>
+                            <td style="white-space: normal;">${item.symptoms}</td>
+                            <td>${item.illnessName}</td>
                         </tr>
                     `);
 
                     $diagnosisTblBody.append($tr);
                 });
             },
-            handleOnRunDiagnosis: function () {
+            populateDiagnosisResult: function (result) {
+                const $resultList = $("#diagnosis-result-list");
+                $resultList.empty();
+
+                result.forEach(item => {
+                    const $diagnosItem = $(`<li><span class="font-semibold">${item.illness}:</span> ${item.score}% Match</li>`);
+                    $resultList.append($diagnosItem);
+                })
+            },
+            handleOnRunDiagnosis: async function () {
                 const command = this.getSymptomDurationData() ?? [];
 
                 if (command.length == 0) {
@@ -138,9 +150,12 @@ const CONSULTATION_HISTORY = [
                     return;
                 }
 
-                const result = services.apiService.runDiagnosis(command);
+                const result = await services.apiService.runDiagnosis(command);
 
                 if (!result) return;
+
+                this.populateDiagnosisResult(result);
+                this.renderDiagnosisTable();
 
                 $(".consultation-content").addClass("hidden");
                 $(".diagnosis-result-content").removeClass("hidden");
@@ -413,6 +428,9 @@ const CONSULTATION_HISTORY = [
         apiService: {
             getSymptoms: async function () {
                 return await apiFetch(URLS.getSymptoms);
+            },
+            getDiagnosis: async function () {
+                return await apiFetch(URLS.getDiagnosis)
             },
             runDiagnosis: async (command) => {
                 return await apiFetch(

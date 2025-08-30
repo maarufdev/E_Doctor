@@ -4,11 +4,17 @@ namespace E_Doctor.Core.Constants.Enums;
 public enum IllnessRuleConditionEnum
 {
     [Description("IsEqual")]
-    IsEqual = 1,
-
-    [Description("IsMoreThan")]
-    IsMoreThan = 2,
+    IsEqual,
 
     [Description("IsLessThan")]
-    IsLessThan = 3
+    IsLessThan,
+    
+    [Description("IsLessThanOrEqual")]
+    IsLessThanOrEqual,
+    
+    [Description("IsMoreThan")]
+    IsMoreThan,
+    
+    [Description("IsMoreThanOrEqual")]
+    IsMoreThanOrEqual,
 }
