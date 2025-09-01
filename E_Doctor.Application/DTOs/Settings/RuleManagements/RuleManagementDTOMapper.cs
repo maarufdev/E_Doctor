@@ -1,4 +1,4 @@
-﻿using E_Doctor.Core.Domain.Entities;
+﻿using E_Doctor.Core.Domain.Entities.Admin;
 
 namespace E_Doctor.Application.DTOs.Settings.RuleManagements
 {

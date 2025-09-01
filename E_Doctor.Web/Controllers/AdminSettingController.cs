@@ -1,8 +1,8 @@
 ﻿using E_Doctor.Application.Constants;
 using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Application.Interfaces.Features.Common;
-using E_Doctor.Application.Interfaces.Features.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers

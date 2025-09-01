@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services
-    .AddInfrastructure(builder.Configuration)
-    .AddApplication();
+    .AddAdminInfrastructure(builder.Configuration)
+    .AddAdminApplication();
 
 var app = builder.Build();
 

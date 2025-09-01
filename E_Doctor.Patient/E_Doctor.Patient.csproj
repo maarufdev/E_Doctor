@@ -10,4 +10,16 @@
     <Folder Include="wwwroot\features\common\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E_Doctor.Application\E_Doctor.Application.csproj" />
+    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

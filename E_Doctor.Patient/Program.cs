@@ -1,7 +1,14 @@
+using E_Doctor.Application;
+using E_Doctor.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services
+    .AddPatientInfrastructure(builder.Configuration)
+    .AddPatientApplication();
 
 var app = builder.Build();
 
