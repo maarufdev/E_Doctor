@@ -1,9 +1,12 @@
 ﻿<link rel="stylesheet" href="~/features/admin/settings/css/illness-setting.css" asp-append-version="true" />
 
 <div class="card">
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between flex-column gap-2 mb-4">
         <h3 class="text-xl font-semibold">Manage Illnesses</h3>
-        <button id="new-disease-btn" class="btn btn-primary">Create New Illness</button>
+        <div class="flex justify-end gap-2">
+            <button id="new-disease-btn" class="btn btn-primary">Create New Illness</button>
+            <button id="export-rules-btn" class="btn btn-primary">Export Rules</button>
+        </div>
     </div>
     <div class="table-container">
         <table class="data-table">

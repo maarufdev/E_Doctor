@@ -434,8 +434,21 @@ a {
     align-items: center;
 }
 
+.items-end {
+    align-items: flex-end;
+}
+
 .justify-between {
     justify-content: space-between;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+
+.flex-column {
+    flex-direction: column;
 }
 
 .text-center {

@@ -125,6 +125,14 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(result);
         }
+
+        public async Task<IActionResult> GetExportRulesConfiguration()
+        {
+            var result = await _ruleManager.ExportRulesConfigration();
+
+            return File(result, "application/json", "rules-config.json");
+        }
+
         #endregion
     }
 }

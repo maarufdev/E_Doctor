@@ -8,6 +8,7 @@
         saveIllness: `${SETTINGS_BASE_URL}/SaveIllness`,
         deleteIllnessById: `${SETTINGS_BASE_URL}/DeleteIllnessById`,
         getWeightRules: `${SETTINGS_BASE_URL}/GetWeightRules`,
+        getExportRulesConfig: `${SETTINGS_BASE_URL}/GetExportRulesConfiguration`
     }
     const stateHolders = {
         tempSelectedRules: [],
@@ -50,7 +51,8 @@
             },
         },
         buttons: {
-            newDiseaseBtn: "#new-disease-btn"
+            newDiseaseBtn: "#new-disease-btn",
+            exportRulesBtn: "#export-rules-btn",
         },
     }
     const services = {
@@ -69,6 +71,27 @@
                 const { forms } = elementHolders;
                 $(forms.illness.root).toggleClass("visible", toOpen);
                 $(forms.illness.title).text(toEdit ? "Edit Illness Details" : "Create New Illness");
+            },
+            handleOnExportRules: async function () {
+                const result = await services.apiService.getExportRulesConfig();
+
+                const jsonString = JSON.stringify(result, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+
+                triggerDownload(blob, 'rules-config.json');
+
+                function triggerDownload(blob, filename) {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }
+
             },
             renderIllnessTable: async function () {
                 const { table } = elementHolders;
@@ -349,7 +372,15 @@
                         eventHandlers.resetDiseaseStates();
                         eventHandlers.populateSymptomSelect();
                     }
-                )
+                );
+
+                registerEvent(
+                    buttons.exportRulesBtn,
+                    "click",
+                    function (e) {
+                        eventHandlers.handleOnExportRules();
+                    }
+                );
             },
             illnessEvent: function () {
                 const { forms } = elementHolders;
@@ -455,6 +486,9 @@
             },
             getWeightRules: async function () {
                 return await apiFetch(URLS.getWeightRules);
+            },
+            getExportRulesConfig: async function () {
+                return await apiFetch(URLS.getExportRulesConfig);
             }
         }
     }

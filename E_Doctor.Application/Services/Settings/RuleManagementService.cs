@@ -1,8 +1,11 @@
 ﻿using E_Doctor.Application.DTOs.Settings.RuleManagements;
+using E_Doctor.Application.DTOs.Settings.RuleManagements.ExportIllnessDTOs;
 using E_Doctor.Application.Interfaces.Features.Settings;
 using E_Doctor.Core.Domain.Entities;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Text.Json;
 
 namespace E_Doctor.Application.Services.Settings
 {
@@ -166,6 +169,55 @@ namespace E_Doctor.Application.Services.Settings
             ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.Description);
             ArgumentNullException.ThrowIfNull(requestDto.Rules);
             ArgumentOutOfRangeException.ThrowIfEqual(0, requestDto.Rules.Count);
+        }
+
+        public async Task<byte[]> ExportRulesConfigration()
+        {
+            try
+            {
+                var symptoms = await _context.Symptoms
+                .AsNoTracking()
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name)
+                .Select(s => new ExportSymptomDTO(s.Id, s.Name))
+                .ToListAsync();
+
+                var illnesses = await _context.Illnesses
+                    .AsNoTracking()
+                    .Where(s => s.IsActive)
+                    .OrderBy(s => s.IllnessName)
+                    .Select(s => new ExportIllnessDTO(s.Id, s.IllnessName, s.Description))
+                    .ToListAsync();
+
+                var rules = await _context.IllnessRules
+                    .AsNoTracking()
+                    .Where(s => s.IsActive)
+                    .Select(r => new ExportRulesDTO(
+                        r.SymptomId,
+                        r.IllnessId,
+                        r.Condition,
+                        r.Days,
+                        r.Weight)
+                    )
+                    .ToListAsync();
+
+                var result = new ExportIllnessConfigDTO
+                {
+                    Symptoms = symptoms,
+                    Illnesses = illnesses,
+                    Rules = rules
+                };
+
+                var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+                var jsonBytes = Encoding.UTF8.GetBytes(json);
+
+                return jsonBytes;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
         }
     }
 }
