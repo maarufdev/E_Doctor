@@ -7,12 +7,12 @@ namespace E_Doctor.Infrastructure.Data
     {
         public PatientAppDbContext(DbContextOptions<PatientAppDbContext> options) : base(options)
         {
-            
         }
 
         public DbSet<PatientSymptomEntity> PatientSymptoms { get; set; }
         public DbSet<PatientIllnessEntity> PatientIllnesses { get; set; }
         public DbSet<PatientRulesEntity> PatientIllnesRules { get; set; }
+        public DbSet<PatientDiagnosisEntity> PatientDiagnosis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,17 +20,22 @@ namespace E_Doctor.Infrastructure.Data
 
             modelBuilder.Entity<PatientSymptomEntity>(e =>
             {
-                e.HasNoKey();
+                e.HasKey(pk => pk.SymptomId);
             });
 
             modelBuilder.Entity<PatientIllnessEntity>(e =>
             {
-                e.HasNoKey();
+                e.HasKey(pk => pk.IllnessId);
             });
 
             modelBuilder.Entity<PatientRulesEntity>(e =>
             {
-                e.HasNoKey();
+                e.HasKey(dr => new { dr.IllnessId, dr.SymptomId });
+            });
+
+            modelBuilder.Entity<PatientDiagnosisEntity>(e =>
+            {
+                e.HasKey(pd => pd.Id);
             });
         }
     }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     [DbContext(typeof(PatientAppDbContext))]
-    [Migration("20250901153706_IntialMigration")]
-    partial class IntialMigration
+    [Migration("20250902152102_AddedPrimaryKey")]
+    partial class AddedPrimaryKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,12 +22,13 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
                 {
+                    b.Property<int>("IllnessId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("IllnessId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("IllnessName")
                         .IsRequired()
@@ -36,25 +37,29 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("TEXT");
 
+                    b.HasKey("IllnessId");
+
                     b.ToTable("PatientIllnesses");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>
                 {
-                    b.Property<int>("Condition")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Days")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("IllnessId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("SymptomId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Condition")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Days")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Weight")
                         .HasColumnType("INTEGER");
+
+                    b.HasKey("IllnessId", "SymptomId");
 
                     b.ToTable("PatientIllnesRules");
                 });
@@ -62,6 +67,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", b =>
                 {
                     b.Property<int>("SymptomId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SymptomName")
@@ -70,6 +76,8 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("TEXT");
+
+                    b.HasKey("SymptomId");
 
                     b.ToTable("PatientSymptoms");
                 });

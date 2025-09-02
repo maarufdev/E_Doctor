@@ -39,7 +39,7 @@ namespace E_Doctor.Application
         private static IServiceCollection RegisterPatientServices(this IServiceCollection services)
         {
             services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IPatientDiagnosisService, PatientDiagnosisService>();
+            services.AddScoped<IPatientService, PatientService>();
 
             return services;
         }

@@ -12,13 +12,24 @@
 
         const options = {
             method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
         };
 
-        if (body) {
+        const isFormData = body instanceof FormData;
+
+        if (isFormData && body) {
+            options.body = body;
+        }
+        else if (!isFormData && body) {
             options.body = JSON.stringify(body);
+            options.headers = {
+                'Content-Type': 'application/json'
+            }
+        }
+        else {
+
+            options.headers = {
+                'Content-Type': 'application/json'
+            }
         }
 
         const response = await fetch(url, options);

@@ -1,77 +1,21 @@
-﻿const SYMPTOMS = [
-    { id: 1, name: 'Fever' }, { id: 2, name: 'Cough' }, { id: 3, name: 'Sore Throat' },
-    { id: 4, name: 'Headache' }, { id: 5, name: 'Body Aches' }, { id: 6, name: 'Rash' },
-    { id: 7, name: 'Itchiness' }, { id: 8, name: 'Fatigue' }, { id: 9, name: 'Difficulty Breathing' },
-    { id: 10, name: 'Nausea' }, { id: 11, name: 'Vomiting' }
-];
-
-const CONSULTATION_HISTORY = [
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Common Cold (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-    {
-        diagnosisId: 1,
-        diagnosisDate: "8/21/2025, 6:56:41 PM",
-        diagnosisSymptoms: "Fever (1 days), Cough (1 days), Sore Throat (1 days), Headache (1 days)",
-        diagnosisResult: "Flu (100%)",
-    },
-];
-
-(function () {
-    const DIAGNOSIS_BASE_URL = "AdminDiagnosis";
-    const SETTINGS_BASE_URL = "AdminSetting";
+﻿(function () {
+    const DIAGNOSIS_BASE_URL = "Diagnosis";
     const URLS = {
-        getSymptoms: `${SETTINGS_BASE_URL}/GetSymptoms`,
+        getSymptoms: `${DIAGNOSIS_BASE_URL}/GetSymptoms`,
         runDiagnosis: `${DIAGNOSIS_BASE_URL}/RunDiagnosis`,
-        getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`
+        getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`,
+        importRulesConfiguration: `${DIAGNOSIS_BASE_URL}/ImportRulesConfiguration`
     }
     const stateHolders = {
         symptoms: [],
         selectedSymptoms: [],
+        importedRuleFile: null,
     }
     const elementHolders = {
         common: {
             buttons: {
                 newConsultation: "#new-consultation-btn",
+                showImportFileModal: "#import-rules-btn",
             }
         },
         tables: {
@@ -99,7 +43,17 @@ const CONSULTATION_HISTORY = [
                     symptoms: ".select-symptoms-content",
                     durations: ".selected-symptoms-durations"
                 }
-            }
+            },
+            importRule: {
+                root: "#import-rules-modal",
+                fields: {
+                    fileInput: "#import-rule-config-input"
+                },
+                buttons: {
+                    saveRules: "#save-rules-config",
+                }
+
+            },
         },
     }
     const services = {
@@ -113,6 +67,24 @@ const CONSULTATION_HISTORY = [
                 const modal = elementHolders.modals.consultation;
                 $(modal.root).toggleClass("visible", toOpen);
                 $(modal.title).text("Step 1: Select Symptoms");
+            },
+            toggleImportFileModal: function (toOpen) {
+                const modal = elementHolders.modals.importRule;
+                $(modal.root).toggleClass("visible", toOpen);
+            },
+            handleOnSaveRules: async function () {
+                const fileInput = stateHolders.importedRuleFile;
+
+                if (!fileInput) {
+                    alert("Please Select a file to import.")
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("file", fileInput);
+
+                const result = await services.apiService.importFile(formData);
+
             },
             renderDiagnosisTable: async function () {
                 const { diagnosis } = elementHolders.tables;
@@ -341,9 +313,54 @@ const CONSULTATION_HISTORY = [
         events: {
             initMain: function () {
                 const { common } = elementHolders;
-                const { consultation } = elementHolders.modals;
+                const { consultation, importRule } = elementHolders.modals;
                 const symptomSearchParent = document.querySelector(consultation.symptomSearchParent);
 
+                registerEvent(
+                    importRule.buttons.saveRules,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.handleOnSaveRules();
+                    }
+                );
+
+                registerEvent(
+                    importRule.fields.fileInput,
+                    "change",
+                    function (event) {
+                        const jsonFile = event.target.files[0];
+
+                        if (!jsonFile) {
+                            event.preventDefault();
+                            return;
+                        }
+
+                        const splitFileName = jsonFile.name.split(".");
+                        let fileExt = splitFileName[splitFileName.length - 1];
+
+                        if (fileExt) {
+                            fileExt = fileExt.toLowerCase();
+                        }
+
+                        if (fileExt != "json") {
+                            event.preventDefault();
+                            event.target.value = "";
+
+                            alert("File imported is not a json file.");
+                            return;
+                        }
+
+                        stateHolders.importedRuleFile = jsonFile;
+                    }
+                );
+
+                registerEvent(
+                    common.buttons.showImportFileModal,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.toggleImportFileModal(true);
+                    }
+                );
 
                 registerEvent(
                     common.buttons.newConsultation,
@@ -440,7 +457,16 @@ const CONSULTATION_HISTORY = [
                         method: "POST"
                     },
                 );
-            }
+            },
+            importFile: async (formData) => {
+                return await apiFetch(
+                    URLS.importRulesConfiguration,
+                    {
+                        body: formData,
+                        method: "POST"
+                    },
+                );
+            },
         }
     };
     document.addEventListener("DOMContentLoaded", services.initialize);

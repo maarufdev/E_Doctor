@@ -1,4 +1,4 @@
-﻿namespace E_Doctor.Application.DTOs.Settings.RuleManagements.ExportIllnessDTOs;
+﻿namespace E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 
 public sealed record ExportSymptomDTO(
     int SymptomId, 

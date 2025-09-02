@@ -58,4 +58,19 @@
     </div>
 </div>
 
-@* <script src="~/features/admin/diagnosis/js/diagnosis.js" asp-append-version="true"></script> *@
+<div id="import-rules-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">Import Rules Congiguration</h3>
+            <button id="close-rules-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="file" accept=".json" autocomplete="off" id="import-rule-config-input" class="form-input" placeholder="Select File">
+        </div>
+        <div class="modal-footer">
+            <button id="save-rules-config" class="btn btn-primary">Save Rules Configuration</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/features/patient/diagnosis/js/diagnosis.js" asp-append-version="true"></script>

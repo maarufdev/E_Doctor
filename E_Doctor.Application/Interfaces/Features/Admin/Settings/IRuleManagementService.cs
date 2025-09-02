@@ -1,5 +1,5 @@
 ﻿using E_Doctor.Application.DTOs.Settings.RuleManagements;
-using E_Doctor.Application.DTOs.Settings.RuleManagements.ExportIllnessDTOs;
+using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 namespace E_Doctor.Application.Interfaces.Features.Admin.Settings;
 
 public interface IRuleManagementService
