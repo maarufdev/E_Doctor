@@ -51,6 +51,7 @@
                 },
                 buttons: {
                     saveRules: "#save-rules-config",
+                    close: "#close-rules-modal",
                 }
 
             },
@@ -73,6 +74,7 @@
                 $(modal.root).toggleClass("visible", toOpen);
             },
             handleOnSaveRules: async function () {
+                const { importRule } = elementHolders.modals
                 const fileInput = stateHolders.importedRuleFile;
 
                 if (!fileInput) {
@@ -85,6 +87,13 @@
 
                 const result = await services.apiService.importFile(formData);
 
+                if (!result) return;
+
+                stateHolders.importedRuleFile = null;
+
+                $(importRule.fields.fileInput).val("");
+
+                this.toggleImportFileModal(false);
             },
             renderDiagnosisTable: async function () {
                 const { diagnosis } = elementHolders.tables;
@@ -359,6 +368,14 @@
                     "click",
                     function (event) {
                         services.eventHandlers.toggleImportFileModal(true);
+                    }
+                );
+
+                registerEvent(
+                    importRule.buttons.close,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.toggleImportFileModal(false);
                     }
                 );
 
