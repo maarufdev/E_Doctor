@@ -51,12 +51,12 @@ internal class DiagnosisService : IDiagnosisService
                 })
                 .ToListAsync();
 
-            var illnessScores = new Dictionary<int, double>();
+            var illnessScores = new Dictionary<int, decimal>();
             var patientSymptomLookup = diagnosisRequest.ToDictionary(d => d.SymptomId, d => d.Duration);
 
             foreach(var illness in potentialIllnesses)
             {
-                double currentScore = 0;
+                decimal currentScore = 0;
                 
                 foreach(var rule in illness.MatchingRules)
                 {
@@ -96,7 +96,7 @@ internal class DiagnosisService : IDiagnosisService
 
                 if(currentScore > 0)
                 {
-                    illnessScores[illness.IllnessId] = currentScore / illness.MaxScore * 100;
+                    illnessScores[illness.IllnessId] = currentScore;
                 }
             }
 

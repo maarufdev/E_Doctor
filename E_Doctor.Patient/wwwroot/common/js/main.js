@@ -105,3 +105,26 @@ function ValidateInput(input = [], message) {
 
     return true;
 }
+
+function convertDateTimeToLocal(utcDateString) {
+
+    if (!utcDateString) return "";
+
+    utcDateString = `${utcDateString}Z`;
+
+    const localDate = new Date(utcDateString);
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const month = months[localDate.getMonth()];
+    const day = localDate.getDate().toString().padStart(2, '0');
+    const year = localDate.getFullYear();
+
+    let hours = localDate.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // The hour '0' should be '12'
+    const minutes = localDate.getMinutes().toString().padStart(2, '0');
+
+    return `${month}-${day}-${year} ${hours}:${minutes} ${ampm}`;
+}

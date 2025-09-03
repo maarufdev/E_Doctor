@@ -3,7 +3,6 @@ using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using E_Doctor.Core.Constants.Enums;
-using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +21,21 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
         public async Task<List<DiagnosisListDTO>> GetDiagnosis()
         {
             var diagnosis = await _appDbContext.PatientDiagnosis
+                .AsNoTracking()
+                .Include(d => d.DiagnosSymptoms)
+                .Include(d => d.DiagnosIllnesses)
                 .Where(d => d.IsActive)
                 .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+                .Select(d => new
+                {
+                    d.Id,
+                    UpdatedOn = d.UpdatedOn ?? d.CreatedOn,
+                    Symptoms = string.Join(", ", d.DiagnosSymptoms.Select(s => $"{s.SymptomName} {s.Days} Days").ToList()),
+                    IllnessName = string.Join(", ", d.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
+                })
                 .Select(d => new DiagnosisListDTO(
                     d.Id,
-                    d.UpdatedOn ?? d.CreatedOn,
+                    d.UpdatedOn,
                     d.Symptoms,
                     d.IllnessName
                  ))
@@ -138,12 +147,12 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     })
                     .ToListAsync();
 
-                var illnessScores = new Dictionary<int, double>();
+                var illnessScores = new Dictionary<int, decimal>();
                 var patientSymptomLookup = diagnosisRequest.ToDictionary(d => d.SymptomId, d => d.Duration);
 
                 foreach (var illness in potentialIllnesses)
                 {
-                    double currentScore = 0;
+                    decimal currentScore = 0;
 
                     foreach (var rule in illness.MatchingRules)
                     {
@@ -207,30 +216,49 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
 
                 if (top5Illnesses.Any())
                 {
-                    var top1Illness = top5Illnesses.FirstOrDefault();
-
-                    var illness = potentialIllnesses.FirstOrDefault(x => x.IllnessId == top1Illness.Key);
-
-                    if (illness is not null)
+                    var toSaveDiagnosis = new PatientDiagnosisEntity
                     {
-                        var symptoms = await _appDbContext.PatientSymptoms
+                        CreatedOn = DateTime.UtcNow,
+                        DiagnosIllnesses = new List<PatientDiagnosisIllnessEntity>(),
+                        DiagnosSymptoms = new List<PatientDiagnosisSymptomEntity>(),
+                        IsActive = true,
+                    };
+
+                    foreach (var diagnosis in top5Illnesses)
+                    {
+                        var diagnosIllness = potentialIllnesses.FirstOrDefault(x => x.IllnessId == diagnosis.Key);
+                        
+                        if(diagnosIllness is null) continue;
+
+                        toSaveDiagnosis.DiagnosIllnesses.Add(new PatientDiagnosisIllnessEntity
+                        {
+                            DiagnosisId = toSaveDiagnosis.Id,
+                            Illness = diagnosIllness.IllnessName,
+                            Score = diagnosis.Value,
+                            IsActive = true,
+                            CreatedOn = DateTime.Now,
+                        });
+                    }
+
+                    var symptoms = await _appDbContext.PatientSymptoms
                             .AsNoTracking()
                             .Where(s => patientSymptomsIds.Contains(s.SymptomId))
-                            .Select(s => $"{s.SymptomName} ({patientSymptomLookup[s.SymptomId]} Days)")
                             .ToListAsync();
 
-                        var patientDiagnosed = new PatientDiagnosisEntity
+                    foreach (var symptom in symptoms) 
+                    {
+                        toSaveDiagnosis.DiagnosSymptoms.Add(new PatientDiagnosisSymptomEntity
                         {
-                            IllnessName = $"{result[0].Illness} {result[0].Score}%",
-                            Symptoms = string.Join(",", symptoms),
-                            CreatedOn = DateTime.UtcNow,
+                            DiagnosisId = toSaveDiagnosis.Id,
+                            SymptomName = symptom.SymptomName,
+                            Days = patientSymptomLookup[symptom.SymptomId],
                             IsActive = true,
-                        };
-
-                        await _appDbContext.PatientDiagnosis.AddAsync(patientDiagnosed);
-
-                        await _appDbContext.SaveChangesAsync();
+                            CreatedOn = DateTime.UtcNow,
+                        });
                     }
+
+                    await _appDbContext.PatientDiagnosis.AddAsync(toSaveDiagnosis);
+                    await _appDbContext.SaveChangesAsync();
                 }
 
                 return result;

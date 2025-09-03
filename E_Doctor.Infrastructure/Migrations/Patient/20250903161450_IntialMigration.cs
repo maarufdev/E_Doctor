@@ -17,8 +17,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    IllnessName = table.Column<string>(type: "TEXT", nullable: true),
-                    Symptoms = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -58,6 +57,54 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                 });
 
             migrationBuilder.CreateTable(
+                name: "PatientDiagnosisIllnesses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DiagnosisId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Illness = table.Column<string>(type: "TEXT", nullable: false),
+                    Score = table.Column<decimal>(type: "TEXT", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientDiagnosisIllnesses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientDiagnosisIllnesses_PatientDiagnosis_DiagnosisId",
+                        column: x => x.DiagnosisId,
+                        principalTable: "PatientDiagnosis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientDiagnosisSymptoms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DiagnosisId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SymptomName = table.Column<string>(type: "TEXT", nullable: true),
+                    Days = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientDiagnosisSymptoms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientDiagnosisSymptoms_PatientDiagnosis_DiagnosisId",
+                        column: x => x.DiagnosisId,
+                        principalTable: "PatientDiagnosis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PatientIllnesRules",
                 columns: table => new
                 {
@@ -85,6 +132,16 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatientDiagnosisIllnesses_DiagnosisId",
+                table: "PatientDiagnosisIllnesses",
+                column: "DiagnosisId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientDiagnosisSymptoms_DiagnosisId",
+                table: "PatientDiagnosisSymptoms",
+                column: "DiagnosisId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientIllnesRules_SymptomId",
                 table: "PatientIllnesRules",
                 column: "SymptomId");
@@ -94,10 +151,16 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PatientDiagnosis");
+                name: "PatientDiagnosisIllnesses");
+
+            migrationBuilder.DropTable(
+                name: "PatientDiagnosisSymptoms");
 
             migrationBuilder.DropTable(
                 name: "PatientIllnesRules");
+
+            migrationBuilder.DropTable(
+                name: "PatientDiagnosis");
 
             migrationBuilder.DropTable(
                 name: "PatientIllnesses");

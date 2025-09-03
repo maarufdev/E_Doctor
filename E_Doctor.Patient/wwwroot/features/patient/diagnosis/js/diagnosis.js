@@ -96,7 +96,7 @@
                 diagnosisReponse.forEach(item => {
                     const $tr = $(`
                         <tr>
-                            <td>${item.diagnoseDate}</td>
+                            <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
                             <td style="white-space: normal;">${item.symptoms}</td>
                             <td>${item.illnessName}</td>
                         </tr>

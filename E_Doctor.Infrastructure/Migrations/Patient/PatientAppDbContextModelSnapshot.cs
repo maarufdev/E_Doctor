@@ -26,13 +26,40 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IllnessName")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PatientDiagnosis");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DiagnosisId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Illness")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Symptoms")
+                    b.Property<decimal>("Score")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -40,7 +67,40 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("Id");
 
-                    b.ToTable("PatientDiagnosis");
+                    b.HasIndex("DiagnosisId");
+
+                    b.ToTable("PatientDiagnosisIllnesses");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisSymptomEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Days")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiagnosisId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SymptomName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiagnosisId");
+
+                    b.ToTable("PatientDiagnosisSymptoms");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
@@ -107,6 +167,28 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.ToTable("PatientSymptoms");
                 });
 
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
+                        .WithMany("DiagnosIllnesses")
+                        .HasForeignKey("DiagnosisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Diagnosis");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisSymptomEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
+                        .WithMany("DiagnosSymptoms")
+                        .HasForeignKey("DiagnosisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Diagnosis");
+                });
+
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>
                 {
                     b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", "Illness")
@@ -124,6 +206,13 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Navigation("Illness");
 
                     b.Navigation("Symptom");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", b =>
+                {
+                    b.Navigation("DiagnosIllnesses");
+
+                    b.Navigation("DiagnosSymptoms");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
