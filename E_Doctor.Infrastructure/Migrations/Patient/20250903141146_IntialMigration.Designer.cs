@@ -11,14 +11,40 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     [DbContext(typeof(PatientAppDbContext))]
-    [Migration("20250902152102_AddedPrimaryKey")]
-    partial class AddedPrimaryKey
+    [Migration("20250903141146_IntialMigration")]
+    partial class IntialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IllnessName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Symptoms")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PatientDiagnosis");
+                });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
                 {
@@ -61,6 +87,8 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("IllnessId", "SymptomId");
 
+                    b.HasIndex("SymptomId");
+
                     b.ToTable("PatientIllnesRules");
                 });
 
@@ -80,6 +108,35 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.HasKey("SymptomId");
 
                     b.ToTable("PatientSymptoms");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", "Illness")
+                        .WithMany("Rules")
+                        .HasForeignKey("IllnessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", "Symptom")
+                        .WithMany("Rules")
+                        .HasForeignKey("SymptomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Illness");
+
+                    b.Navigation("Symptom");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
+                {
+                    b.Navigation("Rules");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", b =>
+                {
+                    b.Navigation("Rules");
                 });
 #pragma warning restore 612, 618
         }

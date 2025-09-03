@@ -6,4 +6,5 @@ public class PatientIllnessEntity
     public string IllnessName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime UpdatedOn { get; set; }
+    public ICollection<PatientRulesEntity>? Rules { get; set; }
 }

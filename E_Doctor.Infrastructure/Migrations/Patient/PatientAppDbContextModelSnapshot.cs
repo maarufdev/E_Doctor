@@ -84,6 +84,8 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("IllnessId", "SymptomId");
 
+                    b.HasIndex("SymptomId");
+
                     b.ToTable("PatientIllnesRules");
                 });
 
@@ -103,6 +105,35 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.HasKey("SymptomId");
 
                     b.ToTable("PatientSymptoms");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", "Illness")
+                        .WithMany("Rules")
+                        .HasForeignKey("IllnessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", "Symptom")
+                        .WithMany("Rules")
+                        .HasForeignKey("SymptomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Illness");
+
+                    b.Navigation("Symptom");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
+                {
+                    b.Navigation("Rules");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", b =>
+                {
+                    b.Navigation("Rules");
                 });
 #pragma warning restore 612, 618
         }

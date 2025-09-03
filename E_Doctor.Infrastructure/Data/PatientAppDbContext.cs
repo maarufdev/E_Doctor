@@ -31,6 +31,15 @@ namespace E_Doctor.Infrastructure.Data
             modelBuilder.Entity<PatientRulesEntity>(e =>
             {
                 e.HasKey(dr => new { dr.IllnessId, dr.SymptomId });
+                
+                e.HasOne(r => r.Illness)
+                .WithMany(i => i.Rules)
+                .HasForeignKey(r => r.IllnessId);
+
+                e.HasOne(r => r.Symptom)
+                .WithMany(s => s.Rules)
+                .HasForeignKey(r => r.SymptomId);
+
             });
 
             modelBuilder.Entity<PatientDiagnosisEntity>(e =>

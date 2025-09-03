@@ -96,7 +96,7 @@ internal class DiagnosisService : IDiagnosisService
 
                 if(currentScore > 0)
                 {
-                    illnessScores[illness.IllnessId] = currentScore;
+                    illnessScores[illness.IllnessId] = currentScore / illness.MaxScore * 100;
                 }
             }
 
