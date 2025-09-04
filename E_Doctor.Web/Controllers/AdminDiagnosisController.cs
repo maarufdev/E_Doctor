@@ -1,5 +1,5 @@
 ﻿using E_Doctor.Application.DTOs.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers

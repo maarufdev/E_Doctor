@@ -1,28 +1,45 @@
-﻿using E_Doctor.Application.Interfaces.Features.Common;
-using E_Doctor.Application.Interfaces.Features.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Settings;
+﻿using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
+using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
+using E_Doctor.Application.Services.Admin.Diagnosis;
+using E_Doctor.Application.Services.Admin.Settings;
 using E_Doctor.Application.Services.Common;
-using E_Doctor.Application.Services.Diagnosis;
-using E_Doctor.Application.Services.Settings;
+using E_Doctor.Application.Services.Patient.Diagnosis;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_Doctor.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        public static IServiceCollection AddAdminApplication(this IServiceCollection services)
         {
-            services.RegisterServices();
+            services.RegisterAdminServices();
             
             return services;
         } 
 
-        private static IServiceCollection RegisterServices(this IServiceCollection services)
+        private static IServiceCollection RegisterAdminServices(this IServiceCollection services)
         {
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ISymptomService, SymptomService>();
             services.AddScoped<IRuleManagementService, RuleManagementService>();
             services.AddScoped<IDiagnosisService, DiagnosisService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddPatientApplication(this IServiceCollection services)
+        {
+            services.RegisterPatientServices();
+
+            return services;
+        }
+
+        private static IServiceCollection RegisterPatientServices(this IServiceCollection services)
+        {
+            services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<IPatientService, PatientService>();
 
             return services;
         }

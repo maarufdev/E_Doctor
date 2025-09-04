@@ -1,8 +1,8 @@
 ﻿using E_Doctor.Application.Constants;
 using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Application.Interfaces.Features.Common;
-using E_Doctor.Application.Interfaces.Features.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
@@ -125,6 +125,14 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(result);
         }
+
+        public async Task<IActionResult> GetExportRulesConfiguration()
+        {
+            var result = await _ruleManager.ExportRulesConfigration();
+
+            return File(result, "application/json", "rules-config.json");
+        }
+
         #endregion
     }
 }

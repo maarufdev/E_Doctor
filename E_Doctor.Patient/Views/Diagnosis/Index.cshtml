@@ -1,0 +1,76 @@
+﻿<link rel="stylesheet" href="~/features/patient/diagnosis/css/diagnosis.css" asp-append-version="true" />
+
+<div id="test" class="page-content">
+    <div class="card">
+        <div class="flex justify-between flex-column gap-2 mb-4">
+            <h3 class="text-xl font-semibold">Consultation Results</h3>
+            <div class="flex justify-end gap-2">
+                <button id="new-consultation-btn" class="btn btn-primary">New Consultation</button>
+                <button id="import-rules-btn" class="btn btn-primary">Import Rules</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead><tr><th>Date</th><th>Symptoms</th><th>Result</th></tr></thead>
+                <tbody id="history-table-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="consultation-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">New Consultation</h3>
+            <button id="close-consultation-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div id="consultation-modal-body" class="modal-body">
+            <div class="consultation-content select-symptoms-content active">
+                <p class="mb-2 font-semibold">Please select all symptoms you are experiencing.</p>
+                <div class="searchable-dropdown" id="symptom-search-parent">
+                    <input type="text" autocomplete="off" id="symptom-search-input" class="form-input" placeholder="Search for a symptom...">
+                    <div id="symptom-search-list" class="searchable-dropdown-list">
+                    </div>
+                </div>
+                <div id="selected-symptoms-container" class="selected-symptoms-container mt-2">
+                    <p class="text-gray-500 selected-symtoms-message">No symptoms selected.</p>
+                    <div class="symptom-tags">
+                    </div>
+                </div>
+            </div>
+            <div class="consultation-content selected-symptoms-durations hidden">
+                <p class="mb-2 font-semibold">For how many days have you experienced each symptom?</p>
+                <div class="duration-fields" id="duration-fields"></div>
+            </div>
+            <div class="consultation-content diagnosis-result-content text-center hidden">
+                <h4 class="text-xl font-semibold mb-2">Potential Diagnosis:</h4>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;" id="diagnosis-result-list">
+                </ul>
+                <p class="text-sm text-gray-500 mt-4">Disclaimer: This is a prototype and not for actual medical use. Please consult a professional.</p>
+            </div>
+        </div>
+        <div id="consultation-modal-footer" class="modal-footer">
+            <button id="next-step-btn" class="btn btn-primary diagnosis-btn">Next</button>
+            <button id="run-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Run Diagnosis</button>
+            <button id="finish-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Finish</button>
+        </div>
+    </div>
+</div>
+
+<div id="import-rules-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">Import Rules Congiguration</h3>
+            <button id="close-rules-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="file" accept=".json" autocomplete="off" id="import-rule-config-input" class="form-input" placeholder="Select File">
+        </div>
+        <div class="modal-footer">
+            <button id="save-rules-config" class="btn btn-primary">Save Rules Configuration</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/features/patient/diagnosis/js/diagnosis.js" asp-append-version="true"></script>
