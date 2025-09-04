@@ -191,7 +191,9 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                 var rules = await _context.IllnessRules
                     .AsNoTracking()
-                    .Where(s => s.IsActive)
+                    .Include(r => r.Symptom)
+                    .Include(r => r.Illness)
+                    .Where(s => s.IsActive && s.Symptom.IsActive && s.Illness.IsActive)
                     .Select(r => new ExportRulesDTO(
                         r.SymptomId,
                         r.IllnessId,

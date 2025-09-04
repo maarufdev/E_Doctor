@@ -94,6 +94,9 @@
                 $(importRule.fields.fileInput).val("");
 
                 this.toggleImportFileModal(false);
+
+                this.renderDiagnosisTable();
+                this.setSymptoms();
             },
             renderDiagnosisTable: async function () {
                 const { diagnosis } = elementHolders.tables;

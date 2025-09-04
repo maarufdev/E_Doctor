@@ -96,7 +96,7 @@ internal class DiagnosisService : IDiagnosisService
 
                 if(currentScore > 0)
                 {
-                    illnessScores[illness.IllnessId] = currentScore;
+                    illnessScores[illness.IllnessId] = currentScore / illness.MaxScore * 100;
                 }
             }
 
@@ -112,8 +112,7 @@ internal class DiagnosisService : IDiagnosisService
 
                 if(illness.MaxScore > 0)
                 {
-                    var percentage = illnessScore.Value / illness.MaxScore * 100;
-                    var percentageToDisplay = percentage.ToString("F2");
+                    var percentageToDisplay = illnessScore.Value.ToString("F2");
 
                     result.Add(new DiagnosisResultDTO(illness.IllnessName, percentageToDisplay));
                 }
@@ -133,10 +132,11 @@ internal class DiagnosisService : IDiagnosisService
                         .Select(s => $"{s.Name} ({patientSymptomLookup[s.Id]} Days)")
                         .ToListAsync();
 
+                    var resultIllnesses = result.Select(i => $"{i.Illness} {i.Score}%");
                     var patientDiagnosed = new DiagnosisEntity
                     {
-                        IllnessName = $"{result[0].Illness} {result[0].Score}%",
-                        Symptoms = string.Join(",", symptoms),
+                        IllnessName = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
+                        Symptoms = string.Join(", ", symptoms),
                         CreatedOn = DateTime.UtcNow,
                         IsActive = true,
                     };

@@ -35,6 +35,7 @@
         const response = await fetch(url, options);
 
         if (!response.ok) {
+            alert("Something went wrong!");
             console.error(`HTTP ${response.status}: ${response.statusText}`);
             return null;
         }
