@@ -11,7 +11,12 @@ builder.Services
     .AddPatientApplication();
 
 var app = builder.Build();
+// seeder
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+await app.SeedPatientUser(services, builder.Configuration);
 
+// Con
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -22,9 +27,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

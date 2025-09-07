@@ -1,11 +1,12 @@
 ﻿using E_Doctor.Application.DTOs.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
 namespace E_Doctor.Patient.Controllers
 {
+    [Authorize]
     public class DiagnosisController : Controller
     {
         private readonly IPatientService _patientService;
