@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace E_Doctor.Web.Controllers
+namespace E_Doctor.Admin.Controllers
 {
-    public class UserAccountController : Controller
+    public class UserController : Controller
     {
         public IActionResult Index()
         {

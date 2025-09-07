@@ -128,7 +128,7 @@
                 if (IsNullUndefinedEmpty(symptomName)) return;
 
                 const isSuccess = await apiService.saveSymptom(command);
-
+                console.log(isSuccess)
                 if (isSuccess) {
                     await this.renderSymptomsTable();
                     this.toggleSymptomsModal(false);

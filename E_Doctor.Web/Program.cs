@@ -5,12 +5,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+//builder.Services.AddSession();
 
 builder.Services
     .AddAdminInfrastructure(builder.Configuration)
     .AddAdminApplication();
 
 var app = builder.Build();
+
+// seeder
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+await app.SeedAdminUser(services, builder.Configuration);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -22,9 +28,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -24,6 +24,9 @@
         const response = await fetch(url, options);
 
         if (!response.ok) {
+            const error = await response.text();
+            alert(error);
+
             console.error(`HTTP ${response.status}: ${response.statusText}`);
             return null;
         }

@@ -1,0 +1,44 @@
+﻿<div id="register-page" class="auth-form-container">
+    <div class="auth-header">
+        <h2>Create Account</h2>
+        <p>Get started with your E-Doctor account</p>
+    </div>
+    <form id="register-form" autocomplete="off">
+        <div class="form-group grid-2">
+            <div>
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+            </div>
+            <div>
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" class="form-input" required autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group grid-2">
+            <div>
+                <label for="reg-firstname">First Name</label>
+                <input type="text" id="reg-firstname" class="form-input" required autocomplete="off">
+            </div>
+            <div>
+                <label for="reg-middlename">Middle Name</label>
+                <input type="text" id="reg-middlename" class="form-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group grid-2">
+            <div>
+                <label for="reg-lastname">Last Name</label>
+                <input type="text" id="reg-lastname" class="form-input" required autocomplete="off">
+            </div>
+            <div>
+                <label for="reg-dob">Date of Birth</label>
+                <input type="date" id="reg-dob" class="form-input" required autocomplete="off">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Register</button>
+    </form>
+    <p class="auth-link">Already have an account? <a asp-controller="Account" asp-action="Login" id="show-login-link">Login</a></p>
+</div>
+
+<script src="~/features/user/js/register.js" asp-append-version="true"></script>
