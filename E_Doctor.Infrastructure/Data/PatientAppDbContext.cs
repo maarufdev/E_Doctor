@@ -1,9 +1,12 @@
 ﻿using E_Doctor.Core.Domain.Entities.Patient;
+using E_Doctor.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Doctor.Infrastructure.Data
 {
-    public class PatientAppDbContext : DbContext
+    public class PatientAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>, int>
     {
         public PatientAppDbContext(DbContextOptions<PatientAppDbContext> options) : base(options)
         {
@@ -13,9 +16,9 @@ namespace E_Doctor.Infrastructure.Data
         public DbSet<PatientIllnessEntity> PatientIllnesses { get; set; }
         public DbSet<PatientRulesEntity> PatientIllnesRules { get; set; }
         public DbSet<PatientDiagnosisEntity> PatientDiagnosis { get; set; }
-
         public DbSet<PatientDiagnosisIllnessEntity> PatientDiagnosisIllnesses { get; set; }
         public DbSet<PatientDiagnosisSymptomEntity> PatientDiagnosisSymptoms { get; set; }
+        public DbSet<AppUserIdentity> UserAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

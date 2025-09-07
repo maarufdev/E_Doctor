@@ -41,6 +41,7 @@ namespace E_Doctor.Application
         {
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IPatientService, PatientService>();
+            services.AddScoped<IUserManagerService, UserManagerService>();
 
             return services;
         }
