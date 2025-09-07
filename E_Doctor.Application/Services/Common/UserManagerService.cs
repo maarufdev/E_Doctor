@@ -2,10 +2,8 @@
 using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Infrastructure.Identity;
-using E_Doctor.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.Globalization;
 using System.Security.Claims;
 
 namespace E_Doctor.Application.Services.Common;
@@ -14,13 +12,36 @@ internal class UserManagerService : IUserManagerService
 {
     private readonly UserManager<AppUserIdentity> _userManager;
     private readonly SignInManager<AppUserIdentity> _signInManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     public UserManagerService(
         UserManager<AppUserIdentity> userManager,
-        SignInManager<AppUserIdentity> signInManager)
+        SignInManager<AppUserIdentity> signInManager,
+        IHttpContextAccessor contextAccessor)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _httpContextAccessor = contextAccessor;
     }
+
+    public Task<int?> GetUserId()
+    {
+        var user = _httpContextAccessor.HttpContext?.User;
+
+        int? userId = null;
+
+        if (user == null || !user.Identity!.IsAuthenticated)
+            return Task.FromResult(userId);
+
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if(int.TryParse(userIdClaim, out var parsedUserId))
+        {
+           userId = parsedUserId;
+        }
+
+        return Task.FromResult(userId);
+    }
+
     public async Task<Result<string>> Login(LoginDTO loginDTO)
     {
         try

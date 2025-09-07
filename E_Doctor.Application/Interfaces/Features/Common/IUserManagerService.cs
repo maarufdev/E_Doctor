@@ -7,4 +7,5 @@ public interface IUserManagerService
     Task<Result<string>> Login(LoginDTO loginDTO);
     Task<Result> Register(RegisterUserDTO registerDTO);
     Task<Result> Logout();
+    Task<int?> GetUserId();
 }

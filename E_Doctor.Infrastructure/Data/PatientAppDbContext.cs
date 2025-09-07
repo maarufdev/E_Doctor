@@ -51,6 +51,10 @@ namespace E_Doctor.Infrastructure.Data
             modelBuilder.Entity<PatientDiagnosisEntity>(e =>
             {
                 e.HasKey(pd => pd.Id);
+                e.HasOne<AppUserIdentity>()
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<PatientDiagnosisIllnessEntity>(e =>

@@ -27,8 +27,6 @@ namespace E_Doctor.Infrastructure.WebHelpers
 
                 context.Result = new RedirectToActionResult("Index", "User", null);
             }
-
-            //base.OnActionExecuted(context);
         }
     }
 }
