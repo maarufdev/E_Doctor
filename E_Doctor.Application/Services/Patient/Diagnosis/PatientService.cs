@@ -1,10 +1,12 @@
 ﻿using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
+using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -13,18 +15,25 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
     internal class PatientService : IPatientService
     {
         private readonly PatientAppDbContext _appDbContext;
-        public PatientService(PatientAppDbContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserManagerService _userServices;
+
+        public PatientService(
+            PatientAppDbContext context,
+            IUserManagerService userServices)
         {
             _appDbContext = context;
+            _userServices = userServices;
         }
 
         public async Task<List<DiagnosisListDTO>> GetDiagnosis()
         {
+            var userId = await _userServices.GetUserId();
             var diagnosis = await _appDbContext.PatientDiagnosis
                 .AsNoTracking()
                 .Include(d => d.DiagnosSymptoms)
                 .Include(d => d.DiagnosIllnesses)
-                .Where(d => d.IsActive)
+                .Where(d => d.IsActive && d.UserId == userId)
                 .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
                 .Select(d => new
                 {
@@ -131,6 +140,8 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
         {
             try
             {
+                var userId = await _userServices.GetUserId();
+
                 var result = new List<DiagnosisResultDTO>();
                 var patientSymptomsIds = diagnosisRequest.Select(s => s.SymptomId).ToList();
 
@@ -222,6 +233,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         DiagnosIllnesses = new List<PatientDiagnosisIllnessEntity>(),
                         DiagnosSymptoms = new List<PatientDiagnosisSymptomEntity>(),
                         IsActive = true,
+                        UserId = userId
                     };
 
                     foreach (var diagnosis in top5Illnesses)

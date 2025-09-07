@@ -66,7 +66,7 @@
                 const result = await login.apiService().login(command);
 
                 if (result) {
-                    window.location.href = "/Diagnosis";
+                    window.location.href = "/Dashboard";
                 }
             }
         );
