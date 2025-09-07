@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
+    [Authorize]
     public class AdminProfileController : Controller
     {
         public IActionResult Index()

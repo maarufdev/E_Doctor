@@ -3,10 +3,12 @@ using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Application.Interfaces.Features.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
+    [Authorize]
     public class AdminSettingController : Controller
     {
         private readonly ISymptomService _symptomService;

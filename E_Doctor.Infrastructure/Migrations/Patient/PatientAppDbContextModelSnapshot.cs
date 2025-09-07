@@ -37,7 +37,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("Id");
 
-                    b.ToTable("PatientDiagnosis");
+                    b.ToTable("PatientDiagnosis", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>
@@ -69,7 +69,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasIndex("DiagnosisId");
 
-                    b.ToTable("PatientDiagnosisIllnesses");
+                    b.ToTable("PatientDiagnosisIllnesses", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisSymptomEntity", b =>
@@ -100,7 +100,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasIndex("DiagnosisId");
 
-                    b.ToTable("PatientDiagnosisSymptoms");
+                    b.ToTable("PatientDiagnosisSymptoms", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientIllnessEntity", b =>
@@ -122,7 +122,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("IllnessId");
 
-                    b.ToTable("PatientIllnesses");
+                    b.ToTable("PatientIllnesses", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>
@@ -146,7 +146,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasIndex("SymptomId");
 
-                    b.ToTable("PatientIllnesRules");
+                    b.ToTable("PatientIllnesRules", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientSymptomEntity", b =>
@@ -164,7 +164,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
                     b.HasKey("SymptomId");
 
-                    b.ToTable("PatientSymptoms");
+                    b.ToTable("PatientSymptoms", (string)null);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>

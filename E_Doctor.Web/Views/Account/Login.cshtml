@@ -1,0 +1,21 @@
+﻿<!-- Login Page -->
+<div id="login-page" class="auth-form-container login">
+    <div class="auth-header">
+        <h2>Welcome Back!</h2>
+        <p>Sign in to continue to E-Doctor</p>
+    </div>
+    <form id="login-form" class="login-form">
+        <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-input" autocomplete="off" />
+        </div>
+        <button id="login-submit-btn" type="submit" class="btn btn-primary mt-4">Login</button>
+    </form>
+    <p class="auth-link">Don't have an account? <a asp-controller="Account" asp-action="Register" id="show-register-link">Register</a></p>
+</div>
+
+<script src="~/features/user/js/login.js" asp-append-version="true"></script>

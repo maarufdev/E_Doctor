@@ -7,24 +7,35 @@
     <link rel="stylesheet" href="~/common/css/main.css" asp-append-version="true" />
 </head>
 <body>
-    <div id="app-container">
-        <!-- Header Section -->
-        <partial name="_Header" />
-
-        <!-- Main Content Area: Sidebar and Dashboard Content -->
-        <div class="main-layout">
-            <!-- Sidebar Navigation -->
-            <partial name="_Sidebar" />
-            <!-- Main Content Area -->
-            <main class="main-content-area">
-                @RenderBody()
-            </main>
-        </div>
-    </div>
     <div id="app-loader"><div class="spinner"></div></div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div id="app-container">
+            <!-- Header Section -->
+            <partial name="_Header" />
+
+            <!-- Main Content Area: Sidebar and Dashboard Content -->
+            <div class="main-layout">
+                <!-- Sidebar Navigation -->
+                <partial name="_Sidebar" />
+                <!-- Main Content Area -->
+                <main class="main-content-area">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    } else
+    {
+        <link rel="stylesheet" href="~/features/user/css/user.css" asp-append-version="true" />
+        <div id="auth-container">
+            @RenderBody()
+        </div>
+    }
     
     <script src="~/common/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/common/js/main.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

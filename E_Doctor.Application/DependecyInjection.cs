@@ -25,6 +25,7 @@ namespace E_Doctor.Application
             services.AddScoped<ISymptomService, SymptomService>();
             services.AddScoped<IRuleManagementService, RuleManagementService>();
             services.AddScoped<IDiagnosisService, DiagnosisService>();
+            services.AddScoped<IUserManagerService, UserManagerService>();
 
             return services;
         }

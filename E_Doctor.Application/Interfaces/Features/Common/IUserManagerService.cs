@@ -1,0 +1,10 @@
+﻿using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
+
+namespace E_Doctor.Application.Interfaces.Features.Common;
+public interface IUserManagerService
+{
+    Task<Result<string>> Login(LoginDTO loginDTO);
+    Task<Result> Register(RegisterUserDTO registerDTO);
+    Task<Result> Logout();
+}
