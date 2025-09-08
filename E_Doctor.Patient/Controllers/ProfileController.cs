@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using E_Doctor.Application.Interfaces.Features.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Patient.Controllers
@@ -7,9 +8,15 @@ namespace E_Doctor.Patient.Controllers
     [Authorize]
     public class ProfileController : Controller
     {
-        public IActionResult Index()
+        private readonly IUserManagerService _userManagerService;
+        public ProfileController(IUserManagerService userManagerService)
         {
-            return View();
+            _userManagerService = userManagerService;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var result = await _userManagerService.GetUserProfile();
+            return View(result);
         }
     }
 }
