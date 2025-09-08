@@ -13,6 +13,7 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
             if (entity.Rules?.Count > 0)
             {
                 rulesDTO = entity.Rules
+                .Where(s => s.Symptom != null && s.Symptom.IsActive)
                 .Select(r => new IllnessRuleDTO(
                     r.SymptomId,
                     r.Condition,
