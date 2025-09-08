@@ -1,12 +1,23 @@
-﻿<div id="profile" class="page-content">
+﻿@using E_Doctor.Application.DTOs.Common
+@model UserProfileDTO;
+
+<div id="profile" class="page-content">
     <h2 class="text-2xl font-semibold mb-4">User Profile</h2>
-    <div class="card" style="max-width: 48rem; margin: auto;">
+    <div id="profile-card" class="card" style="max-width: 48rem;">
         <div class="flex items-center" style="gap: 1.5rem;">
-            <div class="user-avatar" style="width: 6rem; height: 6rem; font-size: 2.25rem;">A</div>
-            <div>
-                <h3 class="text-2xl font-semibold">Admin User</h3>
-                <p class="text-gray-500">admin@edoctor.com</p>
+            <div class="user-avatar" style="width: 6rem; height: 6rem; font-size: 2.25rem;">
+                @Model.DisplayInitial
             </div>
+            <div>
+                <h3 class="text-2xl font-semibold">@Model.FullName</h3>
+                <p class="text-gray-500">@Model.Email</p>
+            </div>
+        </div>
+        <div style="border-top: 1px solid var(--border-color); margin-top: 1.5rem; padding-top: 1.5rem;">
+            <dl style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                <dt class="font-semibold">Date of Birth</dt>
+                <dd>@Model.DateOfBirth</dd>
+            </dl>
         </div>
     </div>
 </div>
