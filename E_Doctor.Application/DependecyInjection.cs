@@ -1,7 +1,9 @@
-﻿using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
+﻿using E_Doctor.Application.Interfaces.Features.Admin.Dashboard;
+using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
+using E_Doctor.Application.Services.Admin.Dashboard;
 using E_Doctor.Application.Services.Admin.Diagnosis;
 using E_Doctor.Application.Services.Admin.Settings;
 using E_Doctor.Application.Services.Common;
@@ -26,6 +28,7 @@ namespace E_Doctor.Application
             services.AddScoped<IRuleManagementService, RuleManagementService>();
             services.AddScoped<IDiagnosisService, DiagnosisService>();
             services.AddScoped<IUserManagerService, UserManagerService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }

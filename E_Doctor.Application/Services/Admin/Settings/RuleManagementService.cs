@@ -28,14 +28,13 @@ namespace E_Doctor.Application.Services.Admin.Settings
         {
             var result = await _context.Illnesses
                 .AsNoTracking()
-                .Include(d => d.Rules)
                 .Where(d => d.IsActive)
                 .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
                 .Select(d => new IllnessSummaryDTO(
                         d.Id,
                         d.IllnessName,
                         d.Description ?? string.Empty,
-                        d.Rules != null ? d.Rules.Count(x => x.IsActive) : 0
+                        d.Rules != null ? d.Rules.Count(x => x.IsActive && x.Symptom != null && x.Symptom.IsActive) : 0
                     ))
                 .ToListAsync();
 
@@ -46,7 +45,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
         {
             var disease = await _context.Illnesses
                 .AsNoTracking()
-                .Include(d => d.Rules.Where(x => x.IsActive == true))
+                .Include(d => d.Rules)
                 .Where(x => x.Id == id && x.IsActive)
                 .FirstOrDefaultAsync();
 
