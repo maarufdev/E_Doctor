@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+﻿using E_Doctor.Application.DTOs.Common;
+using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Infrastructure.Identity;
@@ -40,6 +41,25 @@ internal class UserManagerService : IUserManagerService
         }
 
         return Task.FromResult(userId);
+    }
+
+    public async Task<UserProfileDTO> GetUserProfile()
+    {
+        var userId = await GetUserId();
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        var dob = user?.DateOfBirth != null ? user.DateOfBirth?.ToString("MMMM dd, yyyy") : string.Empty;
+        string nameInitial = user?.FirstName[0].ToString() + user?.LastName[0].ToString();
+        var fullName = $"{user?.FirstName} {user?.LastName}";
+
+        var result = new UserProfileDTO(
+                nameInitial,
+                fullName,
+                user?.Email ?? string.Empty,
+                dob ?? string.Empty
+            );
+        
+        return result;
     }
 
     public async Task<Result<string>> Login(LoginDTO loginDTO)
