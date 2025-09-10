@@ -120,9 +120,9 @@ namespace E_Doctor.Web.Controllers
 
             var result = await _ruleManager.SaveIllness(diseaseDTO);
 
-            if (!result) return BadRequest();
+            if (!result.IsSuccess) return BadRequest(result.Error);
 
-            return Ok(result);
+            return Ok(result.IsSuccess);
         }
 
         [HttpDelete]

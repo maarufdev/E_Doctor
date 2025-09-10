@@ -120,7 +120,6 @@
                             const result = await services.apiService.getDiseaseById(illnessId);
 
                             if (!result) {
-                                alert("something went wrong!");
                                 return;
                             }
 
@@ -133,7 +132,6 @@
                             const result = await services.apiService.removeIllness(illnessId);
 
                             if (!result) {
-                                alert("something went wrong!");
                                 return;
                             }
 
@@ -324,7 +322,6 @@
 
                 const result = await services.apiService.saveDisease(commandQueries.saveIllness);
                 if (!result) {
-                    alert("something went wrong!")
                     return;
                 }
 

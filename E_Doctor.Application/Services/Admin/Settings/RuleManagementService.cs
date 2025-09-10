@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
+﻿using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
@@ -67,7 +68,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
             return result;
         }
 
-        public async Task<bool> SaveIllness(IllnessDTO requestDto)
+        public async Task<Result> SaveIllness(IllnessDTO requestDto)
         {
             try
             {
@@ -77,6 +78,11 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                 if (illnessId == 0)
                 {
+                    var isExist = await _context.Illnesses
+                        .AnyAsync(i => i.IllnessName.ToLower() == requestDto.IllnessName.ToLower());
+
+                    if (isExist) return Result.Failure($"{requestDto.IllnessName} is already exists.");
+
                     var illnessEntity = new IllnessEntity
                     {
                         IllnessName = requestDto.IllnessName,
@@ -110,7 +116,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         .Where(x => x.Id == requestDto.IllnessId && x.IsActive == true)
                         .FirstOrDefaultAsync();
 
-                    if (illness == null) return false;
+                    if (illness == null) return Result.Failure("Illness to be updated does not exist.");
 
                     illness.IllnessName = requestDto.IllnessName;
                     illness.Description = requestDto.Description;
@@ -156,22 +162,24 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                return result;
+                if (!result) return Result.Failure("Something went wrong!");
+
+                return Result.Success();
             }
             catch(DbUpdateConcurrencyException ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
             catch(DbUpdateException dbEx)
             {
                 Console.WriteLine(dbEx.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
         }
 
