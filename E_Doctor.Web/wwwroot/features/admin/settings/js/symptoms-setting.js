@@ -14,9 +14,22 @@
                 symptomName: ""
             },
             symptomId: null,
+        },
+        searchParams: {
+            searchText: "",
+            pageNumber: 1,
+            pageSize: 10
+        },
+        symptomsPaginatedResult: {
+            totalPages: 0,
         }
     }
     const elementHolders = {
+        searchSection: {
+            searchInput: "#symptom-search-input",
+            searchBtn: "#symptom-search-btn",
+            paginationSelect: "#symptoms-pagination"
+        },
         table: {
             symptomsTblBody: "#symptoms-table-body",
             actionBtns: {
@@ -46,6 +59,7 @@
     const services = {
         initialize: function () {
             services.events.initMain();
+            services.events.searchEvent();
             services.eventHandlers.renderSymptomsTable();
         },
         eventHandlers: {
@@ -68,6 +82,22 @@
 
                 eventHandlers.toggleSymptomsModal(true, true);
             },
+            createPaginations: function () {
+                const { searchSection } = elementHolders;
+                const { totalPages } = stateHolders.symptomsPaginatedResult;
+
+                const $pagination = $(searchSection.paginationSelect);
+                $pagination.empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const $option = $(`<option>`);
+                    $option.val = i;
+                    $option.text(i);
+                    $pagination.append($option);
+                }
+
+                $pagination.val(stateHolders.searchParams.pageNumber);
+            },
             renderSymptomsTable: async function () {
                 const { eventHandlers } = services;
 
@@ -78,7 +108,9 @@
                     return;
                 }
 
-                const symptoms = await services.apiService.getSymptoms() ;
+                const result = await services.apiService.getSymptoms();
+
+                const symptoms = result.items;
 
                 symptomsTableBody.innerHTML = "";
 
@@ -101,7 +133,7 @@
                         const { symptomId } = e.currentTarget.dataset;
                         if (!symptomId) return;
 
-                        const isYes = confirm("Are you sure? Deleting a symptom will also affect disease rules");
+                        const isYes = confirm("Are you sure? Deleting a symptom will also affect illness rules.");
 
                         if (isYes) {
                             this.handleOnDeleteSymptom(symptomId);
@@ -109,6 +141,10 @@
                     });
                     symptomsTableBody.appendChild(row);
                 });
+
+                stateHolders.symptomsPaginatedResult.totalPages = result.totalPages;
+
+                this.createPaginations();
             },
             handleOnSaveSymptom: async function () {
                 const { symptomsModal } = elementHolders.modals;
@@ -128,8 +164,9 @@
                 if (IsNullUndefinedEmpty(symptomName)) return;
 
                 const isSuccess = await apiService.saveSymptom(command);
-                console.log(isSuccess)
+
                 if (isSuccess) {
+                    stateHolders.pageNumber = 1;
                     await this.renderSymptomsTable();
                     this.toggleSymptomsModal(false);
                     this.clearSymptomModal();
@@ -141,6 +178,7 @@
 
                 if (!isDeleted) return;
 
+                stateHolders.pageNumber = 1;
                 await this.renderSymptomsTable();
             },
             clearSymptomModal: function () {
@@ -165,11 +203,49 @@
                 $(modals.symptomsModal.buttons.save).off("click").on("click", function () {
                     eventHandlers.handleOnSaveSymptom();
                 });
+            },
+            searchEvent: function () {
+                const { searchSection } = elementHolders;
+
+                registerEvent(
+                    searchSection.searchBtn,
+                    "click",
+                    function () {
+                        const searchValue = $(searchSection.searchInput).val();
+                        stateHolders.searchParams.searchText = searchValue;
+                        stateHolders.searchParams.pageNumber = 1;
+                        services.eventHandlers.renderSymptomsTable();
+                    }
+                );
+
+                registerEvent(
+                    searchSection.searchBtn,
+                    "input",
+                    function () {
+                        const searchValue = $(searchSection.searchInput).val();
+                        stateHolders.searchParams.searchText = searchValue;
+                    }
+                );
+
+                registerEvent(
+                    searchSection.paginationSelect,
+                    "change",
+                    function (event) {
+                        const value = event.target.value;
+                        stateHolders.searchParams.pageNumber = value;
+                        services.eventHandlers.renderSymptomsTable();
+                    }
+                );
             }
         },
         apiService: {
             getSymptoms: async () => {
-                return await apiFetch(URLS.getSymptoms);
+                return await apiFetch(
+                    URLS.getSymptoms,
+                    {
+                        params: stateHolders.searchParams
+                    }
+                );
             },
             getSymptomById: async (symptomId) => {
                 const symptom = await apiFetch(URLS.getSymptomById, {

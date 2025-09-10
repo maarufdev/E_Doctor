@@ -1,5 +1,6 @@
-﻿using E_Doctor.Application.DTOs.Settings.RuleManagements;
-using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
+﻿using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
+using E_Doctor.Application.DTOs.Settings.RuleManagements;
+using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Infrastructure.Data;
@@ -12,6 +13,18 @@ namespace E_Doctor.Application.Services.Admin.Settings
     internal class RuleManagementService(AdminAppDbContext context) : IRuleManagementService
     {
         private readonly AdminAppDbContext _context = context;
+
+        public async Task<IEnumerable<GetSymptomDTO>> GetSymptoms()
+        {
+            var symptoms = await _context.Symptoms
+                .Where(x => x.IsActive)
+                .OrderByDescending(x => x.UpdatedOn ?? x.CreatedOn)
+                .Select(x => new GetSymptomDTO(x.Id, x.Name))
+                .ToListAsync();
+
+            return symptoms;
+        }
+
         public async Task<bool> DeleteIllnessById(int id)
         {
             var illness = await _context.Illnesses.FirstOrDefaultAsync(d => d.Id == id);

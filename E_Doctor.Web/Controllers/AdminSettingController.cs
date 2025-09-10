@@ -46,9 +46,9 @@ namespace E_Doctor.Web.Controllers
         #endregion
 
         #region Symptoms Settings
-        public async Task<IActionResult> GetSymptoms()
+        public async Task<IActionResult> GetSymptoms(GetSymptomsRequestDTO requestDTO)
         {
-            var symptoms = await _symptomService.GetSymptoms();
+            var symptoms = await _symptomService.GetSymptoms(requestDTO);
 
             if (symptoms is null) return BadRequest();
 
@@ -67,11 +67,11 @@ namespace E_Doctor.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSymptom([FromBody] SaveSymptomDTO saveSymptomDto)
         {
-            var isSuccess = await _symptomService.SaveSymptom(saveSymptomDto);
+            var result = await _symptomService.SaveSymptom(saveSymptomDto);
 
-            if (!isSuccess) return BadRequest();
+            if(result.IsFailure) return BadRequest(result.Error);
 
-            return Ok(isSuccess);
+            return Ok(result.IsSuccess);
         }
 
         [HttpDelete]
@@ -87,6 +87,15 @@ namespace E_Doctor.Web.Controllers
         #endregion
 
         #region Illness Rule Management
+
+        public async Task<IActionResult> GetIllnessSymptoms()
+        {
+            var symptoms = await _ruleManager.GetSymptoms();
+
+            if (symptoms is null) return BadRequest();
+
+            return Ok(symptoms);
+        }
         public async Task<IActionResult> GetIllnessList()
         {
             return Ok(await _ruleManager.GetIllnessList());
