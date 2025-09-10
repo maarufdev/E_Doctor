@@ -2,7 +2,7 @@
     const SETTINGS_BASE_URL = "AdminSetting";
     const URLS = {
         getRuleConditions: `${SETTINGS_BASE_URL}/GetRuleConditions`,
-        getSymptoms: `${SETTINGS_BASE_URL}/GetSymptoms`,
+        getIllnessSymptoms: `${SETTINGS_BASE_URL}/GetIllnessSymptoms`,
         getIllnessList: `${SETTINGS_BASE_URL}/GetIllnessList`,
         getIllnessById: `${SETTINGS_BASE_URL}/GetIllnessById`,
         saveIllness: `${SETTINGS_BASE_URL}/SaveIllness`,
@@ -347,7 +347,7 @@
                 return result;
             },
             setSymptomsList: async function () {
-                const response = await services.apiService.getSymptoms();
+                const response = await services.apiService.getIllnessSymptoms();
                 stateHolders.symptoms = response ?? []
             },
             setRuleConditions: async function () {
@@ -449,8 +449,8 @@
             getRuleConditions: async function () {
                 return await apiFetch(URLS.getRuleConditions);
             },
-            getSymptoms: async function () {
-                return await apiFetch(URLS.getSymptoms);
+            getIllnessSymptoms: async function () {
+                return await apiFetch(URLS.getIllnessSymptoms);
             },
             getDiseases: async function () {
                 return await apiFetch(URLS.getIllnessList);

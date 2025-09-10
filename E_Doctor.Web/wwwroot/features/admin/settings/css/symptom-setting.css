@@ -1,1 +1,13 @@
-﻿
+﻿.flex {
+}
+
+.new-symptom-btn {
+}
+
+.self-start {
+    align-self: start;
+}
+
+.search-symptom {
+    min-width: 400px;
+}
