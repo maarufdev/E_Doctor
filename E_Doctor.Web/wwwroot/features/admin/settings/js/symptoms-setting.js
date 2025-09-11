@@ -110,7 +110,7 @@
 
                 const result = await services.apiService.getSymptoms();
 
-                const symptoms = result.items;
+                const symptoms = result.items ?? [];
 
                 symptomsTableBody.innerHTML = "";
 

@@ -1,4 +1,6 @@
-﻿using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
+﻿using E_Doctor.Application.DTOs.Common;
+using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
@@ -37,12 +39,30 @@ namespace E_Doctor.Application.Services.Admin.Settings
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<IllnessSummaryDTO>> GetIllnessList()
+        public async Task<PagedResult<IllnessSummaryDTO>> GetIllnessList(GetIllnessRequestDTO requestParam)
         {
-            var result = await _context.Illnesses
+            var query = _context.Illnesses
                 .AsNoTracking()
-                .Where(d => d.IsActive)
-                .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+                .Where(i => i.IsActive)
+                .OrderByDescending(i => i.UpdatedOn ?? i.CreatedOn)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(requestParam.SearchText))
+            {
+                var searchText = requestParam.SearchText.ToLower();
+
+                query = query
+                    .Where(i =>
+                        i.IllnessName.ToLower().Contains(searchText) ||
+                        i.Description.ToLower().Contains(searchText)
+                    );
+            }
+
+            var totalCounts = await query.CountAsync();
+
+            var illnesses = await query
+                .Skip((requestParam.PageNumber - 1) * requestParam.PageSize)
+                .Take(requestParam.PageSize)
                 .Select(d => new IllnessSummaryDTO(
                         d.Id,
                         d.IllnessName,
@@ -51,7 +71,13 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     ))
                 .ToListAsync();
 
-            return result;
+            return new PagedResult<IllnessSummaryDTO>
+            {
+                Items = illnesses,
+                TotalCount = totalCounts,
+                PageSize = requestParam.PageSize,
+                PageNumber = requestParam.PageNumber,
+            };
         }
 
         public async Task<IllnessDTO> GetIllnessById(int id)
@@ -67,7 +93,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
             return result;
         }
 
-        public async Task<bool> SaveIllness(IllnessDTO requestDto)
+        public async Task<Result> SaveIllness(IllnessDTO requestDto)
         {
             try
             {
@@ -77,6 +103,11 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                 if (illnessId == 0)
                 {
+                    var isExist = await _context.Illnesses
+                        .AnyAsync(i => i.IllnessName.ToLower() == requestDto.IllnessName.ToLower());
+
+                    if (isExist) return Result.Failure($"{requestDto.IllnessName} is already exists.");
+
                     var illnessEntity = new IllnessEntity
                     {
                         IllnessName = requestDto.IllnessName,
@@ -110,7 +141,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         .Where(x => x.Id == requestDto.IllnessId && x.IsActive == true)
                         .FirstOrDefaultAsync();
 
-                    if (illness == null) return false;
+                    if (illness == null) return Result.Failure("Illness to be updated does not exist.");
 
                     illness.IllnessName = requestDto.IllnessName;
                     illness.Description = requestDto.Description;
@@ -156,22 +187,24 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                return result;
+                if (!result) return Result.Failure("Something went wrong!");
+
+                return Result.Success();
             }
             catch(DbUpdateConcurrencyException ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
             catch(DbUpdateException dbEx)
             {
                 Console.WriteLine(dbEx.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return Result.Failure("Something went wrong!");
             }
         }
 

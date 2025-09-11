@@ -23,9 +23,22 @@
         },
         symptoms: [],
         ruleConditions: [],
-        ruleWeights: []
+        ruleWeights: [],
+        searchParams: {
+            searchText: "",
+            pageNumber: 1,
+            pageSize: 10
+        },
+        illnessPaginatedResult: {
+            totalPages: 0,
+        }
     }
     const elementHolders = {
+        searchSection: {
+            searchInput: "#illness-search-input",
+            searchBtn: "#illness-search-btn",
+            paginationSelect: "#illness-pagination"
+        },
         table: {
             diseasesTableBody: "#diseases-table-body",
             actionBtns: {
@@ -61,6 +74,7 @@
             services.eventHandlers.setRuleConditions();
             services.eventHandlers.setWeightRules();
 
+            services.events.searchEvent();
             services.events.initMain();
             services.eventHandlers.populateSymptomSelect();
             services.events.illnessEvent();
@@ -93,6 +107,22 @@
                 }
 
             },
+            createPaginations: function () {
+                const { searchSection } = elementHolders;
+                const { totalPages } = stateHolders.illnessPaginatedResult;
+
+                const $pagination = $(searchSection.paginationSelect);
+                $pagination.empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const $option = $(`<option>`);
+                    $option.val = i;
+                    $option.text(i);
+                    $pagination.append($option);
+                }
+
+                $pagination.val(stateHolders.searchParams.pageNumber);
+            },
             renderIllnessTable: async function () {
                 const { table } = elementHolders;
                 const diseaseModal = this.toggleIllnessModal;
@@ -101,8 +131,10 @@
                 const $diseasesTableBody = $(table.diseasesTableBody);
                 $diseasesTableBody.empty();
 
-                const result = await services.apiService.getDiseases();
-                result.forEach(illness => {
+                const result = await services.apiService.getIllnessList();
+                const illnessList = result.items ?? [];
+
+                illnessList.forEach(illness => {
                     const { illnessId } = illness;
 
                     const row = document.createElement('tr');
@@ -120,7 +152,6 @@
                             const result = await services.apiService.getDiseaseById(illnessId);
 
                             if (!result) {
-                                alert("something went wrong!");
                                 return;
                             }
 
@@ -133,7 +164,6 @@
                             const result = await services.apiService.removeIllness(illnessId);
 
                             if (!result) {
-                                alert("something went wrong!");
                                 return;
                             }
 
@@ -142,6 +172,9 @@
                     });
                     $diseasesTableBody.append(row);
                 });
+
+                stateHolders.illnessPaginatedResult.totalPages = result.totalPages;
+                this.createPaginations();
             },
             populateDiseaseOnForm: function (illness) {
                 const { commandQueries } = stateHolders;
@@ -324,7 +357,6 @@
 
                 const result = await services.apiService.saveDisease(commandQueries.saveIllness);
                 if (!result) {
-                    alert("something went wrong!")
                     return;
                 }
 
@@ -379,6 +411,39 @@
                     "click",
                     function (e) {
                         eventHandlers.handleOnExportRules();
+                    }
+                );
+            },
+            searchEvent: function () {
+                const { searchSection } = elementHolders;
+
+                registerEvent(
+                    searchSection.searchBtn,
+                    "click",
+                    function () {
+                        const searchValue = $(searchSection.searchInput).val();
+                        stateHolders.searchParams.searchText = searchValue;
+                        stateHolders.searchParams.pageNumber = 1;
+                        services.eventHandlers.renderIllnessTable();
+                    }
+                );
+
+                registerEvent(
+                    searchSection.searchBtn,
+                    "input",
+                    function () {
+                        const searchValue = $(searchSection.searchInput).val();
+                        stateHolders.searchParams.searchText = searchValue;
+                    }
+                );
+
+                registerEvent(
+                    searchSection.paginationSelect,
+                    "change",
+                    function (event) {
+                        const value = event.target.value;
+                        stateHolders.searchParams.pageNumber = value;
+                        services.eventHandlers.renderIllnessTable();
                     }
                 );
             },
@@ -452,8 +517,8 @@
             getIllnessSymptoms: async function () {
                 return await apiFetch(URLS.getIllnessSymptoms);
             },
-            getDiseases: async function () {
-                return await apiFetch(URLS.getIllnessList);
+            getIllnessList: async function () {
+                return await apiFetch(URLS.getIllnessList, { params: stateHolders.searchParams });
             },
             getDiseaseById: async function (illnessId) {
                 return await apiFetch(

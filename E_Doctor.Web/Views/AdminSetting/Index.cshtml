@@ -3,8 +3,10 @@
     SettingTab activeTab = ViewBag.ActiveTab ?? SettingTab.Symptom;
 }
 
-<div id="settings" class="page-content">
-    <h2 class="text-2xl font-semibold mb-4">Settings</h2>
+<link rel="stylesheet" href="~/features/admin/settings/css/settings-main.css" asp-append-version="true" />
+
+<div id="settings" class="page-content mb-0 settings-container">
+    <h2 class="text-2xl font-semibold mb-4 settings-page-title">@ViewBag.PageTitle</h2>
     <div class="settings-tabs">
         <a asp-action="Index" asp-route-tabName="@(SettingTab.Symptom)" class="settings-tab-btn @(activeTab == SettingTab.Symptom ? "active": "")" data-tab="symptoms-tab">Symptoms</a>
         <a asp-action="Index" asp-route-tabName="@(SettingTab.Disease)" class="settings-tab-btn @(activeTab == SettingTab.Disease ? "active": "")" data-tab="diseases-tab">Illness</a>

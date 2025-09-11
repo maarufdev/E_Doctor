@@ -1,9 +1,5 @@
 ﻿<link rel="stylesheet" href="~/features/admin/settings/css/symptom-setting.css" asp-append-version="true" />
 
-
-<div class="flex justify-between items-center mb-4">
-    <h3 class="text-xl font-semibold">Manage Symptoms</h3>
-</div>
 <div class="flex justify-between mb-4">
     <div class="flex gap-2">
         <input type="text" id="symptom-search-input" autocomplete="off" class="form-input self-start search-symptom" placeholder="Search symptoms...">
@@ -20,11 +16,7 @@
     </div>
     <div class="pagination-controls">
         <label style="font-weight: 500;">Page: </label>
-        <select id="symptoms-pagination" value="2" class="form-select" style="width: auto;">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select>
+        <select id="symptoms-pagination" value="2" class="form-select" style="width: auto;"></select>
     </div>
 </div>
 <div id="symptom-modal" class="modal-backdrop">

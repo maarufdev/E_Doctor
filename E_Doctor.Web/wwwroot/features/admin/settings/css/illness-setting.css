@@ -3,6 +3,14 @@
 }
 
 
+.self-start {
+    align-self: start;
+}
+
+.search-illness {
+    min-width: 300px;
+}
+
 #disease-rules-container {
     margin-top: 20px;
 }
