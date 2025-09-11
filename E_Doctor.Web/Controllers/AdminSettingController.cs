@@ -28,6 +28,19 @@ namespace E_Doctor.Web.Controllers
         public IActionResult Index(SettingTab? tabName = SettingTab.Symptom)
         {
             ViewBag.ActiveTab = tabName;
+            var pageTitle = "Manage Symptoms";
+
+            switch (tabName)
+            {
+                case SettingTab.Disease:
+                    pageTitle = "Manage Illnesses";
+                    break;
+                default:
+                    pageTitle = "Manage Symptoms";
+                    break;
+            }
+
+            ViewBag.PageTitle = pageTitle;
 
             return View();
         }
@@ -96,9 +109,9 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(symptoms);
         }
-        public async Task<IActionResult> GetIllnessList()
+        public async Task<IActionResult> GetIllnessList(GetIllnessRequestDTO requestParams)
         {
-            return Ok(await _ruleManager.GetIllnessList());
+            return Ok(await _ruleManager.GetIllnessList(requestParams));
         }
 
         public async Task<IActionResult> GetIllnessById(int id)

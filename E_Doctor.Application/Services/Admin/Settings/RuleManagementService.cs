@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+﻿using E_Doctor.Application.DTOs.Common;
+using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 using E_Doctor.Application.DTOs.Settings.RuleManagements;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
@@ -38,12 +39,30 @@ namespace E_Doctor.Application.Services.Admin.Settings
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<IllnessSummaryDTO>> GetIllnessList()
+        public async Task<PagedResult<IllnessSummaryDTO>> GetIllnessList(GetIllnessRequestDTO requestParam)
         {
-            var result = await _context.Illnesses
+            var query = _context.Illnesses
                 .AsNoTracking()
-                .Where(d => d.IsActive)
-                .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+                .Where(i => i.IsActive)
+                .OrderByDescending(i => i.UpdatedOn ?? i.CreatedOn)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(requestParam.SearchText))
+            {
+                var searchText = requestParam.SearchText.ToLower();
+
+                query = query
+                    .Where(i =>
+                        i.IllnessName.ToLower().Contains(searchText) ||
+                        i.Description.ToLower().Contains(searchText)
+                    );
+            }
+
+            var totalCounts = await query.CountAsync();
+
+            var illnesses = await query
+                .Skip((requestParam.PageNumber - 1) * requestParam.PageSize)
+                .Take(requestParam.PageSize)
                 .Select(d => new IllnessSummaryDTO(
                         d.Id,
                         d.IllnessName,
@@ -52,7 +71,13 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     ))
                 .ToListAsync();
 
-            return result;
+            return new PagedResult<IllnessSummaryDTO>
+            {
+                Items = illnesses,
+                TotalCount = totalCounts,
+                PageSize = requestParam.PageSize,
+                PageNumber = requestParam.PageNumber,
+            };
         }
 
         public async Task<IllnessDTO> GetIllnessById(int id)
