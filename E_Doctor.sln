@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E_Doctor.Admin", "E_Doctor.Web\E_Doctor.Admin.csproj", "{297CE5F5-C1F0-4236-92EE-4218234B0155}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E_Doctor.Admin", "E_Doctor.Admin\E_Doctor.Admin.csproj", "{297CE5F5-C1F0-4236-92EE-4218234B0155}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E_Doctor.Infrastructure", "E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj", "{CDFB832B-756A-4658-A775-12EBC6F16D77}"
 EndProject
