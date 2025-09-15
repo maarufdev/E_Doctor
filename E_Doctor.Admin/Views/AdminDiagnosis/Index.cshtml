@@ -31,25 +31,30 @@
                     </div>
                 </div>
                 <div id="selected-symptoms-container" class="selected-symptoms-container mt-2">
-                    <p class="text-gray-500 selected-symtoms-message">No symptoms selected.</p>
-                    <div class="symptom-tags">
+                    <p class="text-gray-500 selected-symtoms-message">Selected symptom will display here.</p>
+                    <div class="patient-symptom hidden" id="patient-question-container">
+                        <p>How long have you had <span id="question-symptom-name-holder" class="font-semibold">fever</span>?</p>
+                        <div class="patient-question">
+                            <input id="quest-symptom-id" value="0" type="text" hidden />
+                            <input id="quest-symptom-days" value="1" type="number" placeholder="Days" class="form-input symptom-duration" />
+                            <button id="quest-symptom-remove-btn" class="btn btn-sm btn-danger remove-patient-symptom-btn" data-symptom-id="0">x</button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="consultation-content selected-symptoms-durations hidden">
-                <p class="mb-2 font-semibold">For how many days have you experienced each symptom?</p>
                 <div class="duration-fields" id="duration-fields"></div>
             </div>
             <div class="consultation-content diagnosis-result-content text-center hidden">
                 <h4 class="text-xl font-semibold mb-2">Potential Diagnosis:</h4>
                 <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;" id="diagnosis-result-list">
-                    @* <li><span class="font-semibold">Common Cold:</span> 44% Match</li> *@
                 </ul>
                 <p class="text-sm text-gray-500 mt-4">Disclaimer: This is a prototype and not for actual medical use. Please consult a professional.</p>
             </div>
         </div>
         <div id="consultation-modal-footer" class="modal-footer">
-            <button id="next-step-btn" class="btn btn-primary diagnosis-btn">Next</button>
+            <button id="next-step-btn" class="btn btn-primary diagnosis-btn" disabled>Next</button>
+            <button id="review-diagnosis-btn" class="btn btn-secondary diagnosis-btn diagnosis-review-btn" disabled>Review</button>
             <button id="run-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Run Diagnosis</button>
             <button id="finish-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Finish</button>
         </div>

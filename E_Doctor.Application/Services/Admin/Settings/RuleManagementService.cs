@@ -85,6 +85,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
             var disease = await _context.Illnesses
                 .AsNoTracking()
                 .Include(d => d.Rules)
+                    .ThenInclude(r => r.Symptom)
                 .Where(x => x.Id == id && x.IsActive)
                 .FirstOrDefaultAsync();
 
@@ -112,6 +113,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     {
                         IllnessName = requestDto.IllnessName,
                         Description = requestDto.Description,
+                        Prescription = requestDto.Prescription,
                         Rules = [],
                         IsActive = true,
                         CreatedOn = DateTime.UtcNow
@@ -145,6 +147,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
 
                     illness.IllnessName = requestDto.IllnessName;
                     illness.Description = requestDto.Description;
+                    illness.Prescription = requestDto.Prescription;
                     illness.UpdatedOn = DateTime.UtcNow;
 
                     var existingRules = illness.Rules?.ToList() ?? [];
@@ -231,7 +234,12 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     .AsNoTracking()
                     .Where(s => s.IsActive)
                     .OrderBy(s => s.IllnessName)
-                    .Select(s => new ExportIllnessDTO(s.Id, s.IllnessName, s.Description))
+                    .Select(s => new ExportIllnessDTO(
+                        s.Id, 
+                        s.IllnessName, 
+                        s.Description ?? string.Empty, 
+                        s.Prescription ?? string.Empty)
+                    )
                     .ToListAsync();
 
                 var rules = await _context.IllnessRules

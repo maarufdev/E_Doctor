@@ -46,6 +46,7 @@ internal class DiagnosisService : IDiagnosisService
                 {
                     IllnessId = i.Id,
                     i.IllnessName,
+                    i.Prescription,
                     MatchingRules = i.Rules.Where(r => r.IsActive && patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                     MaxScore = i.Rules.Where(r => r.IsActive).Sum(r => (int)r.Weight)
                 })

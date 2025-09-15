@@ -17,6 +17,7 @@
                 illnessId: 0,
                 illnessName: "",
                 description: "",
+                prescription: "",
                 rules: []
             },
             illnessId: null,
@@ -53,7 +54,8 @@
                 fields: {
                     illnessId: "#editing-disease-id",
                     illnessName: "#disease-name-input",
-                    description: "#disease-desc-input"
+                    description: "#disease-desc-input",
+                    prescription: "#disease-prescription-input",
                 },
                 rulesContainer: "#disease-rules-container",
                 ddSymptom: "#symptom-select",
@@ -184,17 +186,20 @@
                     illnessId,
                     illnessName,
                     description,
+                    prescription,
                     rules
                 } = illness ?? {};
 
                 commandQueries.saveIllness.illnessId = illnessId;
                 commandQueries.saveIllness.illnessName = illnessName;
                 commandQueries.saveIllness.description = description;
+                commandQueries.saveIllness.prescription = prescription;
                 commandQueries.saveIllness.rules = rules ?? [];
 
                 $(fields.illnessId).val(illnessId);
                 $(fields.illnessName).val(illnessName);
                 $(fields.description).val(description);
+                $(fields.prescription).val(prescription);
 
                 this.constructSelectedRules();
             },
@@ -315,6 +320,7 @@
                 $(fields.illnessId).val("");
                 $(fields.illnessName).val("");
                 $(fields.description).val("");
+                $(fields.prescription).val("");
 
                 const $ruleFieldsContainer = $(forms.illness.rulesContainer);
 
@@ -324,6 +330,7 @@
                     illnessId: 0,
                     illnessName: "",
                     description: "",
+                    prescription: "",
                     rules: []
                 };
                 stateHolders.tempSelectedRules = [];
@@ -370,7 +377,13 @@
                 const { commandQueries } = stateHolders;
                 let result = true;
 
-                result = ValidateInput(commandQueries.saveIllness.illnessName, "Disease Name is required.");
+                result = ValidateInput(commandQueries.saveIllness.illnessName, "Illness Name is required.");
+                if (!result) return false;
+
+                result = ValidateInput(commandQueries.saveIllness.description, "Description is required.");
+                if (!result) return false;
+
+                result = ValidateInput(commandQueries.saveIllness.prescription, "Prescription is required.");
                 if (!result) return false;
 
                 result = ValidateInput(commandQueries.saveIllness.rules, "Rules Fields is required. Please add config at least 1");
@@ -389,7 +402,7 @@
             setWeightRules: async function () {
                 const response = await services.apiService.getWeightRules() ?? [];
                 stateHolders.ruleWeights = response.map(x => ({ id: x.id, text: x.name }));
-            }
+            },
         },
         events: {
             initMain: function () {
@@ -506,6 +519,14 @@
                     function (e) {
                         const $target = $(e.target);
                         commandQueries.saveIllness.description = $target.val(); 
+                    }
+                );
+                registerEvent(
+                    forms.illness.fields.prescription,
+                    "input",
+                    function (e) {
+                        const $target = $(e.target);
+                        commandQueries.saveIllness.prescription = $target.val();
                     }
                 );
             }
