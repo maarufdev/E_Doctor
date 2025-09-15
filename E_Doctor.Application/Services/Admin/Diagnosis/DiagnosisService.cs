@@ -1,5 +1,6 @@
 ﻿using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Infrastructure.Data;
@@ -10,21 +11,24 @@ namespace E_Doctor.Application.Services.Admin.Diagnosis;
 internal class DiagnosisService : IDiagnosisService
 {
     private readonly AdminAppDbContext _appDbContext;
-    public DiagnosisService(AdminAppDbContext appDbContext)
+    private readonly IUserManagerService _userManager;
+    public DiagnosisService(AdminAppDbContext appDbContext, IUserManagerService userManager)
     {
         _appDbContext = appDbContext;
+        _userManager = userManager;
     }
 
     public async Task<List<DiagnosisListDTO>> GetDiagnosis()
     {
-        var diagnosis = await _appDbContext.Diagnosis
+        var diagnosis = await _appDbContext.DiagnosisTest
             .Where(d => d.IsActive)
             .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
             .Select(d => new DiagnosisListDTO(
                 d.Id,
                 d.UpdatedOn ?? d.CreatedOn,
                 d.Symptoms,
-                d.IllnessName
+                d.DiagnosisResult,
+                d.Prescription
              ))
             .ToListAsync();
 
@@ -35,6 +39,7 @@ internal class DiagnosisService : IDiagnosisService
     {
         try
         {
+            var currentUserId = await _userManager.GetUserId();
             var result = new List<DiagnosisResultDTO>();
             var patientSymptomsIds = diagnosisRequest.Select(s => s.SymptomId).ToList();
 
@@ -101,11 +106,11 @@ internal class DiagnosisService : IDiagnosisService
                 }
             }
 
-            var top5Illnesses = illnessScores
+            var topIllness = illnessScores
                 .OrderByDescending(kvp => kvp.Value)
-                .Take(5);
+                .Take(1);
 
-            foreach(var illnessScore in top5Illnesses)
+            foreach(var illnessScore in topIllness)
             {
                 var illness = potentialIllnesses.FirstOrDefault(i => i.IllnessId == illnessScore.Key);
 
@@ -119,9 +124,9 @@ internal class DiagnosisService : IDiagnosisService
                 }
             }
 
-            if (top5Illnesses.Any())
+            if (topIllness.Any())
             {
-                var top1Illness = top5Illnesses.FirstOrDefault();
+                var top1Illness = topIllness.FirstOrDefault();
 
                 var illness = potentialIllnesses.FirstOrDefault(x => x.IllnessId == top1Illness.Key);
 
@@ -134,15 +139,17 @@ internal class DiagnosisService : IDiagnosisService
                         .ToListAsync();
 
                     var resultIllnesses = result.Select(i => $"{i.Illness} {i.Score}%");
-                    var patientDiagnosed = new DiagnosisEntity
+                    var patientDiagnosed = new DiagnosisTestEntity
                     {
-                        IllnessName = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
+                        UserId = currentUserId ?? 0,
+                        DiagnosisResult = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
                         Symptoms = string.Join(", ", symptoms),
+                        Prescription = illness.Prescription,
                         CreatedOn = DateTime.UtcNow,
                         IsActive = true,
                     };
 
-                    await _appDbContext.Diagnosis.AddAsync(patientDiagnosed);
+                    await _appDbContext.DiagnosisTest.AddAsync(patientDiagnosed);
 
                     await _appDbContext.SaveChangesAsync();
                 }

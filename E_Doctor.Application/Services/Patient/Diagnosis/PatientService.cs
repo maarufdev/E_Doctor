@@ -46,7 +46,8 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     d.Id,
                     d.UpdatedOn,
                     d.Symptoms,
-                    d.IllnessName
+                    d.IllnessName,
+                    string.Empty
                  ))
                 .ToListAsync();
 

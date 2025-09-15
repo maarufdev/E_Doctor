@@ -77,6 +77,7 @@
                             <td>${item.diagnoseDate}</td>
                             <td style="white-space: normal;">${item.symptoms}</td>
                             <td>${item.illnessName}</td>
+                            <td>${item.prescription}</td>
                         </tr>
                     `);
 
