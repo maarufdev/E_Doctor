@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     [DbContext(typeof(PatientAppDbContext))]
-    [Migration("20250907100526_AddAuthentication")]
-    partial class AddAuthentication
+    [Migration("20250914121119_AddIllnessPrescriptionField")]
+    partial class AddIllnessPrescriptionField
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,8 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("PatientDiagnosis");
                 });
@@ -117,6 +119,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DiagnosisResult")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Prescription")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -377,6 +383,14 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Infrastructure.Identity.AppUserIdentity", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>

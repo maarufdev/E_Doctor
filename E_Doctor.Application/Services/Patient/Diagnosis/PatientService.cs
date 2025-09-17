@@ -46,7 +46,8 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     d.Id,
                     d.UpdatedOn,
                     d.Symptoms,
-                    d.IllnessName
+                    d.IllnessName,
+                    string.Empty
                  ))
                 .ToListAsync();
 
@@ -87,6 +88,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         IllnessId = i.IllnessId,
                         IllnessName = i.IllnessName,
                         Description = i.Description,
+                        Prescription = i.Prescription,
                         UpdatedOn = DateTime.UtcNow,
                     });
 
@@ -153,6 +155,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     {
                         IllnessId = i.IllnessId,
                         i.IllnessName,
+                        i.Prescription,
                         MatchingRules = i.Rules.Where(r => patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                         MaxScore = i.Rules.Sum(r => (int)r.Weight)
                     })
@@ -246,6 +249,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         {
                             DiagnosisId = toSaveDiagnosis.Id,
                             Illness = diagnosIllness.IllnessName,
+                            Prescription = diagnosIllness.Prescription ?? string.Empty,
                             Score = diagnosis.Value,
                             IsActive = true,
                             CreatedOn = DateTime.Now,

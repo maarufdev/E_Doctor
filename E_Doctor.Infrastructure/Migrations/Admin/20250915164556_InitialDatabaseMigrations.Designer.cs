@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     [DbContext(typeof(AdminAppDbContext))]
-    [Migration("20250907081936_AddUserDetailsOnIdentity")]
-    partial class AddUserDetailsOnIdentity
+    [Migration("20250915164556_InitialDatabaseMigrations")]
+    partial class InitialDatabaseMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
-            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.DiagnosisEntity", b =>
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.DiagnosisTestEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,11 +29,14 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IllnessName")
+                    b.Property<string>("DiagnosisResult")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Prescription")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Symptoms")
                         .HasColumnType("TEXT");
@@ -41,9 +44,12 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Diagnosis");
+                    b.ToTable("DiagnosisTest");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.IllnessEntity", b =>
@@ -65,6 +71,9 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Prescription")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
@@ -79,7 +88,8 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                             CreatedOn = new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Common",
                             IllnessName = "Flu",
-                            IsActive = true
+                            IsActive = true,
+                            Prescription = ""
                         });
                 });
 

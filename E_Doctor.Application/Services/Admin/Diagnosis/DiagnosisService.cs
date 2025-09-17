@@ -1,5 +1,6 @@
 ﻿using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Infrastructure.Data;
@@ -10,31 +11,52 @@ namespace E_Doctor.Application.Services.Admin.Diagnosis;
 internal class DiagnosisService : IDiagnosisService
 {
     private readonly AdminAppDbContext _appDbContext;
-    public DiagnosisService(AdminAppDbContext appDbContext)
+    private readonly IUserManagerService _userManager;
+    public DiagnosisService(AdminAppDbContext appDbContext, IUserManagerService userManager)
     {
         _appDbContext = appDbContext;
+        _userManager = userManager;
     }
 
     public async Task<List<DiagnosisListDTO>> GetDiagnosis()
     {
-        var diagnosis = await _appDbContext.Diagnosis
+        var diagnosis = await _appDbContext.DiagnosisTest
             .Where(d => d.IsActive)
             .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
             .Select(d => new DiagnosisListDTO(
                 d.Id,
                 d.UpdatedOn ?? d.CreatedOn,
                 d.Symptoms,
-                d.IllnessName
+                d.DiagnosisResult,
+                d.Prescription
              ))
             .ToListAsync();
 
         return diagnosis;
     }
 
-    public async Task<List<DiagnosisResultDTO>> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
+
+    public async Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId)
+    {
+        var result = new DiagnosisDetailsDTO();
+
+        var diagnosis = await _appDbContext.DiagnosisTest
+            .AsNoTracking()
+            .Where(d => d.IsActive && d.Id == diagnosisId)
+            .FirstOrDefaultAsync();
+
+        if (diagnosis == null) return result;
+
+        return DiagnosisDetailsDTO.Create(
+            diagnosis.DiagnosisResult ?? string.Empty, 
+            diagnosis.Description ?? string.Empty, 
+            diagnosis.Prescription ?? string.Empty);
+    }
+    public async Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
     {
         try
         {
+            var currentUserId = await _userManager.GetUserId();
             var result = new List<DiagnosisResultDTO>();
             var patientSymptomsIds = diagnosisRequest.Select(s => s.SymptomId).ToList();
 
@@ -46,6 +68,8 @@ internal class DiagnosisService : IDiagnosisService
                 {
                     IllnessId = i.Id,
                     i.IllnessName,
+                    i.Prescription,
+                    i.Description,
                     MatchingRules = i.Rules.Where(r => r.IsActive && patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                     MaxScore = i.Rules.Where(r => r.IsActive).Sum(r => (int)r.Weight)
                 })
@@ -100,11 +124,11 @@ internal class DiagnosisService : IDiagnosisService
                 }
             }
 
-            var top5Illnesses = illnessScores
+            var topIllness = illnessScores
                 .OrderByDescending(kvp => kvp.Value)
-                .Take(5);
+                .Take(1);
 
-            foreach(var illnessScore in top5Illnesses)
+            foreach(var illnessScore in topIllness)
             {
                 var illness = potentialIllnesses.FirstOrDefault(i => i.IllnessId == illnessScore.Key);
 
@@ -118,9 +142,11 @@ internal class DiagnosisService : IDiagnosisService
                 }
             }
 
-            if (top5Illnesses.Any())
+            var diagnosisResult = new DiagnosisDetailsDTO();
+
+            if (topIllness.Any())
             {
-                var top1Illness = top5Illnesses.FirstOrDefault();
+                var top1Illness = topIllness.FirstOrDefault();
 
                 var illness = potentialIllnesses.FirstOrDefault(x => x.IllnessId == top1Illness.Key);
 
@@ -133,21 +159,29 @@ internal class DiagnosisService : IDiagnosisService
                         .ToListAsync();
 
                     var resultIllnesses = result.Select(i => $"{i.Illness} {i.Score}%");
-                    var patientDiagnosed = new DiagnosisEntity
+                    var patientDiagnosed = new DiagnosisTestEntity
                     {
-                        IllnessName = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
+                        UserId = currentUserId ?? 0,
+                        DiagnosisResult = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
                         Symptoms = string.Join(", ", symptoms),
+                        Prescription = illness.Prescription,
+                        Description = illness.Description,
                         CreatedOn = DateTime.UtcNow,
                         IsActive = true,
                     };
 
-                    await _appDbContext.Diagnosis.AddAsync(patientDiagnosed);
+                    await _appDbContext.DiagnosisTest.AddAsync(patientDiagnosed);
 
                     await _appDbContext.SaveChangesAsync();
+
+                    diagnosisResult = DiagnosisDetailsDTO.Create(
+                        patientDiagnosed.DiagnosisResult, 
+                        patientDiagnosed.Description ?? string.Empty,
+                        patientDiagnosed.Prescription ?? string.Empty);
                 }
             }
 
-            return result;
+            return diagnosisResult;
         }
         catch (Exception ex) 
         { 

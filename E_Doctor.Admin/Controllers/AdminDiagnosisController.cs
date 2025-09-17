@@ -31,5 +31,10 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(result);
         }
+
+        public async Task<IActionResult> GetDiagnosisById(int diagnosisId)
+        {
+            return Ok(await _diagnosisService.GetDiagnosisById(diagnosisId));
+        }
     }
 }

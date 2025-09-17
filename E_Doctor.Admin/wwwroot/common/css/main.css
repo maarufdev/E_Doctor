@@ -232,9 +232,9 @@ a {
     background-color: var(--warning-color);
 }
 
-    .btn-warning:hover {
-        background-color: var(--warning-hover);
-    }
+.btn-warning:hover {
+    background-color: var(--warning-hover);
+}
 
 .form-input, .form-select, .form-textarea {
     width: 100%;
@@ -488,12 +488,24 @@ a {
     font-weight: 600;
 }
 
+.font-bold {
+    font-weight: 800;
+}
+
 .text-gray-500 {
     color: #6b7280;
 }
 
 .text-gray-700 {
     color: #374151;
+}
+
+.text-xs {
+    font-size: .75rem;
+}
+
+.text-sm {
+    font-size: 1rem;
 }
 
 .text-xl {

@@ -15,7 +15,7 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
     public DbSet<SymptomEntity> Symptoms { get; set; }
     public DbSet<IllnessEntity> Illnesses { get; set; }
     public DbSet<IllnessRuleEntity> IllnessRules { get; set; }
-    public DbSet<DiagnosisEntity> Diagnosis { get; set; }
+    public DbSet<DiagnosisTestEntity> DiagnosisTest { get; set; }
     public DbSet<AppUserIdentity> UserAccounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

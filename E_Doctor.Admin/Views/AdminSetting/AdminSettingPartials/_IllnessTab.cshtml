@@ -46,17 +46,20 @@
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div>
                     <label for="disease-name-input" class="font-semibold">Illness Name</label>
-                    <input type="text" id="disease-name-input" class="form-input mt-1" placeholder="e.g., Influenza">
+                    <input type="text" id="disease-name-input" class="form-input mt-1" placeholder="e.g., Influenza" autocomplete="off">
                 </div>
                 <div>
                     <label for="disease-desc-input" class="font-semibold">Description</label>
                     <textarea id="disease-desc-input" class="form-textarea mt-1" placeholder="Brief description of the illness"></textarea>
                 </div>
+                <div>
+                    <label for="disease-desc-input" class="font-semibold">Prescription</label>
+                    <textarea id="disease-prescription-input" class="form-textarea mt-1" placeholder="Prescription"></textarea>
+                </div>
                 <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
                     <h4 class="font-semibold mb-2">Rule Configuration</h4>
                     <div class="flex items-center gap-2 p-2" style="background-color: #f9fafb; border-radius: 0.375rem;">
                         <div style="flex-grow: 1;">
-                            @* <label for="symptom-select" class="font-semibold" style="font-size: 0.875rem;">Add Symptom Rule</label> *@
                             <select id="symptom-select" class="form-select mt-1"></select>
                         </div>
                         <button id="add-disease-rule-btn" class="btn btn-secondary" style="padding: 0.65rem;">Add</button>
@@ -64,13 +67,6 @@
                     <div id="disease-rules-container" style="display:flex; flex-direction:column; gap: 0.5rem; max-height: 12rem; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 0.75rem;">
 
                     </div>
-                    @* <div class="flex items-center gap-2 p-2" style="background-color: #f9fafb; border-radius: 0.375rem;">
-                        <div style="flex-grow: 1;">
-                            <label for="symptom-select" class="font-semibold" style="font-size: 0.875rem;">Add Symptom Rule</label>
-                            <select id="symptom-select" class="form-select mt-1"></select>
-                        </div>
-                        <button id="add-disease-rule-btn" class="btn btn-secondary" style="padding: 0.65rem;">Add</button>
-                    </div> *@
                 </div>
             </div>
         </div>

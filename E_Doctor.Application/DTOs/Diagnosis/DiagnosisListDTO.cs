@@ -4,5 +4,6 @@ public sealed record DiagnosisListDTO(
     int DiagnosisId,
     DateTime? DiagnoseDate,
     string Symptoms,
-    string IllnessName
+    string IllnessName,
+    string Prescription
 );

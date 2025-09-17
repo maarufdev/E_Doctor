@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     /// <inheritdoc />
-    public partial class AddUserIdentity : Migration
+    public partial class InitialDatabaseMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,12 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    MiddleName = table.Column<string>(type: "TEXT", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -51,6 +56,59 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiagnosisTest",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DiagnosisResult = table.Column<string>(type: "TEXT", nullable: true),
+                    Symptoms = table.Column<string>(type: "TEXT", nullable: true),
+                    Prescription = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiagnosisTest", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Illnesses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IllnessName = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Prescription = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Illnesses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Symptoms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Symptoms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,6 +217,49 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "IllnessRules",
+                columns: table => new
+                {
+                    SymptomId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IllnessId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Condition = table.Column<int>(type: "INTEGER", nullable: false),
+                    Days = table.Column<int>(type: "INTEGER", nullable: false),
+                    Weight = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IllnessRules", x => new { x.IllnessId, x.SymptomId });
+                    table.ForeignKey(
+                        name: "FK_IllnessRules_Illnesses_IllnessId",
+                        column: x => x.IllnessId,
+                        principalTable: "Illnesses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IllnessRules_Symptoms_SymptomId",
+                        column: x => x.SymptomId,
+                        principalTable: "Symptoms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Illnesses",
+                columns: new[] { "Id", "CreatedOn", "Description", "IllnessName", "IsActive", "Prescription", "UpdatedOn" },
+                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Common", "Flu", true, "", null });
+
+            migrationBuilder.InsertData(
+                table: "Symptoms",
+                columns: new[] { "Id", "CreatedOn", "IsActive", "Name", "UpdatedOn" },
+                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Fever", null });
+
+            migrationBuilder.InsertData(
+                table: "IllnessRules",
+                columns: new[] { "IllnessId", "SymptomId", "Condition", "Days", "IsActive", "Weight" },
+                values: new object[] { 1, 1, 1, 2, true, 0 });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -195,6 +296,11 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IllnessRules_SymptomId",
+                table: "IllnessRules",
+                column: "SymptomId");
         }
 
         /// <inheritdoc />
@@ -216,10 +322,22 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "DiagnosisTest");
+
+            migrationBuilder.DropTable(
+                name: "IllnessRules");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Illnesses");
+
+            migrationBuilder.DropTable(
+                name: "Symptoms");
         }
     }
 }
