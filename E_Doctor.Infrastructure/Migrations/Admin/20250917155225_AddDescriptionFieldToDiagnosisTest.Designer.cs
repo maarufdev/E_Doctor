@@ -3,6 +3,7 @@ using System;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     [DbContext(typeof(AdminAppDbContext))]
-    partial class AdminAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250917155225_AddDescriptionFieldToDiagnosisTest")]
+    partial class AddDescriptionFieldToDiagnosisTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");

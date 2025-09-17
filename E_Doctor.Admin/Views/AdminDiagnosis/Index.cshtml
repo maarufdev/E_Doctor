@@ -13,7 +13,7 @@
                         <th>Date</th>
                         <th>Symptoms</th>
                         <th>Result</th>
-                        <th>Prescription</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="history-table-body">
@@ -30,7 +30,7 @@
             <button id="close-consultation-modal" class="modal-close-btn">&times;</button>
         </div>
         <div id="consultation-modal-body" class="modal-body">
-            <div class="consultation-content select-symptoms-content active">
+            <div class="consultation-content select-symptoms-content">
                 <p class="mb-2 font-semibold">Please select all symptoms you are experiencing.</p>
                 <div class="searchable-dropdown" id="symptom-search-parent">
                     <input type="text" autocomplete="off" id="symptom-search-input" class="form-input" placeholder="Search for a symptom...">
@@ -38,32 +38,43 @@
                     </div>
                 </div>
                 <div id="selected-symptoms-container" class="selected-symptoms-container mt-2">
-                    <p class="text-gray-500 selected-symtoms-message">Selected symptom will display here.</p>
-                    <div class="patient-symptom hidden" id="patient-question-container">
-                        <p>How long have you had <span id="question-symptom-name-holder" class="font-semibold">fever</span>?</p>
-                        <div class="patient-question">
-                            <input id="quest-symptom-id" value="0" type="text" hidden />
-                            <input id="quest-symptom-days" value="1" type="number" placeholder="Days" class="form-input symptom-duration" />
-                            <button id="quest-symptom-remove-btn" class="btn btn-sm btn-danger remove-patient-symptom-btn" data-symptom-id="0">x</button>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
             <div class="consultation-content selected-symptoms-durations hidden">
                 <div class="duration-fields" id="duration-fields"></div>
             </div>
-            <div class="consultation-content diagnosis-result-content text-center hidden">
-                <h4 class="text-xl font-semibold mb-2">Potential Diagnosis:</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;" id="diagnosis-result-list">
-                </ul>
-                <p class="text-sm text-gray-500 mt-4">Disclaimer: This is a prototype and not for actual medical use. Please consult a professional.</p>
+        </div>
+        <div id="consultation-modal-footer" class="modal-footer flex">
+            <div class="consultation-buttons symptoms-selection-buttons flex justify-end w-full">
+                <button id="next-step-btn" class="btn btn-primary diagnosis-btn flex-end" disabled>Next</button>
+            </div>
+            <div class="consultation-buttons symptoms-review-buttons flex justify-between w-full hidden">
+                <button id="back-diagnosis-btn" class="btn btn-secondary diagnosis-btn diagnosis-review-btn">Back</button>
+                <button id="run-diagnosis-btn" class="btn btn-primary diagnosis-btn">Run Diagnosis</button>
+            </div>
+            <div class="consultation-buttons symptoms-result-buttons flex justify-end w-full hidden">
+                <button id="finish-diagnosis-btn" class="btn btn-primary diagnosis-btn">Done</button>
             </div>
         </div>
-        <div id="consultation-modal-footer" class="modal-footer">
-            <button id="next-step-btn" class="btn btn-primary diagnosis-btn" disabled>Next</button>
-            <button id="review-diagnosis-btn" class="btn btn-secondary diagnosis-btn diagnosis-review-btn" disabled>Review</button>
-            <button id="run-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Run Diagnosis</button>
-            <button id="finish-diagnosis-btn" class="btn btn-primary diagnosis-btn hidden">Finish</button>
+    </div>
+</div>
+
+@* Diagnosis Result *@
+<div id="diagnosis-result-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">Diagnosis Result</h3>
+            <button id="close-diagnosis-result-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="diagnosis-result-block diagnosis-result-content">
+                <h5 class="diagnosis-result-text" id="diagnosis-result"></h5>
+                <p id="diagnosis-description"></p>
+                <h6 class="font-semibold mt-2">Recommended Treatement:</h6>
+                <p id="diagnosis-prescriptions"></p>
+                <p class="text-xs font-bold text-gray-500 mt-4">Disclaimer: If the medication is not effective, it is important to consult a doctor.</p>
+            </div>
         </div>
     </div>
 </div>

@@ -35,7 +35,24 @@ internal class DiagnosisService : IDiagnosisService
         return diagnosis;
     }
 
-    public async Task<List<DiagnosisResultDTO>> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
+
+    public async Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId)
+    {
+        var result = new DiagnosisDetailsDTO();
+
+        var diagnosis = await _appDbContext.DiagnosisTest
+            .AsNoTracking()
+            .Where(d => d.IsActive && d.Id == diagnosisId)
+            .FirstOrDefaultAsync();
+
+        if (diagnosis == null) return result;
+
+        return DiagnosisDetailsDTO.Create(
+            diagnosis.DiagnosisResult ?? string.Empty, 
+            diagnosis.Description ?? string.Empty, 
+            diagnosis.Prescription ?? string.Empty);
+    }
+    public async Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
     {
         try
         {
@@ -52,6 +69,7 @@ internal class DiagnosisService : IDiagnosisService
                     IllnessId = i.Id,
                     i.IllnessName,
                     i.Prescription,
+                    i.Description,
                     MatchingRules = i.Rules.Where(r => r.IsActive && patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                     MaxScore = i.Rules.Where(r => r.IsActive).Sum(r => (int)r.Weight)
                 })
@@ -124,6 +142,8 @@ internal class DiagnosisService : IDiagnosisService
                 }
             }
 
+            var diagnosisResult = new DiagnosisDetailsDTO();
+
             if (topIllness.Any())
             {
                 var top1Illness = topIllness.FirstOrDefault();
@@ -145,6 +165,7 @@ internal class DiagnosisService : IDiagnosisService
                         DiagnosisResult = string.Join(", ", result.Select(i => $"{i.Illness} {i.Score}%")),
                         Symptoms = string.Join(", ", symptoms),
                         Prescription = illness.Prescription,
+                        Description = illness.Description,
                         CreatedOn = DateTime.UtcNow,
                         IsActive = true,
                     };
@@ -152,10 +173,15 @@ internal class DiagnosisService : IDiagnosisService
                     await _appDbContext.DiagnosisTest.AddAsync(patientDiagnosed);
 
                     await _appDbContext.SaveChangesAsync();
+
+                    diagnosisResult = DiagnosisDetailsDTO.Create(
+                        patientDiagnosed.DiagnosisResult, 
+                        patientDiagnosed.Description ?? string.Empty,
+                        patientDiagnosed.Prescription ?? string.Empty);
                 }
             }
 
-            return result;
+            return diagnosisResult;
         }
         catch (Exception ex) 
         { 

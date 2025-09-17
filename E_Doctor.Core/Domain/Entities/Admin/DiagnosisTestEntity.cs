@@ -6,4 +6,5 @@ public class DiagnosisTestEntity : BaseEntity
     public string? DiagnosisResult { get; set; }
     public string? Symptoms { get; set; }
     public string? Prescription { get; set; }
+    public string? Description { get; set; }
 }
