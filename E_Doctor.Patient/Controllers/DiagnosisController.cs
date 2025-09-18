@@ -1,4 +1,5 @@
 ﻿using E_Doctor.Application.DTOs.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,11 @@ namespace E_Doctor.Patient.Controllers
         public async Task<IActionResult> GetDiagnosis()
         {
             return Ok(await _patientService.GetDiagnosis());
+        }
+
+        public async Task<IActionResult> GetDiagnosisById(int diagnosisId)
+        {
+            return Ok(await _patientService.GetDiagnosisById(diagnosisId));
         }
     }
 }

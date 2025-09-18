@@ -51,6 +51,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("DiagnosisId")
                         .HasColumnType("INTEGER");
 
@@ -119,7 +123,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DiagnosisResult")
+                    b.Property<string>("IllnessName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -396,24 +400,24 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>
                 {
-                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "DiagnosisTest")
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
                         .WithMany("DiagnosIllnesses")
                         .HasForeignKey("DiagnosisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiagnosisTest");
+                    b.Navigation("Diagnosis");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisSymptomEntity", b =>
                 {
-                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "DiagnosisTest")
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
                         .WithMany("DiagnosSymptoms")
                         .HasForeignKey("DiagnosisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiagnosisTest");
+                    b.Navigation("Diagnosis");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>

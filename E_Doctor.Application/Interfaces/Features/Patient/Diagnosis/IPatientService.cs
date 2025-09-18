@@ -6,6 +6,7 @@ public interface IPatientService
 {
     Task<bool> MigrateRules(string jsonData);
     Task<IEnumerable<GetSymptomDTO>> GetSymtoms();
-    Task<List<DiagnosisResultDTO>> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest);
+    Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId);
+    Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest);
     Task<List<DiagnosisListDTO>> GetDiagnosis();
 }

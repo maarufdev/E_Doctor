@@ -57,7 +57,7 @@ namespace E_Doctor.Patient.Controllers
         {
             await _userService.Logout();
 
-            return RedirectToAction("Index", "DiagnosisTest");
+            return RedirectToAction("Index", "Diagnosis");
         }
     }
 }
