@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     [DbContext(typeof(PatientAppDbContext))]
-    [Migration("20250914123530_AddIllnessPrescriptionFieldToPatientDiagnosisDetail")]
-    partial class AddIllnessPrescriptionFieldToPatientDiagnosisDetail
+    [Migration("20250918133112_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DiagnosisId")
@@ -122,7 +126,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DiagnosisResult")
+                    b.Property<string>("IllnessName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -399,24 +403,24 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisIllnessEntity", b =>
                 {
-                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "DiagnosisTest")
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
                         .WithMany("DiagnosIllnesses")
                         .HasForeignKey("DiagnosisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiagnosisTest");
+                    b.Navigation("Diagnosis");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisSymptomEntity", b =>
                 {
-                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "DiagnosisTest")
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientDiagnosisEntity", "Diagnosis")
                         .WithMany("DiagnosSymptoms")
                         .HasForeignKey("DiagnosisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiagnosisTest");
+                    b.Navigation("Diagnosis");
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientRulesEntity", b =>

@@ -87,7 +87,6 @@
                 $(modal.root).toggleClass("visible", toOpen);
                 $(modal.title).text("Step 1: Select Symptoms");
             },
-
             toggleDiagnosisModal: function (toOpen) {
                 const modal = elementHolders.modals.diagnosis;
                 $(modal.root).toggleClass("visible", toOpen);
@@ -180,7 +179,6 @@
 
                 return command
             },
-
             handleOnCreateSymptomsDurations: function () {
                 const { consultation } = elementHolders.modals;
                 const $durationContainer = $("#duration-fields");
@@ -197,7 +195,6 @@
                     $durationContainer.append(duration);
                 });
             },
-
             handleOnClickNext: function () {
                 const { consultation } = elementHolders.modals;
 

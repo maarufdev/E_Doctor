@@ -2,6 +2,7 @@
 using E_Doctor.Infrastructure.Identity;
 using E_Doctor.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -51,6 +52,18 @@ public static class DependencyInjection
         {
             options.LoginPath = "/Account/Login";
             options.AccessDeniedPath = "/Account/Login";
+
+            // 👇 Force cookie to behave like a "session cookie"
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+            // Expiration settings
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // valid only for 30 mins
+            options.SlidingExpiration = false; // lifetime won’t refresh on activity
+
+            // 👇 This makes the cookie disappear when browser closes
+            options.Cookie.MaxAge = null;
         });
 
         services.AddSession(o =>
@@ -84,6 +97,15 @@ public static class DependencyInjection
         {
             options.LoginPath = "/Account/Login";
             options.AccessDeniedPath = "/Account/Login";
+
+            // 👇 Force cookie to behave like a "session cookie"
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+            // Expiration settings
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // valid only for 30 mins
+            options.SlidingExpiration = false; // lifetime won’t refresh on activity
         });
 
         services.AddSession(o =>
