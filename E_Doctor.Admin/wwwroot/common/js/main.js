@@ -69,6 +69,8 @@ function IsNullUndefinedEmpty(value) {
 }
 
 function registerEvent(root, type, callback) {
+    console.log("register event invoked!")
+
     $(root).off(type).on(type, function (event) {
         if (callback) {
             callback(event);

@@ -1,0 +1,34 @@
+{
+  "executable": "E_Doctor.Admin",
+  "splashscreen": {
+    "imageFile": ""
+  },
+  "name": "E_Doctor.Admin",
+  "author": "YourName",
+  "singleInstance": true,
+  "build": {
+    "appId": "com.edoctor.admin",
+    "productName": "E_Doctor.Admin",
+    "copyright": "Copyright © 2025 YourName",
+    "buildVersion": "1.0.0",
+    "compression": "maximum",
+    "directories": {
+      "output": "../../../bin/Desktop"
+    },
+    "extraResources": [
+      {
+        "from": "./bin",
+        "to": "bin",
+        "filter": [ "**/*" ]
+      }
+    ],
+    "files": [
+      {
+        "from": "./ElectronHostHook/node_modules",
+        "to": "ElectronHostHook/node_modules",
+        "filter": [ "**/*" ]
+      },
+      "**/*"
+    ]
+  }
+}

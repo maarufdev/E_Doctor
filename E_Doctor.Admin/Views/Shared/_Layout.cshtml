@@ -4,10 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>E-Doctor Admin</title>
-    <link rel="stylesheet" href="~/common/css/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/common/css/main.css" />
+    @* <script src="~/common/js/main.js" asp-append-version="true"></script> *@
+    <script src="/common/lib/jquery/dist/jquery.min.js"></script>
+
 </head>
 <body>
     <div id="app-loader"><div class="spinner"></div></div>
+    <script src="/common/js/main.js" defer></script>
 
     @if (User.Identity.IsAuthenticated)
     {
@@ -27,14 +31,14 @@
         </div>
     } else
     {
-        <link rel="stylesheet" href="~/features/user/css/user.css" asp-append-version="true" />
+        <link rel="stylesheet" href="/features/user/css/user.css" asp-append-version="true" />
         <div id="auth-container">
             @RenderBody()
         </div>
     }
     
-    <script src="~/common/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/common/js/main.js" asp-append-version="true"></script>
+    @* <script src="~/common/lib/jquery/dist/jquery.min.js"></script> *@
+    @* <script src="~/common/js/main.js" asp-append-version="true"></script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

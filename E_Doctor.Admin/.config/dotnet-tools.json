@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "electronnet.cli": {
+      "version": "23.6.2",
+      "commands": [
+        "electronize"
+      ],
+      "rollForward": false
+    }
+  }
+}

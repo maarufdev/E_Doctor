@@ -13,6 +13,7 @@
 
     initialize() {
         document.addEventListener("DOMContentLoaded", () => {
+            console.log("login reloaded!")
             this.userNameElmt = "#login-username";
             this.passwordElmt = "#login-password";
             this.submitBtn = "#login-submit-btn";

@@ -15,8 +15,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAdminInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var dbPath = Path.Combine(AppContext.BaseDirectory, connectionString);
+
         services
-            .AddDbContext<AdminAppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
+            .AddDbContext<AdminAppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"))
             .AddAdminCustomIdentityServices();
 
         return services;
@@ -51,7 +54,7 @@ public static class DependencyInjection
         services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Account/Login";
-            options.AccessDeniedPath = "/Account/Login";
+            //options.AccessDeniedPath = "/Account/Login";
 
             // 👇 Force cookie to behave like a "session cookie"
             options.Cookie.HttpOnly = true;
