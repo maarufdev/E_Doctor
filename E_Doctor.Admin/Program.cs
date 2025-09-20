@@ -1,7 +1,12 @@
 using E_Doctor.Application;
 using E_Doctor.Infrastructure;
+using E_Doctor.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Force Kestrel to always use port 5000
+builder.WebHost.UseUrls("http://localhost:5000");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -13,7 +18,7 @@ builder.Services
 
 var app = builder.Build();
 
-// seeder
+// Seeder
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 await app.SeedAdminUser(services, builder.Configuration);
@@ -22,7 +27,6 @@ await app.SeedAdminUser(services, builder.Configuration);
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
