@@ -87,6 +87,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         IllnessName = i.IllnessName,
                         Description = i.Description,
                         Prescription = i.Prescription,
+                        Notes = i.Notes,
                         UpdatedOn = DateTime.UtcNow,
                     });
 
@@ -150,7 +151,8 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
             return DiagnosisDetailsDTO.Create(
                 illness.Illness ?? string.Empty,
                 illness.Description ?? string.Empty,
-                illness.Prescription ?? string.Empty);
+                illness.Prescription ?? string.Empty,
+                illness.Notes ?? string.Empty);
         }
 
         public async Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
@@ -172,6 +174,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         i.IllnessName,
                         i.Prescription,
                         i.Description,
+                        i.Notes,
                         MatchingRules = i.Rules.Where(r => patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                         MaxScore = i.Rules.Sum(r => (int)r.Weight)
                     })
@@ -269,6 +272,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                             Illness = diagnosIllness.IllnessName,
                             Description = diagnosIllness.Description,
                             Prescription = diagnosIllness.Prescription ?? string.Empty,
+                            Notes = diagnosIllness.Notes,
                             Score = diagnosis.Value,
                             IsActive = true,
                             CreatedOn = DateTime.Now,
@@ -302,7 +306,8 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         diagnosisResult = DiagnosisDetailsDTO.Create(
                             foundIllness.Illness,
                             foundIllness.Description ?? string.Empty,
-                            foundIllness.Prescription ?? string.Empty
+                            foundIllness.Prescription ?? string.Empty,
+                            foundIllness.Notes ?? string.Empty
                             );
                     }
                     

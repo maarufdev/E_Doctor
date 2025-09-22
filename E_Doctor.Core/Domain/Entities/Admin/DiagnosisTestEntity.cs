@@ -3,8 +3,9 @@
 public class DiagnosisTestEntity : BaseEntity
 {
     public int UserId { get; set; }
-    public string? DiagnosisResult { get; set; }
-    public string? Symptoms { get; set; }
-    public string? Prescription { get; set; }
-    public string? Description { get; set; }
+    public string? DiagnosisResult { get; set; } = string.Empty;
+    public string? Symptoms { get; set; } = string.Empty;
+    public string? Prescription { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
+    public string? Notes { get; set; } = string.Empty;
 }

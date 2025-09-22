@@ -28,6 +28,7 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
                 entity.IllnessName,
                 entity.Description ?? string.Empty,
                 entity.Prescription ?? string.Empty,
+                entity.Notes ?? string.Empty,
                 rulesDTO
                 );
 

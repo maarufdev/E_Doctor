@@ -8,13 +8,13 @@ public enum IllnessRuleConditionEnum
 
     [Description("IsLessThan")]
     IsLessThan,
-    
+
     [Description("IsLessThanOrEqual")]
     IsLessThanOrEqual,
-    
+
     [Description("IsMoreThan")]
     IsMoreThan,
-    
+
     [Description("IsMoreThanOrEqual")]
     IsMoreThanOrEqual,
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     /// <inheritdoc />
-    public partial class InitialDatabaseMigrations : Migration
+    public partial class InitialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,6 +68,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     DiagnosisResult = table.Column<string>(type: "TEXT", nullable: true),
                     Symptoms = table.Column<string>(type: "TEXT", nullable: true),
                     Prescription = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -86,6 +87,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     IllnessName = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Prescription = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -247,8 +249,8 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
 
             migrationBuilder.InsertData(
                 table: "Illnesses",
-                columns: new[] { "Id", "CreatedOn", "Description", "IllnessName", "IsActive", "Prescription", "UpdatedOn" },
-                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Common", "Flu", true, "", null });
+                columns: new[] { "Id", "CreatedOn", "Description", "IllnessName", "IsActive", "Notes", "Prescription", "UpdatedOn" },
+                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Common", "Flu", true, "", "", null });
 
             migrationBuilder.InsertData(
                 table: "Symptoms",

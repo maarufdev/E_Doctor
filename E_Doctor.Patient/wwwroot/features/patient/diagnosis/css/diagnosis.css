@@ -15,18 +15,18 @@
     display: none;
 }
 
-    .searchable-dropdown-list.visible {
-        display: block;
-    }
+.searchable-dropdown-list.visible {
+    display: block;
+}
 
 .searchable-dropdown-item {
     padding: 0.5rem 0.75rem;
     cursor: pointer;
 }
 
-    .searchable-dropdown-item:hover {
-        background-color: #f3f4f6;
-    }
+.searchable-dropdown-item:hover {
+    background-color: #f3f4f6;
+}
 
 .selected-symptoms-container {
     display: flex;
@@ -61,7 +61,6 @@
     cursor: pointer;
     font-weight: bold;
 }
-
 
 .selected-symtoms-message:has(+ .patient-symptom:not(.hidden)) {
     display: none;
@@ -120,7 +119,6 @@
     opacity: 0.6;
 }
 
-
 .diagnosis-result-text {
     font-size: 1rem;
     font-weight: 600;
@@ -134,7 +132,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 300px;
 }
 
 .btn-view-diagnosis {
@@ -144,4 +141,8 @@
 
 .btn-view-diagnosis:visited {
     color: var(--primary-color);
+}
+
+.diagnosis-result-modal-content {
+    max-width: 500px;
 }

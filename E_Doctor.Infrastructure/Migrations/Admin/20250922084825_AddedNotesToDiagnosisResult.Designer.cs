@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     [DbContext(typeof(AdminAppDbContext))]
-    [Migration("20250915164556_InitialDatabaseMigrations")]
-    partial class InitialDatabaseMigrations
+    [Migration("20250922084825_AddedNotesToDiagnosisResult")]
+    partial class AddedNotesToDiagnosisResult
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,11 +29,17 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DiagnosisResult")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Prescription")
                         .HasColumnType("TEXT");
@@ -71,6 +77,9 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Prescription")
                         .HasColumnType("TEXT");
 
@@ -89,6 +98,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                             Description = "Common",
                             IllnessName = "Flu",
                             IsActive = true,
+                            Notes = "",
                             Prescription = ""
                         });
                 });

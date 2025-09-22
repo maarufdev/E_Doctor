@@ -3,5 +3,6 @@ public sealed record ExportIllnessDTO(
     int IllnessId,
     string IllnessName,
     string Description,
-    string Prescription
+    string Prescription,
+    string Notes
 );

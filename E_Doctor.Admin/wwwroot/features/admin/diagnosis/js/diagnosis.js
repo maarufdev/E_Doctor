@@ -70,6 +70,7 @@
                     result: "#diagnosis-result",
                     description: "#diagnosis-description",
                     prescription: "#diagnosis-prescriptions",
+                    notes: "#diagnosis-notes",
                 }
             }
         },
@@ -125,17 +126,19 @@
                     $diagnosisTblBody.append($tr);
                 });
             },
-            populateDiagnosisResult: function ({ result, description, prescription }) {
+            populateDiagnosisResult: function ({ result, description, prescription, notes }) {
                 const { diagnosis } = elementHolders.modals;
 
                 $(diagnosis.details.result).text(" ");
                 $(diagnosis.details.prescription).text(" ");
                 $(diagnosis.details.description).text(" ");
+                $(diagnosis.details.notes).text(" ");
 
                 if (result) {
                     $(diagnosis.details.result).text(result ?? " ");
                     $(diagnosis.details.prescription).text(prescription ?? " ");
                     $(diagnosis.details.description).text(description ?? " ");
+                    $(diagnosis.details.notes).text(notes ?? " ");
                 } 
             },
             handleOnShowDiagnosisResult: function (result) {

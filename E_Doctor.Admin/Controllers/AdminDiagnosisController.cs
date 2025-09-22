@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Diagnosis;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +14,26 @@ namespace E_Doctor.Web.Controllers
         {
             _diagnosisService = diagnosisService;
         }
-        public IActionResult Index()
+        public IActionResult Index(AdminDiagnosisTab? tabName = AdminDiagnosisTab.Diagnosis)
         {
+            ViewBag.ActiveTab = tabName;
+            var pageTitle = "Diagnosis";
+
+            switch (tabName)
+            {
+                case AdminDiagnosisTab.Symptom:
+                    pageTitle = "Manage Symptoms";
+                    break;
+                case AdminDiagnosisTab.Illness:
+                    pageTitle = "Manage Illnesses";
+                    break;
+                default:
+                    pageTitle = "Diagnosis";
+                    break;
+            }
+
+            ViewBag.PageTitle = pageTitle;
+
             return View();
         }
 
