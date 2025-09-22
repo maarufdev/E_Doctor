@@ -10,4 +10,5 @@ public interface IUserManagerService
     Task<Result> Logout();
     Task<int?> GetUserId();
     Task<UserProfileDTO> GetUserProfile();
+    Task<Result> ResetPassword(ResetPasswordDTO resetPasswordDTO);
 }
