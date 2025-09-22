@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>E-Doctor Admin</title>
     <link rel="stylesheet" href="~/common/css/main.css" />
-    @* <script src="~/common/js/main.js" asp-append-version="true"></script> *@
-    <script src="/common/lib/jquery/dist/jquery.min.js"></script>
-
 </head>
 <body>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <div id="app-loader"><div class="spinner"></div></div>
     <script src="/common/js/main.js" defer></script>
 
@@ -36,10 +34,42 @@
             @RenderBody()
         </div>
     }
-    
-    @* <script src="~/common/lib/jquery/dist/jquery.min.js"></script> *@
-    @* <script src="~/common/js/main.js" asp-append-version="true"></script> *@
 
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 id="alert-modal-title" class="text-xl font-semibold"></h3>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="alert-modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" data-action="close">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 id="confirm-modal-title" class="text-xl font-semibold"></h3>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-modal-message"></p>
+            </div>
+            <div class="modal-footer flex gap-2">
+                <button type="button" id="confirm-cancel-btn" class="btn btn-sm" style="background-color: var(--border-color); color: var(--text-secondary);">Cancel</button>
+                <button type="button" id="confirm-ok-btn" class="btn btn-sm btn-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <script src="~/common/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/common/js/main.js" asp-append-version="true"></script>
+    <script>if (window.module) module = window.module;</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

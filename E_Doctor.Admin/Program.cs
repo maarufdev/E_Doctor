@@ -46,16 +46,12 @@ app.MapControllerRoute(
 // Enable Electron.NET
 if (HybridSupport.IsElectronActive)
 {
-
-    //app.UseElectron();
-    Console.WriteLine("Electron is active, creating window...");
     Task.Run(CreateElectronWindow);
-    await app.RunAsync(); // Runs the web host properly for Electron
+    await app.RunAsync(); 
 }
 else
 {
-    Console.WriteLine("Running as normal web app...");
-    app.Run(); // Fallback if Electron is not active
+    app.Run(); 
 }
 
 static async Task CreateElectronWindow()
@@ -68,15 +64,12 @@ static async Task CreateElectronWindow()
             Width = 1200,
             Height = 800,
             Show = true,// <-- Always show window immediately
-            //AutoHideMenuBar = true // hides the menu bar
+            AutoHideMenuBar = true // hides the menu bar
         }
     );
 
     window.OnClosed += () =>
     {
-        Console.WriteLine("Electron window closed. Quitting app...");
         Electron.App.Quit();
     };
-
-    Console.WriteLine("Electron window created successfully!");
 }
