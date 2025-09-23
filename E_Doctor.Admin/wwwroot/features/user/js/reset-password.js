@@ -1,21 +1,21 @@
-﻿class LoginService {
+﻿class ResetPasswordService {
     constructor() {
 
         this.loginCommand = {
             userName: null,
-            password: null
+            newPassword: null
         };
 
         this.userNameElmt = null;
-        this.passwordElmt = null;
-        this.submitBtn = null;
+        this.newPasswordElmt = null;
+        this.resetBtn = null;
     }
 
     initialize() {
         document.addEventListener("DOMContentLoaded", () => {
-            this.userNameElmt = "#login-username";
-            this.passwordElmt = "#login-password";
-            this.submitBtn = "#login-submit-btn";
+            this.userNameElmt = "#username";
+            this.newPasswordElmt = "#new-password";
+            this.resetBtn = "#reset-password-btn";
 
             this.registerEvents();
         });
@@ -33,15 +33,15 @@
         );
 
         registerEvent(
-            this.passwordElmt,
+            this.newPasswordElmt,
             "input",
             function (event) {
-                login.loginCommand.password = event.target.value;
+                login.loginCommand.newPassword = event.target.value;
             }
         );
 
         registerEvent(
-            this.submitBtn,
+            this.resetBtn,
             "click",
             async function (event) {
                 event.preventDefault();
@@ -51,22 +51,23 @@
                 let errors = [];
 
                 if (!command.userName || command.userName.trim() === "") {
-                    errors.push("Username is required.");
+                    errors.push("Username/Email is required.");
                 }
 
-                if (!command.password || command.password.trim() === "") {
-                    errors.push("Password is required.");
+                if (!command.newPassword || command.newPassword.trim() === "") {
+                    errors.push("New Password is required.");
                 }
 
                 if (errors.length > 0) {
-                    alert(errors.join("\n"));   
-                    return;                    
+                    alert(errors.join("\n"));
+                    return;
                 }
 
-                const result = await login.apiService().login(command);
+                const result = await login.apiService().forgot(command);
 
                 if (result) {
-                    window.location.href = "/Diagnosis";
+                    alert("Password has been reset successfully.")
+                    window.location.href = "/Account/Login";
                 }
             }
         );
@@ -74,9 +75,9 @@
 
     apiService() {
         return {
-            login: async function (command) {
+            forgot: async function (command) {
                 return await apiFetch(
-                    "/Account/Login",
+                    "/Account/ResetPassword",
                     {
                         method: "POST",
                         body: command
@@ -88,6 +89,6 @@
 }
 
 (function () {
-    const login = new LoginService();
-    login.initialize();
+    const service = new ResetPasswordService();
+    service.initialize();
 }());

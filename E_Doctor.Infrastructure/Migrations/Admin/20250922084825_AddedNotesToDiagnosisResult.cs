@@ -5,13 +5,13 @@
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     /// <inheritdoc />
-    public partial class AddDescriptionFieldToDiagnosisTest : Migration
+    public partial class AddedNotesToDiagnosisResult : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Description",
+                name: "Notes",
                 table: "DiagnosisTest",
                 type: "TEXT",
                 nullable: true);
@@ -21,7 +21,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Description",
+                name: "Notes",
                 table: "DiagnosisTest");
         }
     }

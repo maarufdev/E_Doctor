@@ -143,4 +143,19 @@ internal class UserManagerService : IUserManagerService
 
         return Result.Success();
     }
+
+    public async Task<Result> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+    {
+        var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Username);
+        
+        if (user is null) return Result.Failure("User not found");
+
+        var generatedToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        var result = await _userManager.ResetPasswordAsync(user, generatedToken, resetPasswordDTO.NewPassword);
+
+        if (result.Succeeded) return Result.Success();
+
+        return Result.Failure("Password was not reset successfully.");
+    }
 }

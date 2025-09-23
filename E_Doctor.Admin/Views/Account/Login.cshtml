@@ -9,9 +9,12 @@
             <label for="login-username">Username</label>
             <input type="text" id="login-username" class="form-input" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="login-password">Password</label>
             <input type="password" id="login-password" class="form-input" autocomplete="off" />
+        </div>
+        <div class="form-group mt-3 flex">
+            <p class="auth-link"><a asp-controller="Account" asp-action="ForgotPassword">Forgot your password?</a></p>
         </div>
         <button id="login-submit-btn" type="submit" class="btn btn-primary mt-4">Login</button>
     </form>

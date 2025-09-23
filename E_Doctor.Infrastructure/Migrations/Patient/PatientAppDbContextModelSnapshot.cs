@@ -65,6 +65,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Prescription")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -124,6 +128,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IllnessName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

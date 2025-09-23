@@ -114,6 +114,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         IllnessName = requestDto.IllnessName,
                         Description = requestDto.Description,
                         Prescription = requestDto.Prescription,
+                        Notes = requestDto.Notes,
                         Rules = [],
                         IsActive = true,
                         CreatedOn = DateTime.UtcNow
@@ -148,6 +149,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     illness.IllnessName = requestDto.IllnessName;
                     illness.Description = requestDto.Description;
                     illness.Prescription = requestDto.Prescription;
+                    illness.Notes = requestDto.Notes;
                     illness.UpdatedOn = DateTime.UtcNow;
 
                     var existingRules = illness.Rules?.ToList() ?? [];
@@ -238,7 +240,8 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         s.Id, 
                         s.IllnessName, 
                         s.Description ?? string.Empty, 
-                        s.Prescription ?? string.Empty)
+                        s.Prescription ?? string.Empty,
+                        s.Notes ?? string.Empty)
                     )
                     .ToListAsync();
 

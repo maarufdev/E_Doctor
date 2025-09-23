@@ -25,26 +25,6 @@ namespace E_Doctor.Web.Controllers
             _commonService = commonService;
         }
 
-        public IActionResult Index(SettingTab? tabName = SettingTab.Symptom)
-        {
-            ViewBag.ActiveTab = tabName;
-            var pageTitle = "Manage Symptoms";
-
-            switch (tabName)
-            {
-                case SettingTab.Disease:
-                    pageTitle = "Manage Illnesses";
-                    break;
-                default:
-                    pageTitle = "Manage Symptoms";
-                    break;
-            }
-
-            ViewBag.PageTitle = pageTitle;
-
-            return View();
-        }
-
         #region common
         public IActionResult GetRuleConditions()
         {

@@ -4,5 +4,6 @@ public sealed record IllnessDTO(
     string IllnessName,
     string Description,
     string Prescription,
+    string Notes,
     List<IllnessRuleDTO> Rules
 );

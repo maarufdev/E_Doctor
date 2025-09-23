@@ -18,6 +18,7 @@
                 illnessName: "",
                 description: "",
                 prescription: "",
+                notes: "",
                 rules: []
             },
             illnessId: null,
@@ -56,6 +57,7 @@
                     illnessName: "#disease-name-input",
                     description: "#disease-desc-input",
                     prescription: "#disease-prescription-input",
+                    notes: "#disease-notes-input",
                 },
                 rulesContainer: "#disease-rules-container",
                 ddSymptom: "#symptom-select",
@@ -187,6 +189,7 @@
                     illnessName,
                     description,
                     prescription,
+                    notes,
                     rules
                 } = illness ?? {};
 
@@ -194,12 +197,14 @@
                 commandQueries.saveIllness.illnessName = illnessName;
                 commandQueries.saveIllness.description = description;
                 commandQueries.saveIllness.prescription = prescription;
+                commandQueries.saveIllness.notes = notes;
                 commandQueries.saveIllness.rules = rules ?? [];
 
                 $(fields.illnessId).val(illnessId);
                 $(fields.illnessName).val(illnessName);
                 $(fields.description).val(description);
                 $(fields.prescription).val(prescription);
+                $(fields.notes).val(notes);
 
                 this.constructSelectedRules();
             },
@@ -235,10 +240,10 @@
                 const $select = $(`<select class="form-select rule-symptom-condition-select" style="width: 10rem;">`);
 
                 const $options = stateHolders.ruleConditions.map(
-                    c => `<option value="${c.id}" ${c.id == selectedCondition ? "selected" : ""}>${c.text}</option>`).join("");
-
+                    c => `<option value="${c.id}" ${c.id == selectedCondition ? "selected" : ""} title="${c.text}">${c.text}</option>`).join("");
                 $select.append($options);
-
+                const currentSelectedText = $select.find("option:selected").text()
+                $select.attr("title", currentSelectedText);
                 return $select[0].outerHTML;
             },
             createRulesWeightOption: function (selectedWeight) {
@@ -278,7 +283,7 @@
                 const symptom = {
                     symptomId: symptomId,
                     symptomName: symptomName,
-                    condition: 1,
+                    condition: 4,
                     days: 1
                 }
 
@@ -321,6 +326,7 @@
                 $(fields.illnessName).val("");
                 $(fields.description).val("");
                 $(fields.prescription).val("");
+                $(fields.notes).val("");
 
                 const $ruleFieldsContainer = $(forms.illness.rulesContainer);
 
@@ -331,6 +337,7 @@
                     illnessName: "",
                     description: "",
                     prescription: "",
+                    notes: "",
                     rules: []
                 };
                 stateHolders.tempSelectedRules = [];
@@ -384,6 +391,9 @@
                 if (!result) return false;
 
                 result = ValidateInput(commandQueries.saveIllness.prescription, "Prescription is required.");
+                if (!result) return false;
+
+                result = ValidateInput(commandQueries.saveIllness.notes, "Notes/Referral is required.");
                 if (!result) return false;
 
                 result = ValidateInput(commandQueries.saveIllness.rules, "Rules Fields is required. Please add config at least 1");
@@ -527,6 +537,15 @@
                     function (e) {
                         const $target = $(e.target);
                         commandQueries.saveIllness.prescription = $target.val();
+                    }
+                );
+
+                registerEvent(
+                    forms.illness.fields.notes,
+                    "input",
+                    function (e) {
+                        const $target = $(e.target);
+                        commandQueries.saveIllness.notes = $target.val();
                     }
                 );
             }

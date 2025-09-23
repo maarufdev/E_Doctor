@@ -50,7 +50,8 @@ internal class DiagnosisService : IDiagnosisService
         return DiagnosisDetailsDTO.Create(
             diagnosis.DiagnosisResult ?? string.Empty, 
             diagnosis.Description ?? string.Empty, 
-            diagnosis.Prescription ?? string.Empty);
+            diagnosis.Prescription ?? string.Empty,
+            diagnosis.Notes ?? string.Empty);
     }
     public async Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
     {
@@ -70,6 +71,7 @@ internal class DiagnosisService : IDiagnosisService
                     i.IllnessName,
                     i.Prescription,
                     i.Description,
+                    i.Notes,
                     MatchingRules = i.Rules.Where(r => r.IsActive && patientSymptomsIds.Contains(r.SymptomId)).ToList(),
                     MaxScore = i.Rules.Where(r => r.IsActive).Sum(r => (int)r.Weight)
                 })
@@ -166,6 +168,7 @@ internal class DiagnosisService : IDiagnosisService
                         Symptoms = string.Join(", ", symptoms),
                         Prescription = illness.Prescription,
                         Description = illness.Description,
+                        Notes = illness.Notes,
                         CreatedOn = DateTime.UtcNow,
                         IsActive = true,
                     };
@@ -177,7 +180,8 @@ internal class DiagnosisService : IDiagnosisService
                     diagnosisResult = DiagnosisDetailsDTO.Create(
                         patientDiagnosed.DiagnosisResult, 
                         patientDiagnosed.Description ?? string.Empty,
-                        patientDiagnosed.Prescription ?? string.Empty);
+                        patientDiagnosed.Prescription ?? string.Empty,
+                        patientDiagnosed.Notes ?? string.Empty);
                 }
             }
 

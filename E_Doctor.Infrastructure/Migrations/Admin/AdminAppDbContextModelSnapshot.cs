@@ -35,6 +35,9 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Prescription")
                         .HasColumnType("TEXT");
 
@@ -71,6 +74,9 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Prescription")
                         .HasColumnType("TEXT");
 
@@ -89,6 +95,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                             Description = "Common",
                             IllnessName = "Flu",
                             IsActive = true,
+                            Notes = "",
                             Prescription = ""
                         });
                 });

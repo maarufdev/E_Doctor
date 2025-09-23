@@ -59,5 +59,16 @@ namespace E_Doctor.Patient.Controllers
 
             return RedirectToAction("Index", "Diagnosis");
         }
+
+        public IActionResult ForgotPassword() => View();
+
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        {
+            var result = await _userService.ResetPassword(resetPasswordDTO);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.IsSuccess);
+        }
     }
 }
