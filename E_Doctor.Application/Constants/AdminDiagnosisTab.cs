@@ -2,6 +2,7 @@
 public enum AdminDiagnosisTab
 {
     Diagnosis,
+    Consultation,
     Symptom,
     Illness
 }
