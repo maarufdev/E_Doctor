@@ -24,42 +24,6 @@
     </div>
 </div>
 
-<div id="consultation-modal" class="modal-backdrop">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="consultation-modal-title" class="text-xl font-semibold">New Consultation</h3>
-            <button id="close-consultation-modal" class="modal-close-btn">&times;</button>
-        </div>
-        <div id="consultation-modal-body" class="modal-body">
-            <div class="consultation-content select-symptoms-content">
-                <p class="mb-2 font-semibold">Please select all symptoms you are experiencing.</p>
-                <div class="searchable-dropdown" id="symptom-search-parent">
-                    <input type="text" autocomplete="off" id="symptom-search-input" class="form-input" placeholder="Search for a symptom...">
-                    <div id="symptom-search-list" class="searchable-dropdown-list">
-                    </div>
-                </div>
-                <div id="selected-symptoms-container" class="selected-symptoms-container mt-2">
-                </div>
-            </div>
-            <div class="consultation-content selected-symptoms-durations hidden">
-                <div class="duration-fields" id="duration-fields"></div>
-            </div>
-        </div>
-        <div id="consultation-modal-footer" class="modal-footer flex">
-            <div class="consultation-buttons symptoms-selection-buttons flex justify-end w-full">
-                <button id="next-step-btn" class="btn btn-primary diagnosis-btn flex-end" disabled>Next</button>
-            </div>
-            <div class="consultation-buttons symptoms-review-buttons flex justify-between w-full hidden">
-                <button id="back-diagnosis-btn" class="btn btn-secondary diagnosis-btn diagnosis-review-btn">Back</button>
-                <button id="run-diagnosis-btn" class="btn btn-primary diagnosis-btn">Run Diagnosis</button>
-            </div>
-            <div class="consultation-buttons symptoms-result-buttons flex justify-end w-full hidden">
-                <button id="finish-diagnosis-btn" class="btn btn-primary diagnosis-btn">Done</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @* Diagnosis Result *@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
