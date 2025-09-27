@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     [DbContext(typeof(AdminAppDbContext))]
-    [Migration("20250922084825_AddedNotesToDiagnosisResult")]
-    partial class AddedNotesToDiagnosisResult
+    [Migration("20250927134344_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,16 +111,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<int>("SymptomId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Condition")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Days")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Weight")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("IllnessId", "SymptomId");
@@ -134,10 +125,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                         {
                             IllnessId = 1,
                             SymptomId = 1,
-                            Condition = 1,
-                            Days = 2,
-                            IsActive = true,
-                            Weight = 0
+                            IsActive = true
                         });
                 });
 

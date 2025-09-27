@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Diagnosis;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
@@ -15,8 +16,23 @@ namespace E_Doctor.Patient.Controllers
         {
             _patientService = patientService;
         }
-        public IActionResult Index()
+        public IActionResult Index(AdminDiagnosisTab? tabName = AdminDiagnosisTab.Diagnosis)
         {
+            ViewBag.ActiveTab = tabName;
+            var pageTitle = "Diagnosis";
+
+            switch (tabName)
+            {
+                case AdminDiagnosisTab.Consultation:
+                    pageTitle = "Consulation";
+                    break;
+                default:
+                    pageTitle = "Diagnosis";
+                    break;
+            }
+
+            ViewBag.PageTitle = pageTitle;
+
             return View();
         }
 
@@ -43,13 +59,15 @@ namespace E_Doctor.Patient.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RunDiagnosis([FromBody] List<RunDiagnosisDTO> requestDTO)
+        public async Task<IActionResult> RunDiagnosis([FromBody] RunDiagnosisDTO requestDTO)
         {
-            if (requestDTO.Count == 0) return BadRequest("Please provide diagnosis");
+            if (requestDTO is null) return BadRequest("Please provide diagnosis");
 
             var result = await _patientService.RunDiagnosis(requestDTO);
 
-            return Ok(result);
+            if (result.IsFailure) return BadRequest(result.Value);
+
+            return Ok(result.Value);
         }
 
         public async Task<IActionResult> GetDiagnosis()
@@ -60,6 +78,22 @@ namespace E_Doctor.Patient.Controllers
         public async Task<IActionResult> GetDiagnosisById(int diagnosisId)
         {
             return Ok(await _patientService.GetDiagnosisById(diagnosisId));
+        }
+
+        public async Task<IActionResult> GetConsultationIllnessList()
+        {
+            var result = await _patientService.GetConsultationIllnessList();
+
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetConsultationSymptomByIllnessId(int IllnessId)
+        {
+            var result = await _patientService.GetConsultationSymptomByIllnessId(IllnessId);
+
+            if (result.IsFailure) return BadRequest(result.Value);
+
+            return Ok(result.Value);
         }
     }
 }

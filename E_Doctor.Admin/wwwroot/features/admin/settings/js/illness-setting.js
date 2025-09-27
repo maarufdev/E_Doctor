@@ -158,7 +158,6 @@
                             if (!result) {
                                 return;
                             }
-
                             services.eventHandlers.populateDiseaseOnForm(result);
                             diseaseModal(true, true);
                         }
@@ -213,13 +212,25 @@
                 const { commandQueries, tempSelectedRules, symptoms } = stateHolders;
                 const diseaseRules = commandQueries.saveIllness.rules;
 
+                //const rulesToPopulates = diseaseRules.map(rule => {
+                //    const transformedRule = {
+                //        symptomId: rule.symptomId,
+                //        symptomName: symptoms.find(s => s.symptomId == rule.symptomId)?.symptomName ?? "",
+                //        condition: rule.condition,
+                //        days: rule.days,
+                //        weight: rule.weight
+                //    }
+
+                //    tempSelectedRules.push(transformedRule);
+
+                //    return transformedRule;
+                //});
+
                 const rulesToPopulates = diseaseRules.map(rule => {
                     const transformedRule = {
                         symptomId: rule.symptomId,
                         symptomName: symptoms.find(s => s.symptomId == rule.symptomId)?.symptomName ?? "",
-                        condition: rule.condition,
-                        days: rule.days,
-                        weight: rule.weight
+                        question: rule.question,
                     }
 
                     tempSelectedRules.push(transformedRule);
@@ -262,13 +273,25 @@
                 ruleRow.style.backgroundColor = '#f9fafb';
                 ruleRow.style.borderRadius = '0.25rem';
                 ruleRow.dataset.symptomId = data.symptomId;
+                //ruleRow.innerHTML = `
+                //        <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
+                //        ${this.createRulesConditionOption(data.condition)}
+                //        <input type="number" value="${data.days}" min="1" class="form-input rule-symptom-days" style="width: 6rem;">
+                //        ${this.createRulesWeightOption(data.weight)}
+                //        <button class="remove-rule-btn" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:1.5rem; line-height:1;">&times;</button>
+                //    `;
+
+                //// with questionaire
                 ruleRow.innerHTML = `
                         <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
-                        ${this.createRulesConditionOption(data.condition)}
-                        <input type="number" value="${data.days}" min="1" class="form-input rule-symptom-days" style="width: 6rem;">
-                        ${this.createRulesWeightOption(data.weight)}
-                        <button class="remove-rule-btn" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:1.5rem; line-height:1;">&times;</button>
+                        <textarea type="text" class="form-input rule-symptom-question" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="flex-grow: 1;resize: none;align-self: start;" placeholder="Symptom Question">${data.question ?? ""}</textarea>
+                        <button class="remove-rule-btn" style="background:none;border:none;color:var(--danger-color);cursor:pointer;font-size: 2rem;line-height:1;width: 50px;">&times;</button>
                     `;
+
+                //ruleRow.innerHTML = `
+                //        <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
+                //        <button class="remove-rule-btn" style="background:none;border:none;color:var(--danger-color);cursor:pointer;font-size: 2rem;line-height:1;width: 50px;">&times;</button>
+                //    `;
                 return ruleRow;
             },
             addRule: function () {
@@ -283,8 +306,8 @@
                 const symptom = {
                     symptomId: symptomId,
                     symptomName: symptomName,
-                    condition: 4,
-                    days: 1
+                    //condition: 4,
+                    //days: 1
                 }
 
                 const $ruleFieldsContainer = $(forms.illness.rulesContainer);
@@ -346,15 +369,17 @@
                 const $diseaseSymptomRules = $("#disease-rules-container").find(".rule-symptom-config-container");
                 const rules = [...$diseaseSymptomRules].map(field => {
                     const symptomId = parseInt($(field).data("symptomId"));
-                    const condition = parseInt($(field).find(".rule-symptom-condition-select").val());
-                    const days = parseInt($(field).find(".rule-symptom-days").val());
-                    const weight = parseInt($(field).find(".rule-symptom-weight-select").val());
+                    const question = $(field).find(".rule-symptom-question").val()
+                    //const condition = parseInt($(field).find(".rule-symptom-condition-select").val());
+                    //const days = parseInt($(field).find(".rule-symptom-days").val());
+                    //const weight = parseInt($(field).find(".rule-symptom-weight-select").val());
 
                     return {
                         symptomId,
-                        condition,
-                        days,
-                        weight
+                        question
+                        //condition,
+                        //days,
+                        //weight
                     }
                 });
 
@@ -398,6 +423,13 @@
 
                 result = ValidateInput(commandQueries.saveIllness.rules, "Rules Fields is required. Please add config at least 1");
                 if (!result) return false;
+
+                const hasQuestionEmpty = commandQueries.saveIllness.rules.some(q => q.question == "");
+
+                if (hasQuestionEmpty) {
+                    alert("Question field is required.");
+                    return false;
+                }
 
                 return result;
             },

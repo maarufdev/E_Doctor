@@ -12,14 +12,19 @@ namespace E_Doctor.Application.DTOs.Settings.RuleManagements
 
             if (entity.Rules?.Count > 0)
             {
+                //rulesDTO = entity.Rules
+                //.Where(s => s.Symptom != null && s.Symptom.IsActive)
+                //.Select(r => new IllnessRuleDTO(
+                //    r.SymptomId,
+                //    r.Condition,
+                //    r.Days,
+                //    r.Weight
+                //))
+                //.ToList();
+
                 rulesDTO = entity.Rules
-                .Where(s => s.Symptom != null && s.Symptom.IsActive)
-                .Select(r => new IllnessRuleDTO(
-                    r.SymptomId,
-                    r.Condition,
-                    r.Days,
-                    r.Weight
-                ))
+                .Where(s => s.Symptom != null && s.Symptom.IsActive && s.IsActive)
+                .Select(r => new IllnessRuleDTO(r.SymptomId, r.Question))
                 .ToList();
             }
 

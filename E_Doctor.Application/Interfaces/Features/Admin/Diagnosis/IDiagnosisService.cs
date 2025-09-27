@@ -1,9 +1,13 @@
-﻿using E_Doctor.Application.DTOs.Diagnosis;
+﻿using E_Doctor.Application.DTOs.Common;
+using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+using E_Doctor.Application.DTOs.Diagnosis;
 
 namespace E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 public interface IDiagnosisService
 {
     Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId);
-    Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest);
+    Task<Result<DiagnosisDetailsDTO>> RunDiagnosis(RunDiagnosisDTO diagnosisRequest);
     Task<List<DiagnosisListDTO>> GetDiagnosis();
+    Task<List<GetConsultationIllnessDTO>> GetConsultationIllnessList();
+    Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId);
 }
