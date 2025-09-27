@@ -66,7 +66,7 @@
                 buttons: {
                     close: "#close-diagnosis-result-modal"
                 },
-                details: {
+                diagnosisInfo: {
                     result: "#diagnosis-result",
                     description: "#diagnosis-description",
                     prescription: "#diagnosis-prescriptions",
@@ -129,16 +129,16 @@
             populateDiagnosisResult: function ({ result, description, prescription, notes }) {
                 const { diagnosis } = elementHolders.modals;
 
-                $(diagnosis.details.result).text(" ");
-                $(diagnosis.details.prescription).text(" ");
-                $(diagnosis.details.description).text(" ");
-                $(diagnosis.details.notes).text(" ");
+                $(diagnosis.diagnosisInfo.result).text(" ");
+                $(diagnosis.diagnosisInfo.prescription).text(" ");
+                $(diagnosis.diagnosisInfo.description).text(" ");
+                $(diagnosis.diagnosisInfo.notes).text(" ");
 
                 if (result) {
-                    $(diagnosis.details.result).text(result ?? " ");
-                    $(diagnosis.details.prescription).text(prescription ?? " ");
-                    $(diagnosis.details.description).text(description ?? " ");
-                    $(diagnosis.details.notes).text(notes ?? " ");
+                    $(diagnosis.diagnosisInfo.result).text(result ?? " ");
+                    $(diagnosis.diagnosisInfo.prescription).text(prescription ?? " ");
+                    $(diagnosis.diagnosisInfo.description).text(description ?? " ");
+                    $(diagnosis.diagnosisInfo.notes).text(notes ?? " ");
                 } 
             },
             handleOnShowDiagnosisResult: function (result) {

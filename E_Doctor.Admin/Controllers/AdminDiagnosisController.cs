@@ -45,18 +45,36 @@ namespace E_Doctor.Web.Controllers
             return Ok(await  _diagnosisService.GetDiagnosis());
         }
 
-        public async Task<IActionResult> RunDiagnosis([FromBody] List<RunDiagnosisDTO> requestDTO)
+        public async Task<IActionResult> RunDiagnosis([FromBody] RunDiagnosisDTO requestDTO)
         {
-            if (requestDTO.Count == 0) return BadRequest("Please provide diagnosis");
+            if (requestDTO is null) return BadRequest("Please provide diagnosis");
 
             var result = await _diagnosisService.RunDiagnosis(requestDTO);
 
-            return Ok(result);
+            if (result.IsFailure) return BadRequest(result.Value);
+
+            return Ok(result.Value);
         }
 
         public async Task<IActionResult> GetDiagnosisById(int diagnosisId)
         {
             return Ok(await _diagnosisService.GetDiagnosisById(diagnosisId));
+        }
+
+        public async Task<IActionResult> GetConsultationIllnessList()
+        {
+            var result = await _diagnosisService.GetConsultationIllnessList();
+
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetConsultationSymptomByIllnessId(int IllnessId)
+        {
+            var result = await _diagnosisService.GetConsultationSymptomByIllnessId(IllnessId);
+
+            if (result.IsFailure) return BadRequest(result.Value);
+
+            return Ok(result.Value);
         }
     }
 }

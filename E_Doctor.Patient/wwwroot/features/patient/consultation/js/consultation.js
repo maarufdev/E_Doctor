@@ -4,7 +4,7 @@
         YES: 1,
         NONE: 2
     };
-    const DIAGNOSIS_BASE_URL = "AdminDiagnosis";
+    const DIAGNOSIS_BASE_URL = "Diagnosis";
     const URLS = {
         getSymptomsByIllnessId: `${DIAGNOSIS_BASE_URL}/GetConsultationSymptomByIllnessId`,
         getIllnesses: `${DIAGNOSIS_BASE_URL}/GetConsultationIllnessList`,

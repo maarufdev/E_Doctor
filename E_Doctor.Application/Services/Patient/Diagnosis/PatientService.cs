@@ -1,9 +1,10 @@
-﻿using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
+﻿using E_Doctor.Application.DTOs.Common;
+using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
+using E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Settings.Symptoms;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
-using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -155,171 +156,120 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                 illness.Notes ?? string.Empty);
         }
 
-        public async Task<DiagnosisDetailsDTO> RunDiagnosis(List<RunDiagnosisDTO> diagnosisRequest)
+        public async Task<Result<DiagnosisDetailsDTO>> RunDiagnosis(RunDiagnosisDTO diagnosisRequest)
         {
             try
             {
                 var userId = await _userServices.GetUserId();
-
                 var result = new List<DiagnosisResultDTO>();
-                var patientSymptomsIds = diagnosisRequest.Select(s => s.SymptomId).ToList();
-
-                var potentialIllnesses = await _appDbContext.PatientIllnesses
-                    .AsNoTracking()
-                    .Include(i => i.Rules)
-                    .Where(i => i.Rules != null && i.Rules.Any(r => patientSymptomsIds.Contains(r.SymptomId)))
-                    .Select(i => new
-                    {
-                        IllnessId = i.IllnessId,
-                        i.IllnessName,
-                        i.Prescription,
-                        i.Description,
-                        i.Notes,
-                        MatchingRules = i.Rules.Where(r => patientSymptomsIds.Contains(r.SymptomId)).ToList(),
-                        MaxScore = i.Rules.Sum(r => (int)r.Weight)
-                    })
-                    .ToListAsync();
-
-                var illnessScores = new Dictionary<int, decimal>();
-                var patientSymptomLookup = diagnosisRequest.ToDictionary(d => d.SymptomId, d => d.Duration);
-
-                foreach (var illness in potentialIllnesses)
-                {
-                    decimal currentScore = 0;
-
-                    foreach (var rule in illness.MatchingRules)
-                    {
-                        if (patientSymptomLookup.TryGetValue(rule.SymptomId, out var patientDuration))
-                        {
-                            bool isRuleMet = false;
-
-                            switch (rule.Condition)
-                            {
-                                case IllnessRuleConditionEnum.IsEqual:
-                                    isRuleMet = patientDuration == rule.Days;
-                                    break;
-
-                                case IllnessRuleConditionEnum.IsLessThan:
-                                    isRuleMet = patientDuration < rule.Days;
-                                    break;
-
-                                case IllnessRuleConditionEnum.IsLessThanOrEqual:
-                                    isRuleMet = patientDuration <= rule.Days;
-                                    break;
-
-                                case IllnessRuleConditionEnum.IsMoreThan:
-                                    isRuleMet = patientDuration > rule.Days;
-                                    break;
-
-                                case IllnessRuleConditionEnum.IsMoreThanOrEqual:
-                                    isRuleMet = patientDuration >= rule.Days;
-                                    break;
-                            }
-
-                            if (isRuleMet)
-                            {
-                                currentScore += (int)rule.Weight;
-                            }
-                        }
-                    }
-
-                    if (currentScore > 0)
-                    {
-                        illnessScores[illness.IllnessId] = currentScore / illness.MaxScore * 100;
-                    }
-                }
-
-                var topIllness = illnessScores
-                    .OrderByDescending(kvp => kvp.Value)
-                    .Take(1);
-
-                foreach (var illnessScore in topIllness)
-                {
-                    var illness = potentialIllnesses.FirstOrDefault(i => i.IllnessId == illnessScore.Key);
-
-                    if (illness is null) continue;
-
-                    if (illness.MaxScore > 0)
-                    {
-                        var percentageToDisplay = illnessScore.Value.ToString("F2");
-
-                        result.Add(new DiagnosisResultDTO(illness.IllnessName, percentageToDisplay));
-                    }
-                }
-
                 var diagnosisResult = new DiagnosisDetailsDTO();
 
-                if (topIllness.Any())
+                var illness = await _appDbContext.PatientIllnesses
+                   .AsNoTracking()
+                   .Include(r => r.Rules)
+                   .ThenInclude(s => s.Symptom)
+                   .Where(i => i.IllnessId == diagnosisRequest.IllnessId)
+                   .Select(i => new
+                   {
+                       IllnessId = i.IllnessId,
+                       i.IllnessName,
+                       i.Prescription,
+                       i.Description,
+                       i.Notes,
+                       Rules = i.Rules.ToList(),
+                       RuleCount = i.Rules.Count(),
+                       MatchedRules = i.Rules.Where(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)).ToList(),
+                       MatchedRuleCount = i.Rules.Count(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)),
+                   })
+                   .FirstOrDefaultAsync();
+
+                if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
+
+                var score = illness.RuleCount / illness.MatchedRuleCount * 100;
+
+                var toSaveDiagnosis = new PatientDiagnosisEntity
                 {
-                    var toSaveDiagnosis = new PatientDiagnosisEntity
+                    CreatedOn = DateTime.UtcNow,
+                    DiagnosIllnesses = new List<PatientDiagnosisIllnessEntity>(),
+                    DiagnosSymptoms = new List<PatientDiagnosisSymptomEntity>(),
+                    IsActive = true,
+                    UserId = userId
+                };
+
+                var patientIllness = new PatientDiagnosisIllnessEntity
+                {
+                    DiagnosisId = toSaveDiagnosis.Id,
+                    Illness = illness.IllnessName,
+                    Description = illness.Description,
+                    Prescription = illness.Prescription ?? string.Empty,
+                    Notes = illness.Notes,
+                    Score = score,
+                    IsActive = true,
+                    CreatedOn = DateTime.Now,
+                };
+
+                toSaveDiagnosis.DiagnosIllnesses.Add(patientIllness);
+
+                foreach (var symptom in illness.MatchedRules) 
+                {
+                    toSaveDiagnosis.DiagnosSymptoms.Add(new PatientDiagnosisSymptomEntity
                     {
-                        CreatedOn = DateTime.UtcNow,
-                        DiagnosIllnesses = new List<PatientDiagnosisIllnessEntity>(),
-                        DiagnosSymptoms = new List<PatientDiagnosisSymptomEntity>(),
+                        DiagnosisId = toSaveDiagnosis.Id,
+                        SymptomName = symptom.Symptom?.SymptomName ?? string.Empty,
+                        Days = 0,
                         IsActive = true,
-                        UserId = userId
-                    };
-
-                    foreach (var diagnosis in topIllness)
-                    {
-                        var diagnosIllness = potentialIllnesses.FirstOrDefault(x => x.IllnessId == diagnosis.Key);
-                        
-                        if(diagnosIllness is null) continue;
-
-                        toSaveDiagnosis.DiagnosIllnesses.Add(new PatientDiagnosisIllnessEntity
-                        {
-                            DiagnosisId = toSaveDiagnosis.Id,
-                            Illness = diagnosIllness.IllnessName,
-                            Description = diagnosIllness.Description,
-                            Prescription = diagnosIllness.Prescription ?? string.Empty,
-                            Notes = diagnosIllness.Notes,
-                            Score = diagnosis.Value,
-                            IsActive = true,
-                            CreatedOn = DateTime.Now,
-                        });
-                    }
-
-                    var symptoms = await _appDbContext.PatientSymptoms
-                            .AsNoTracking()
-                            .Where(s => patientSymptomsIds.Contains(s.SymptomId))
-                            .ToListAsync();
-
-                    foreach (var symptom in symptoms) 
-                    {
-                        toSaveDiagnosis.DiagnosSymptoms.Add(new PatientDiagnosisSymptomEntity
-                        {
-                            DiagnosisId = toSaveDiagnosis.Id,
-                            SymptomName = symptom.SymptomName,
-                            Days = patientSymptomLookup[symptom.SymptomId],
-                            IsActive = true,
-                            CreatedOn = DateTime.UtcNow,
-                        });
-                    }
-
-                    await _appDbContext.PatientDiagnosis.AddAsync(toSaveDiagnosis);
-                    await _appDbContext.SaveChangesAsync();
-
-                    var foundIllness = toSaveDiagnosis.DiagnosIllnesses.FirstOrDefault();
-                    
-                    if (foundIllness is not null)
-                    {
-                        diagnosisResult = DiagnosisDetailsDTO.Create(
-                            foundIllness.Illness,
-                            foundIllness.Description ?? string.Empty,
-                            foundIllness.Prescription ?? string.Empty,
-                            foundIllness.Notes ?? string.Empty
-                            );
-                    }
-                    
+                        CreatedOn = DateTime.UtcNow,
+                    });
                 }
 
-                return diagnosisResult;
+                await _appDbContext.PatientDiagnosis.AddAsync(toSaveDiagnosis);
+                await _appDbContext.SaveChangesAsync();
+
+                diagnosisResult = DiagnosisDetailsDTO.Create(
+                       patientIllness.Illness,
+                       patientIllness.Description ?? string.Empty,
+                       patientIllness.Prescription ?? string.Empty,
+                       patientIllness.Notes ?? string.Empty
+                       );
+                
+                return Result<DiagnosisDetailsDTO>.Success(diagnosisResult);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 throw;
             }
+        }
+
+        public async Task<List<GetConsultationIllnessDTO>> GetConsultationIllnessList()
+        {
+            return await _appDbContext.PatientIllnesses
+                .AsNoTracking()
+                .Select(i => new GetConsultationIllnessDTO(i.IllnessId, i.IllnessName))
+                .ToListAsync();
+        }
+
+        public async Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId)
+        {
+            var illness = await _appDbContext.PatientIllnesses
+                .AsNoTracking()
+                .Include(r => r.Rules)
+                .ThenInclude(s => s.Symptom)
+                .Where(i => i.IllnessId == illnessId)
+                .Select(i => new
+                {
+                    IllnessId = i.IllnessId,
+                    Symptoms = i.Rules.Select(s => s.Symptom).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
+
+            var symptoms = illness.Symptoms
+                .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName))
+                .ToList();
+
+            return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Success(symptoms);
         }
     }
 }

@@ -13,6 +13,7 @@
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Symptom)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Symptom ? "active" : "")" data-tab="symptoms-tab">Symptoms</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Illness)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Illness ? "active" : "")" data-tab="diseases-tab">Illness</a>
     </div>
+
     <div id="symptoms-tab" class="sub-page active">
         @switch (activeTab)
         {
