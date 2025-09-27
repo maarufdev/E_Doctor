@@ -7,19 +7,19 @@
             Please select an illness below to begin the symptom assessment
         </p>
     </div>
-    <button class="btn btn-primary start-new-diagnosis-btn" id="start-consultation-btn">Start New Diagnosis</button>
+    <button class="btn btn-primary start-new-diagnosis-btn" id="start-consultation-btn">Start New Consultation</button>
 </div>
 
 <div id="illness-modal" class="modal-backdrop">
     <div class="modal-content modal-illness-content">
         <div class="modal-header">
-            <h3 class="text-xl font-semibold">Select an Illness</h3>
+            <h3 class="text-sm font-semibold">Select an Illness</h3>
             <button class="modal-close-btn" id="close-illness-modal-btn">&times;</button>
         </div>
         <div class="modal-body">
             <div class="illness-content">
                 <div>
-                    <input id="search-illness-txt" class="form-input" type="text" placeholder="Search illness" autocomplete="off"  />
+                    <input id="search-illness-txt" class="form-input" type="text" placeholder="Search illness" autocomplete="off" />
                 </div>
                 <div class="illness-list" id="illness-list">
                     <button class="btn illness-item-btn" data-illness-id="1">Anxiety Disorder</button>
@@ -32,7 +32,7 @@
 <div id="symptoms-modal" class="modal-backdrop">
     <div class="modal-content modal-symptom-content">
         <div class="modal-header">
-            <h3 class="text-xl font-bold" id="symptoms-modal-title">Anxiety Disorder</h3>
+            <h3 class="text-sm" id="symptoms-modal-title"></h3>
         </div>
         <div class="modal-body">
             <div class="symptoms-content" id="symptom-question-content">
@@ -54,7 +54,7 @@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
         <div class="modal-header">
-            <h3 class="text-xl font-semibold">Diagnosis Result</h3>
+            <h3 class="text-sm font-semibold">Diagnosis Result</h3>
         </div>
         <div class="modal-body">
             <div class="diagnosis-content-card text-center">
@@ -77,5 +77,6 @@
         </div>
     </div>
 </div>
+
 
 <script src="~/features/admin/consultation/js/consultation.js" asp-append-version="true"></script>

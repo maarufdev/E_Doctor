@@ -83,7 +83,7 @@ internal class DiagnosisService : IDiagnosisService
 
             if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
 
-            var score = illness.RuleCount / illness.MatchedRuleCount * 100;
+            var score = (double)illness.MatchedRuleCount / illness.RuleCount * 100;
 
             var patientDiagnosed = new DiagnosisTestEntity
             {
@@ -134,14 +134,22 @@ internal class DiagnosisService : IDiagnosisService
             .Select(i => new
             {
                 IllnessId = i.Id,
-                Symptoms = i.Rules.Where(r => r.IsActive).Select(s => s.Symptom).Where(s => s.IsActive).ToList()
+                Symptoms = i.Rules.Where(r => r.IsActive)
+                    .Select(s => new
+                    {
+                        SymptomId = s.SymptomId,
+                        SymptomName = s.Symptom.Name,
+                        Question = s.Question,
+                        IsActive = s.Symptom.IsActive
+                    })
+                    .Where(s => s.IsActive).ToList()
             })
             .FirstOrDefaultAsync();
 
         if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
 
         var symptoms = illness.Symptoms
-            .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.Id, s.Name))
+            .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.Question))
             .ToList();
 
         return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Success(symptoms);

@@ -73,8 +73,6 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
                 {
                     IllnessId = 1,
                     SymptomId = 1,
-                    Condition = Core.Constants.Enums.IllnessRuleConditionEnum.IsLessThan,
-                    Days = 2,
                     IsActive = true,
                 });
         });

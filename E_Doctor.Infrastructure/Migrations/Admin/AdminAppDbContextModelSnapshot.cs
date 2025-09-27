@@ -108,17 +108,12 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.Property<int>("SymptomId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Condition")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Days")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("IllnessId", "SymptomId");
 
@@ -131,10 +126,8 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                         {
                             IllnessId = 1,
                             SymptomId = 1,
-                            Condition = 1,
-                            Days = 2,
                             IsActive = true,
-                            Weight = 0
+                            Question = ""
                         });
                 });
 

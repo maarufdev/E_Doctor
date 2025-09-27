@@ -2,27 +2,28 @@
 
 #nullable disable
 
-namespace E_Doctor.Infrastructure.Migrations.Admin
+namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     /// <inheritdoc />
-    public partial class AddedNotesToDiagnosisResult : Migration
+    public partial class AddQuestionFields : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Notes",
-                table: "DiagnosisTest",
+                name: "Question",
+                table: "PatientIllnesRules",
                 type: "TEXT",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Notes",
-                table: "DiagnosisTest");
+                name: "Question",
+                table: "PatientIllnesRules");
         }
     }
 }

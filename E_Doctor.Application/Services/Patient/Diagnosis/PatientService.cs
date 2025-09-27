@@ -38,7 +38,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                 {
                     d.Id,
                     UpdatedOn = d.UpdatedOn ?? d.CreatedOn,
-                    Symptoms = string.Join(", ", d.DiagnosSymptoms.Select(s => $"{s.SymptomName} {s.Days} Days").ToList()),
+                    Symptoms = string.Join(", ", d.DiagnosSymptoms.Select(s => $"{s.SymptomName}").ToList()),
                     IllnessName = string.Join(", ", d.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
                 })
                 .Select(d => new DiagnosisListDTO(
@@ -115,9 +115,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         {
                             SymptomId = r.SymptomId,
                             IllnessId = illness.IllnessId,
-                            Condition = r.Condition,
-                            Days = r.Days,
-                            Weight = r.Weight,
+                            Question = r.Question
                         })
                         .ToList();
                 }
@@ -150,7 +148,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
             if (illness == null) return result;
 
             return DiagnosisDetailsDTO.Create(
-                illness.Illness ?? string.Empty,
+                $"{illness.Illness} {illness.Score.ToString("F2")}%" ?? string.Empty,
                 illness.Description ?? string.Empty,
                 illness.Prescription ?? string.Empty,
                 illness.Notes ?? string.Empty);
@@ -185,7 +183,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
 
                 if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
 
-                var score = illness.RuleCount / illness.MatchedRuleCount * 100;
+                var score = (double)illness.MatchedRuleCount / illness.RuleCount * 100;
 
                 var toSaveDiagnosis = new PatientDiagnosisEntity
                 {
@@ -203,7 +201,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     Description = illness.Description,
                     Prescription = illness.Prescription ?? string.Empty,
                     Notes = illness.Notes,
-                    Score = score,
+                    Score = (decimal)score,
                     IsActive = true,
                     CreatedOn = DateTime.Now,
                 };
@@ -226,7 +224,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                 await _appDbContext.SaveChangesAsync();
 
                 diagnosisResult = DiagnosisDetailsDTO.Create(
-                       patientIllness.Illness,
+                       $"{patientIllness.Illness} {score.ToString("F2")}%",
                        patientIllness.Description ?? string.Empty,
                        patientIllness.Prescription ?? string.Empty,
                        patientIllness.Notes ?? string.Empty
@@ -259,14 +257,19 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                 .Select(i => new
                 {
                     IllnessId = i.IllnessId,
-                    Symptoms = i.Rules.Select(s => s.Symptom).ToList()
+                    Symptoms = i.Rules.Select(s => new
+                    {
+                        SymptomId = s.SymptomId,
+                        SymptomName = s.Symptom.SymptomName,
+                        s.Question
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
 
             if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
 
             var symptoms = illness.Symptoms
-                .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName))
+                .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.Question))
                 .ToList();
 
             return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Success(symptoms);

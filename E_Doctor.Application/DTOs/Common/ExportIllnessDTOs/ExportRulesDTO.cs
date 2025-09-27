@@ -5,7 +5,13 @@ namespace E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 public sealed record ExportRulesDTO(
     int SymptomId,
     int IllnessId,
-    IllnessRuleConditionEnum Condition,
-    int Days,
-    IllnessRuleWeightEnum Weight
+    string Question
 );
+
+//public sealed record ExportRulesDTO(
+//    int SymptomId,
+//    int IllnessId,
+//    IllnessRuleConditionEnum Condition,
+//    int Days,
+//    IllnessRuleWeightEnum Weight
+//);

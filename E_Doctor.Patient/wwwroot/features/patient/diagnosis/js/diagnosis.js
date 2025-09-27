@@ -127,7 +127,7 @@
                 const fileInput = stateHolders.importedRuleFile;
 
                 if (!fileInput) {
-                    alert("Please Select a file to import.")
+                    alert("Please Select a file to import.");
                     return;
                 }
 
@@ -145,7 +145,6 @@
                 this.toggleImportFileModal(false);
 
                 this.renderDiagnosisTable();
-                this.setSymptoms();
             },
         },
         events: {

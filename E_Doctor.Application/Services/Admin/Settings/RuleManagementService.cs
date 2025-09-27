@@ -126,9 +126,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         {
                             IllnessId = illnessEntity.Id,
                             SymptomId = rule.SymptomId,
-                            Condition = rule.Condition,
-                            Days = rule.Days,
-                            Weight = rule.Weight,
+                            Question = rule.Question,
                             IsActive = true,
                         };
 
@@ -168,10 +166,8 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         
                         if (existingRule is not null)
                         {
+                            existingRule.Question = rule.Question;
                             existingRule.IsActive = true;
-                            existingRule.Condition = rule.Condition;
-                            existingRule.Days = rule.Days;
-                            existingRule.Weight = rule.Weight;
                         }
                         else
                         {
@@ -179,9 +175,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                             {
                                 SymptomId = rule.SymptomId,
                                 IllnessId = illnessId,
-                                Condition = rule.Condition,
-                                Days = rule.Days,
-                                Weight = rule.Weight,
+                                Question = rule.Question,
                                 IsActive = true
                             };
 
@@ -253,9 +247,8 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     .Select(r => new ExportRulesDTO(
                         r.SymptomId,
                         r.IllnessId,
-                        r.Condition,
-                        r.Days,
-                        r.Weight)
+                        r.Question
+                        )
                     )
                     .ToListAsync();
 

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     [DbContext(typeof(PatientAppDbContext))]
-    [Migration("20250922133152_AddedNotesToDiagnosisResult")]
-    partial class AddedNotesToDiagnosisResult
+    [Migration("20250927134519_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,15 +156,6 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("SymptomId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Condition")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Days")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Weight")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("IllnessId", "SymptomId");
