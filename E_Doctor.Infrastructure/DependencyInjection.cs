@@ -1,6 +1,5 @@
 ﻿using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
-using E_Doctor.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
