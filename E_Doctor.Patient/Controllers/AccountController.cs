@@ -57,7 +57,7 @@ namespace E_Doctor.Patient.Controllers
         {
             await _userService.Logout();
 
-            return RedirectToAction("Index", "Diagnosis");
+            return RedirectToAction("Index", "Account");
         }
 
         public IActionResult ForgotPassword() => View();

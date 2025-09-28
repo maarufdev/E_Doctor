@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     /// <inheritdoc />
-    public partial class InitialMigrations : Migration
+    public partial class PatientInitialDatabaseMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -222,7 +222,8 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                 columns: table => new
                 {
                     SymptomId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IllnessId = table.Column<int>(type: "INTEGER", nullable: false)
+                    IllnessId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Question = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

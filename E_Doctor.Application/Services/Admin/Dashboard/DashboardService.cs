@@ -1,5 +1,6 @@
 ﻿using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Dashboard;
+using E_Doctor.Application.Helpers;
 using E_Doctor.Application.Interfaces.Features.Admin.Dashboard;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,23 @@ internal class DashboardService : IDashboardService
                 .Where(c => c.Illness.IsActive && c.Symptom.IsActive)
                 .CountAsync(i => i.IsActive)
         );
+
+        var recentDiagnosis = await _dbContext.DiagnosisTest
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+            .Take(5)
+            .ToListAsync();
+
+        var recentDiagnosisDTO = recentDiagnosis
+            .Select(d =>
+            {
+                var dateTime = d.UpdatedOn ?? d.CreatedOn;
+                return new GetDashboardRecentDiagnosisDTO(DateTimeHelper.ToLocalShortDateTimeString(dateTime.Value), d.Symptoms, d.DiagnosisResult);
+            })
+            .ToList();
         
-        var result = GetDashboardDetailsDTO.Create(cardDetails);
+        var result = GetDashboardDetailsDTO.Create(cardDetails, recentDiagnosisDTO);
 
         return Result<GetDashboardDetailsDTO>.Success(result);
     }

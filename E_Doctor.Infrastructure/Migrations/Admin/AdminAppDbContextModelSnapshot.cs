@@ -86,18 +86,6 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.HasKey("Id");
 
                     b.ToTable("Illnesses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedOn = new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Common",
-                            IllnessName = "Flu",
-                            IsActive = true,
-                            Notes = "",
-                            Prescription = ""
-                        });
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.IllnessRuleEntity", b =>
@@ -120,15 +108,6 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.HasIndex("SymptomId");
 
                     b.ToTable("IllnessRules");
-
-                    b.HasData(
-                        new
-                        {
-                            IllnessId = 1,
-                            SymptomId = 1,
-                            IsActive = true,
-                            Question = ""
-                        });
                 });
 
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.SymptomEntity", b =>
@@ -153,15 +132,6 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                     b.HasKey("Id");
 
                     b.ToTable("Symptoms");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedOn = new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Name = "Fever"
-                        });
                 });
 
             modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>

@@ -50,7 +50,8 @@ a {
 */
 /* Header */
 .header {
-    background: linear-gradient(to right, var(--primary-color), #06b6d4);
+    /*background: linear-gradient(to right, var(--primary-color), #06b6d4);*/
+    background: linear-gradient(90deg, #4F46E5, #3B82F6);
     color: white;
     padding: 1rem 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);

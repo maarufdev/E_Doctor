@@ -10,7 +10,7 @@ public interface IPatientService
     Task<IEnumerable<GetSymptomDTO>> GetSymtoms();
     Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId);
     Task<Result<DiagnosisDetailsDTO>> RunDiagnosis(RunDiagnosisDTO diagnosisRequest);
-    Task<List<DiagnosisListDTO>> GetDiagnosis();
+    Task<PagedResult<DiagnosisListDTO>> GetDiagnosis(GetDiagnosisParamsDTO requestParams);
     Task<List<GetConsultationIllnessDTO>> GetConsultationIllnessList();
     Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId);
 }

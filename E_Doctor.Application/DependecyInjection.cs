@@ -2,11 +2,13 @@
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Patient.Dashboard;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using E_Doctor.Application.Services.Admin.Dashboard;
 using E_Doctor.Application.Services.Admin.Diagnosis;
 using E_Doctor.Application.Services.Admin.Settings;
 using E_Doctor.Application.Services.Common;
+using E_Doctor.Application.Services.Patient.Dashboard;
 using E_Doctor.Application.Services.Patient.Diagnosis;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -45,6 +47,7 @@ namespace E_Doctor.Application
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IUserManagerService, UserManagerService>();
+            services.AddScoped<IPatientDashboardService, PatientDashboardService>();
 
             return services;
         }

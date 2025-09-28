@@ -1,13 +1,12 @@
 ﻿<link rel="stylesheet" href="~/features/patient/diagnosis/css/diagnosis.css" asp-append-version="true" />
 
-<div class="card">
-    <div class="flex justify-between flex-column gap-2 mb-4">
-        <h3 class="text-xl font-semibold">Consultation Results</h3>
-        <div class="flex justify-end gap-2">
-            <button id="new-consultation-btn" class="btn btn-primary">New Consultation</button>
-            <button id="import-rules-btn" class="btn btn-primary">Import Rules</button>
-        </div>
+<div class="flex justify-between flex-column gap-2 mb-4">
+    <div class="flex justify-end gap-2">
+        <button id="new-consultation-btn" class="btn btn-primary">New Consultation</button>
+        <button id="import-rules-btn" class="btn btn-primary">Import Rules</button>
     </div>
+</div>
+<div class="card">
     <div class="table-container">
         <table class="data-table">
             <tr>
@@ -19,6 +18,11 @@
             <tbody id="history-table-body">
             </tbody>
         </table>
+    </div>
+    <div class="pagination-controls">
+        <label style="font-weight: 500;">Page: </label>
+        <select id="diagnosis-pagination" value="2" class="form-select" style="width: auto;">
+        </select>
     </div>
 </div>
 

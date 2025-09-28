@@ -1,4 +1,5 @@
 ﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
@@ -40,9 +41,9 @@ namespace E_Doctor.Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetDiagnosis()
+        public async Task<IActionResult> GetDiagnosis(GetDiagnosisParamsDTO getDiagnosisParams)
         {
-            return Ok(await  _diagnosisService.GetDiagnosis());
+            return Ok(await  _diagnosisService.GetDiagnosis(getDiagnosisParams));
         }
 
         public async Task<IActionResult> RunDiagnosis([FromBody] RunDiagnosisDTO requestDTO)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     /// <inheritdoc />
-    public partial class InitialMigrations : Migration
+    public partial class AdminInitialDatabaseMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -226,6 +226,7 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                 {
                     SymptomId = table.Column<int>(type: "INTEGER", nullable: false),
                     IllnessId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Question = table.Column<string>(type: "TEXT", nullable: false),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -244,21 +245,6 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                table: "Illnesses",
-                columns: new[] { "Id", "CreatedOn", "Description", "IllnessName", "IsActive", "Notes", "Prescription", "UpdatedOn" },
-                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Common", "Flu", true, "", "", null });
-
-            migrationBuilder.InsertData(
-                table: "Symptoms",
-                columns: new[] { "Id", "CreatedOn", "IsActive", "Name", "UpdatedOn" },
-                values: new object[] { 1, new DateTime(2025, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Fever", null });
-
-            migrationBuilder.InsertData(
-                table: "IllnessRules",
-                columns: new[] { "IllnessId", "SymptomId", "IsActive" },
-                values: new object[] { 1, 1, true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
