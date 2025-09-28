@@ -1,4 +1,5 @@
 ﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
@@ -70,9 +71,9 @@ namespace E_Doctor.Patient.Controllers
             return Ok(result.Value);
         }
 
-        public async Task<IActionResult> GetDiagnosis()
+        public async Task<IActionResult> GetDiagnosis(GetDiagnosisParamsDTO getDiagnosisParams)
         {
-            return Ok(await _patientService.GetDiagnosis());
+            return Ok(await _patientService.GetDiagnosis(getDiagnosisParams));
         }
 
         public async Task<IActionResult> GetDiagnosisById(int diagnosisId)

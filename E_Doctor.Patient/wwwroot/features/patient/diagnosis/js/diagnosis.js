@@ -11,13 +11,21 @@
         symptoms: [],
         selectedSymptoms: [],
         importedRuleFile: null,
+        searchParams: {
+            pageNumber: 1,
+            pageSize: 10
+        },
+        diagnosisPaginatedResult: {
+            totalPages: 0,
+        },
     }
     const elementHolders = {
         common: {
             buttons: {
                 newConsultation: "#new-consultation-btn",
                 showImportFileModal: "#import-rules-btn",
-            }
+            },
+            diagnosisPagination: "#diagnosis-pagination",
         },
         tables: {
             diagnosis: {
@@ -69,7 +77,8 @@
                 const $diagnosisTblBody = $(diagnosis.body);
                 $diagnosisTblBody.empty();
 
-                const diagnosisReponse = await services.apiService.getDiagnosis() ?? [];
+                const result = await services.apiService.getDiagnosis() ?? [];
+                const diagnosisReponse = result.items ?? [];
 
                 diagnosisReponse.forEach(item => {
                     const { diagnosisId } = item;
@@ -97,6 +106,26 @@
                     )
                     $diagnosisTblBody.append($tr);
                 });
+
+                stateHolders.diagnosisPaginatedResult.totalPages = result.totalPages;
+
+                this.createPaginations();
+            },
+            createPaginations: function () {
+                const { common } = elementHolders;
+                const { totalPages } = stateHolders.diagnosisPaginatedResult;
+
+                const $pagination = $(common.diagnosisPagination);
+                $pagination.empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const $option = $(`<option>`);
+                    $option.val = i;
+                    $option.text(i);
+                    $pagination.append($option);
+                }
+
+                $pagination.val(stateHolders.searchParams.pageNumber);
             },
             populateDiagnosisResult: function ({ result, description, prescription, notes }) {
                 const { diagnosis } = elementHolders.modals;
@@ -167,6 +196,15 @@
                         services.eventHandlers.toggleDiagnosisModal(false);
                     }
                 );
+                registerEvent(
+                    elementHolders.common.diagnosisPagination,
+                    "change",
+                    function (event) {
+                        const value = event.target.value;
+                        stateHolders.searchParams.pageNumber = value;
+                        services.eventHandlers.renderDiagnosisTable();
+                    }
+                );
             },
             initImportRulesevent: function () {
                 const { importRule } = elementHolders.modals;
@@ -232,7 +270,11 @@
                 return await apiFetch(URLS.getSymptoms);
             },
             getDiagnosis: async function () {
-                return await apiFetch(URLS.getDiagnosis)
+                return await apiFetch(
+                    URLS.getDiagnosis,
+                    {
+                        params: stateHolders.searchParams
+                    });
             },
             runDiagnosis: async (command) => {
                 return await apiFetch(

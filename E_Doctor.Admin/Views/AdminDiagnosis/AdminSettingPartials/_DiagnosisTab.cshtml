@@ -2,11 +2,11 @@
 <link rel="stylesheet" href="~/features/admin/diagnosis/css/diagnosis.css" asp-append-version="true" />
 
 <div id="test" class="page-content">
+    <div class="flex justify-end mb-4">
+        <button id="new-consultation-btn" class="btn btn-primary self-start">New Consultation</button>
+    </div>
     <div class="card">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold">Consultation Results</h3>
-            <button id="new-consultation-btn" class="btn btn-primary">New Consultation</button>
-        </div>
+        
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -20,6 +20,11 @@
                 <tbody id="history-table-body">
                 </tbody>
             </table>
+        </div>
+        <div class="pagination-controls">
+            <label style="font-weight: 500;">Page: </label>
+            <select id="diagnosis-pagination" value="2" class="form-select" style="width: auto;">
+            </select>
         </div>
     </div>
 </div>

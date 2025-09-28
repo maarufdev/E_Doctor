@@ -19,11 +19,18 @@ internal class DiagnosisService : IDiagnosisService
         _userManager = userManager;
     }
 
-    public async Task<List<DiagnosisListDTO>> GetDiagnosis()
+    public async Task<PagedResult<DiagnosisListDTO>> GetDiagnosis(GetDiagnosisParamsDTO requestParams)
     {
-        var diagnosis = await _appDbContext.DiagnosisTest
+        var query = _appDbContext.DiagnosisTest
+            .AsNoTracking()
             .Where(d => d.IsActive)
-            .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+            .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn);
+
+        var totalCount = await query.CountAsync();
+
+        var diagnosis = await query
+            .Skip((requestParams.PageNumber - 1) * requestParams.PageSize)
+            .Take(requestParams.PageSize)
             .Select(d => new DiagnosisListDTO(
                 d.Id,
                 d.UpdatedOn ?? d.CreatedOn,
@@ -33,7 +40,15 @@ internal class DiagnosisService : IDiagnosisService
              ))
             .ToListAsync();
 
-        return diagnosis;
+
+
+        return new PagedResult<DiagnosisListDTO>
+        {
+            Items = diagnosis,
+            TotalCount = totalCount,
+            PageSize = requestParams.PageSize,
+            PageNumber = requestParams.PageNumber,
+        };
     }
 
 

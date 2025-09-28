@@ -7,7 +7,6 @@ using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -16,7 +15,6 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
     internal class PatientService : IPatientService
     {
         private readonly PatientAppDbContext _appDbContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserManagerService _userServices;
 
         public PatientService(
@@ -27,13 +25,20 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
             _userServices = userServices;
         }
 
-        public async Task<List<DiagnosisListDTO>> GetDiagnosis()
+        public async Task<PagedResult<DiagnosisListDTO>> GetDiagnosis(GetDiagnosisParamsDTO requestParams)
         {
             var userId = await _userServices.GetUserId();
-            var diagnosis = await _appDbContext.PatientDiagnosis
+
+            var query = _appDbContext.PatientDiagnosis
                 .AsNoTracking()
                 .Where(d => d.IsActive && d.UserId == userId)
-                .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn)
+                .OrderByDescending(d => d.UpdatedOn ?? d.CreatedOn);
+
+            var totalCount = await query.CountAsync();
+
+            var diagnosis = await query
+                .Skip((requestParams.PageNumber - 1) * requestParams.PageSize)
+                .Take(requestParams.PageSize)
                 .Select(d => new
                 {
                     d.Id,
@@ -50,7 +55,13 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                  ))
                 .ToListAsync();
 
-            return diagnosis;
+            return new PagedResult<DiagnosisListDTO>
+            {
+                Items = diagnosis,
+                TotalCount = totalCount,
+                PageSize = requestParams.PageSize,
+                PageNumber = requestParams.PageNumber,
+            };
         }
 
         public async Task<IEnumerable<GetSymptomDTO>> GetSymtoms()
