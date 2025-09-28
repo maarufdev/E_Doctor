@@ -36,18 +36,12 @@ a {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    /*visibility: hidden;*/
 }
-
 
 .hidden {
     display: none !important;
 }
 
-/*#app-container.loaded {
-    visibility: visible;
-}
-*/
 /* Header */
 .header {
     /*background: linear-gradient(to right, var(--primary-color), #06b6d4);*/
@@ -192,7 +186,7 @@ a {
 }
 
 .btn {
-    padding: 0.65rem 1.5rem;
+    padding: 0.5rem 1rem;
     border: none;
     border-radius: 0.375rem;
     font-size: 1rem;
@@ -540,3 +534,4 @@ a {
 .w-full {
     width: 100%;
 }
+

@@ -2,11 +2,12 @@
     max-width: 800px;
 }
 
-
 .self-start {
     align-self: start;
 }
-
+.self-center {
+    align-self: center;
+}
 .search-illness {
     min-width: 300px;
 }
