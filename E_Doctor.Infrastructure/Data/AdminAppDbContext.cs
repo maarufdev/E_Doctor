@@ -21,8 +21,7 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-
+        
         var currentDate = DateTime.UtcNow;
         #region Symptoms Seeding and Config
         modelBuilder.Entity<SymptomEntity>(entity =>
@@ -31,8 +30,6 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
 
             entity.Property(s => s.Id)
                 .ValueGeneratedOnAdd();
-
-            entity.HasData(new SymptomEntity { Id = 1, Name = "Fever", IsActive = true, CreatedOn = new DateTime(2025, 8, 9), });
         });
         #endregion
 
@@ -40,18 +37,6 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
         modelBuilder.Entity<IllnessEntity>(entity =>
         {
             entity.HasKey(s => s.Id);
-
-            // Seeding
-
-            entity.HasData(
-                new IllnessEntity
-                {
-                    Id = 1,
-                    IllnessName = "Flu",
-                    Description = "Common",
-                    CreatedOn = new DateTime(2025, 8, 9),
-                    IsActive = true,
-               });
         });
         #endregion
 
@@ -67,14 +52,6 @@ public class AdminAppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole
             entity.HasOne(dr => dr.Symptom)
             .WithMany(d => d.Rules)
             .HasForeignKey(dr => dr.SymptomId);
-
-            entity.HasData(
-                new IllnessRuleEntity
-                {
-                    IllnessId = 1,
-                    SymptomId = 1,
-                    IsActive = true,
-                });
         });
         #endregion
     }
