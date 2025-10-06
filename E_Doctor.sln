@@ -15,6 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentations", "Presentati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E_Doctor.Patient", "E_Doctor.Patient\E_Doctor.Patient.csproj", "{CEDC89E8-E0AE-4FBD-9107-14BDC206D42E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{FD58BA51-2549-4C68-8962-BABDB8D9289F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Users\maarufb\Downloads\EDoctor.pdf = ..\..\..\..\Users\maarufb\Downloads\EDoctor.pdf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

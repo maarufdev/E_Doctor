@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\E_Doctor.Application\E_Doctor.Application.csproj" />
-    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
+    <Compile Remove="wwwroot\features\common\**" />
+    <Content Remove="wwwroot\features\common\**" />
+    <EmbeddedResource Remove="wwwroot\features\common\**" />
+    <None Remove="wwwroot\features\common\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\features\common\" />
+    <ProjectReference Include="..\E_Doctor.Application\E_Doctor.Application.csproj" />
+    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

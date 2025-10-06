@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\features\common\" />
+    <Compile Remove="wwwroot\features\common\**" />
+    <Content Remove="wwwroot\features\common\**" />
+    <EmbeddedResource Remove="wwwroot\features\common\**" />
+    <None Remove="wwwroot\features\common\**" />
   </ItemGroup>
 
   <ItemGroup>
