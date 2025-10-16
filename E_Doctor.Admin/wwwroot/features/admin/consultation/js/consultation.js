@@ -15,6 +15,7 @@
         illnessList: [],
         symptoms: [],
         currentSymptomIndex: 0,
+        symptomModalTitle: ""
     }
     const elementHolders = {
         buttons: {
@@ -76,7 +77,7 @@
                 toggleSymptom: function (flag = false) {
                     const { modals } = elementHolders;
                     $(modals.symptoms.root).toggleClass("visible", flag);
-                    $(modals.symptoms.title).text(stateHolders.currentIllnessName ?? "");
+                    $(modals.symptoms.title).text(stateHolders.symptomModalTitle ?? "");
                 },
 
                 toggleDiagnosisResult: function (flag = false) {
@@ -85,6 +86,20 @@
                 },
             },
             illness: {
+                setCommonSymptoms: async function () {
+                    const symptomResult = await services.apiService.getSymptomsByIllnessId(null) ?? [];
+
+                    //stateHolders.currentIllnessId = item.illnessId;
+                    stateHolders.symptomModalTitle = "Please Select symptoms";
+
+                    stateHolders.symptoms = symptomResult.map(item => {
+                        const obj = { ...item, active: false, selectType: SELECTION_TYPES.NONE };
+                        return obj;
+                    });
+                    stateHolders.currentSymptomIndex = 0;
+                    services.eventHandlers.modal.toggleSymptom(true);
+                    services.eventHandlers.symptom.populateSymptomQuestion();
+                },
                 populateIllnessList: function () {
                     const { modals } = elementHolders;
                     const $illnessList = $(modals.illness.illnessList);
@@ -104,7 +119,7 @@
                                 const symptomResult = await services.apiService.getSymptomsByIllnessId(item.illnessId) ?? [];
 
                                 stateHolders.currentIllnessId = item.illnessId;
-                                stateHolders.currentIllnessName = item.illnessName;
+                                stateHolders.symptomModalTitle = item.illnessName;
 
                                 stateHolders.symptoms = symptomResult.map(item => {
                                     const obj = { ...item, active: false, selectType: SELECTION_TYPES.NONE };
@@ -193,13 +208,10 @@
                     const isFirstItem = (stateHolders.currentSymptomIndex == 0);
 
                     $(buttons.back).prop("disabled", isFirstItem);
-                    $(buttons.next)
-                        .prop("disabled", isLastItem)
-                        .toggleClass("hidden", isLastItem);
 
-                    $(buttons.getDiagnosis)
-                        .prop("disabled", !isLastItem)
-                        .toggleClass("hidden", !isLastItem);
+                    $(buttons.next)
+                        .prop("disabled", isLastItem);
+
 
                     $(this.elements.buttons.yesNo).removeClass("selected");
 
@@ -235,6 +247,8 @@
                     );
                 },
                 handleOnYes: function () {
+                    const { buttons} = this.elements;
+
                     const symptom = stateHolders.symptoms[stateHolders.currentSymptomIndex];
                     if (!symptom) return;
 
@@ -243,6 +257,11 @@
 
                     $(this.elements.buttons.yesNo).removeClass("selected");
                     $(this.elements.buttons.yes).addClass("selected");
+
+                    const hasSelected = stateHolders.symptoms.some(s => s.active);
+
+                    $(buttons.getDiagnosis)
+                        .prop("disabled", !hasSelected);
                 },
                 handleOnNo: function () {
                     const symptom = stateHolders.symptoms[stateHolders.currentSymptomIndex];
@@ -270,8 +289,6 @@
                     const hasSelectedItem = stateHolders.symptoms.filter(item => item.active == true).length > 0;
                     const illnessId = stateHolders.currentIllnessId;
 
-                    if (!illnessId) alert("Something went wrong");
-
                     if (!hasSelectedItem) {
                         alert("No symptom selected.\nPlease select at least 1 symptom.");
                         return;
@@ -279,10 +296,9 @@
 
                     const selectedSymptoms = stateHolders.symptoms
                         .filter(item => item.active === true)
-                        .map(item => item.symptomId);
+                        .map(item => parseInt(item.symptomId));
 
                     const command = {
-                        illnessId: illnessId,
                         symptomIds: selectedSymptoms
                     }
 
@@ -325,7 +341,8 @@
                     buttons.startNewConsultation,
                     "click",
                     function (e) {
-                        eventHandlers.illness.handleOnShowIllness();
+                        eventHandlers.illness.setCommonSymptoms();
+                        //eventHandlers.illness.handleOnShowIllness();
                     }
                 );
 

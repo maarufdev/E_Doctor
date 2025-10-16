@@ -2,7 +2,7 @@
 
 <div class="flex gap-2 flex-column w-full consultation-content text-center">
     <div class="consultaiont-card flex flex-column gap-2">
-        <h1 class="font-bold">Start a New Consultation</h1>
+        <h1 class="font-bold consulation-title">Start a New Consultation</h1>
         <p>
             Please select an illness below to begin the symptom assessment
         </p>
@@ -34,15 +34,27 @@
         <div class="modal-header">
             <h3 class="text-sm" id="symptoms-modal-title"></h3>
         </div>
+        <button id="quest-back-btn" class="card-slider-btn back question-btn" type="button" title="Card Slide Back">
+            <span id="back-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6 text-gray-700">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path>
+                </svg>
+            </span>
+        </button>
         <div class="modal-body">
             <div class="symptoms-content" id="symptom-question-content">
             </div>
         </div>
+        <button id="quest-next-btn" class="card-slider-btn next question-btn" type="button" title="Card Slide Next">
+            <span id="next-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                </svg>
+            </span>
+        </button>
         <div class="modal-footer">
             <div class="navigation-symptom-buttons flex justify-between mt-2">
-                <button class="btn back-button question-btn" disabled id="quest-back-btn">Back</button>
-                <button class="btn btn-primary next-button question-btn" id="quest-next-btn">Next</button>
-                <button class="btn btn-secondary get-diagnosis-button question-btn hidden" id="quest-get-diagnosis-btn">Get Diagnosis</button>
+                <button class="btn btn-secondary get-diagnosis-button question-btn" id="quest-get-diagnosis-btn" disabled>Get Diagnosis</button>
             </div>
             <div class="flex mt-2 justify-center">
                 <button class="btn cancel-symptom-btn" id="cancel-diagnosis">Cancel Diagnosis</button>

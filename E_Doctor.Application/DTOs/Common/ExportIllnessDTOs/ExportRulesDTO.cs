@@ -4,8 +4,7 @@ namespace E_Doctor.Application.DTOs.Common.ExportIllnessDTOs;
 
 public sealed record ExportRulesDTO(
     int SymptomId,
-    int IllnessId,
-    string Question
+    int IllnessId
 );
 
 //public sealed record ExportRulesDTO(

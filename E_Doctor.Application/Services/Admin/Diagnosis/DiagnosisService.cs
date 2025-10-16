@@ -81,7 +81,8 @@ internal class DiagnosisService : IDiagnosisService
                 .AsNoTracking()
                 .Include(r => r.Rules)
                 .ThenInclude(s => s.Symptom)
-                .Where(i => i.IsActive == true && i.Id == diagnosisRequest.IllnessId)
+                //.Where(i => i.IsActive == true && i.Id == diagnosisRequest.IllnessId)
+                .Where(i => i.IsActive == true)
                 .Select(i => new
                 {
                     IllnessId = i.Id,
@@ -94,6 +95,7 @@ internal class DiagnosisService : IDiagnosisService
                     MatchedRules = i.Rules.Where(r => r.IsActive && diagnosisRequest.SymptomIds.Contains(r.SymptomId)).ToList(),
                     MatchedRuleCount = i.Rules.Count(r => r.IsActive && diagnosisRequest.SymptomIds.Contains(r.SymptomId)),
                 })
+                .OrderByDescending(o => o.MatchedRuleCount)
                 .FirstOrDefaultAsync();
 
             if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
@@ -141,31 +143,39 @@ internal class DiagnosisService : IDiagnosisService
 
     public async Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId)
     {
-        var illness = await _appDbContext.Illnesses
+        //var illness = await _appDbContext.Illnesses
+        //    .AsNoTracking()
+        //    .Include(r => r.Rules)
+        //    .ThenInclude(s => s.Symptom)
+        //    .Where(i => i.IsActive && i.Id == illnessId)
+        //    .Select(i => new
+        //    {
+        //        IllnessId = i.Id,
+        //        Symptoms = i.Rules.Where(r => r.IsActive)
+        //            .Select(s => new
+        //            {
+        //                SymptomId = s.SymptomId,
+        //                SymptomName = s.Symptom.Name,
+        //                Question = s.Question,
+        //                IsActive = s.Symptom.IsActive
+        //            })
+        //            .Where(s => s.IsActive).ToList()
+        //    })
+        //    .FirstOrDefaultAsync();
+
+        //if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
+
+        var symptoms = await _appDbContext.Symptoms
             .AsNoTracking()
-            .Include(r => r.Rules)
-            .ThenInclude(s => s.Symptom)
-            .Where(i => i.IsActive && i.Id == illnessId)
-            .Select(i => new
-            {
-                IllnessId = i.Id,
-                Symptoms = i.Rules.Where(r => r.IsActive)
-                    .Select(s => new
-                    {
-                        SymptomId = s.SymptomId,
-                        SymptomName = s.Symptom.Name,
-                        Question = s.Question,
-                        IsActive = s.Symptom.IsActive
-                    })
-                    .Where(s => s.IsActive).ToList()
-            })
-            .FirstOrDefaultAsync();
+            .Where(s => s.IsActive)
+            .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.Id, s.Name, s.QuestionText))
+            .ToListAsync();
 
-        if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
+        //var symptoms = await _appDbContext.Symptoms
+        //    .AsNoTracking()
+        //    .Where(s => s.IsActive)
+        //    .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.Question))
 
-        var symptoms = illness.Symptoms
-            .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.Question))
-            .ToList();
 
         return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Success(symptoms);
     }

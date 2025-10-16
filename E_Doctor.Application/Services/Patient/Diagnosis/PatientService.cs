@@ -67,7 +67,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
         public async Task<IEnumerable<GetSymptomDTO>> GetSymtoms()
         {
             return await _appDbContext.PatientSymptoms
-                .Select(s => new GetSymptomDTO(s.SymptomId, s.SymptomName)).ToListAsync();
+                .Select(s => new GetSymptomDTO(s.SymptomId, s.SymptomName, string.Empty)).ToListAsync();
         }
 
         public async Task<bool> MigrateRules(string jsonData)
@@ -87,6 +87,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                     {
                         SymptomId = s.SymptomId,
                         SymptomName = s.SymptomName,
+                        QuestionText = s.QuestionText,
                         UpdatedOn = DateTime.UtcNow,
                     });
 
@@ -126,7 +127,6 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                         {
                             SymptomId = r.SymptomId,
                             IllnessId = illness.IllnessId,
-                            Question = r.Question
                         })
                         .ToList();
                 }
@@ -177,7 +177,7 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
                    .AsNoTracking()
                    .Include(r => r.Rules)
                    .ThenInclude(s => s.Symptom)
-                   .Where(i => i.IllnessId == diagnosisRequest.IllnessId)
+                   //.Where(i => i.IllnessId == diagnosisRequest.IllnessId)
                    .Select(i => new
                    {
                        IllnessId = i.IllnessId,
@@ -260,28 +260,28 @@ namespace E_Doctor.Application.Services.Patient.Diagnosis
 
         public async Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId)
         {
-            var illness = await _appDbContext.PatientIllnesses
+            //var illness = await _appDbContext.PatientIllnesses
+            //    .AsNoTracking()
+            //    .Include(r => r.Rules)
+            //    .ThenInclude(s => s.Symptom)
+            //    .Where(i => i.IllnessId == illnessId)
+            //    .Select(i => new
+            //    {
+            //        IllnessId = i.IllnessId,
+            //        Symptoms = i.Rules.Select(s => new
+            //        {
+            //            SymptomId = s.SymptomId,
+            //            SymptomName = s.Symptom.SymptomName,
+            //        }).ToList()
+            //    })
+            //    .FirstOrDefaultAsync();
+
+            //if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
+
+            var symptoms = await _appDbContext.PatientSymptoms
                 .AsNoTracking()
-                .Include(r => r.Rules)
-                .ThenInclude(s => s.Symptom)
-                .Where(i => i.IllnessId == illnessId)
-                .Select(i => new
-                {
-                    IllnessId = i.IllnessId,
-                    Symptoms = i.Rules.Select(s => new
-                    {
-                        SymptomId = s.SymptomId,
-                        SymptomName = s.Symptom.SymptomName,
-                        s.Question
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
-
-            if (illness == null) return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Failure("Illness Symptoms available.");
-
-            var symptoms = illness.Symptoms
-                .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.Question))
-                .ToList();
+                .Select(s => new GetConsultationSymptomByIllnessIdDTO(s.SymptomId, s.SymptomName, s.QuestionText))
+                .ToListAsync();
 
             return Result<List<GetConsultationSymptomByIllnessIdDTO>>.Success(symptoms);
         }

@@ -230,7 +230,7 @@
                     const transformedRule = {
                         symptomId: rule.symptomId,
                         symptomName: symptoms.find(s => s.symptomId == rule.symptomId)?.symptomName ?? "",
-                        question: rule.question,
+                        //questionText: rule.question,
                     }
 
                     tempSelectedRules.push(transformedRule);
@@ -238,6 +238,7 @@
                     return transformedRule;
                 });
 
+                console.log(rulesToPopulates);
                 const $ruleFieldsContainer = $(forms.illness.rulesContainer);
 
                 $ruleFieldsContainer.empty();
@@ -273,6 +274,8 @@
                 ruleRow.style.backgroundColor = '#f9fafb';
                 ruleRow.style.borderRadius = '0.25rem';
                 ruleRow.dataset.symptomId = data.symptomId;
+
+                // with weights
                 //ruleRow.innerHTML = `
                 //        <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
                 //        ${this.createRulesConditionOption(data.condition)}
@@ -282,9 +285,16 @@
                 //    `;
 
                 //// with questionaire
+                //ruleRow.innerHTML = `
+                //        <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
+                //        <textarea type="text" class="form-input rule-symptom-question" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background-color: #e5e7eb; flex-grow: 1;resize: none;align-self: start;" placeholder="Symptom Question" readonly>${data.questionText ?? ""}</textarea>
+                //        <button class="remove-rule-btn" style="background:none;border:none;color:var(--danger-color);cursor:pointer;font-size: 2rem;line-height:1;width: 50px;">&times;</button>
+                //    `;
+
+
+                //// without questionaire
                 ruleRow.innerHTML = `
                         <input type="text" value="${data.symptomName}" class="form-input rule-symptom-text" style="background-color: #e5e7eb; flex-grow: 1;" readonly>
-                        <textarea type="text" class="form-input rule-symptom-question" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="flex-grow: 1;resize: none;align-self: start;" placeholder="Symptom Question">${data.question ?? ""}</textarea>
                         <button class="remove-rule-btn" style="background:none;border:none;color:var(--danger-color);cursor:pointer;font-size: 2rem;line-height:1;width: 50px;">&times;</button>
                     `;
 
@@ -375,8 +385,8 @@
                     //const weight = parseInt($(field).find(".rule-symptom-weight-select").val());
 
                     return {
-                        symptomId,
-                        question
+                        symptomId
+                        //question
                         //condition,
                         //days,
                         //weight

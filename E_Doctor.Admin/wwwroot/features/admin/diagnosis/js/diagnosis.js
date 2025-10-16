@@ -141,7 +141,7 @@
                     elementHolders.common.buttons.newConsultation,
                     "click",
                     function (event) {
-                        window.location.href = "AdminDiagnosis?tabName=Consultation";
+                        window.location.href = "/";
                     }
                 );
             },

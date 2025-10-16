@@ -58,7 +58,7 @@ public static class DependencyInjection
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             // Expiration settings
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // valid only for 30 mins
+            options.ExpireTimeSpan = TimeSpan.FromDays(30); // valid only for 30 mins
             options.SlidingExpiration = false; // lifetime won’t refresh on activity
 
             // 👇 This makes the cookie disappear when browser closes
@@ -103,7 +103,7 @@ public static class DependencyInjection
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             // Expiration settings
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // valid only for 30 mins
+            options.ExpireTimeSpan = TimeSpan.FromDays(30); // valid only for 30 mins
             options.SlidingExpiration = false; // lifetime won’t refresh on activity
         });
 
