@@ -7,7 +7,7 @@ public class PatientRulesEntity
     public PatientSymptomEntity? Symptom { get; set; }
     public int IllnessId { get; set; }
     public PatientIllnessEntity? Illness { get; set; }
-    public string Question { get; set; } = string.Empty;
+    //public string Question { get; set; } = string.Empty;
 }
 
 //public class PatientRulesEntity

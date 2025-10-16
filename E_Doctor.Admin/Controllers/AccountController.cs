@@ -35,23 +35,23 @@ namespace E_Doctor.Web.Controllers
             return Ok(result.Value);
         }
 
-        public IActionResult Register()
-        {
-            return View();
-        }
+        //public IActionResult Register()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUserDTO register)
-        {
-            var result = await _userService.Register(register);
+        //[HttpPost]
+        //public async Task<IActionResult> Register([FromBody] RegisterUserDTO register)
+        //{
+        //    var result = await _userService.Register(register);
 
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
+        //    if (result.IsFailure)
+        //    {
+        //        return BadRequest(result.Error);
+        //    }
 
-            return Ok(result.IsSuccess);
-        }
+        //    return Ok(result.IsSuccess);
+        //}
 
         public async Task<IActionResult> Logout()
         {

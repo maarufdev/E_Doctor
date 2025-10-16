@@ -2,5 +2,6 @@
 
 public sealed record ExportSymptomDTO(
     int SymptomId, 
-    string SymptomName
+    string SymptomName,
+    string QuestionText
 );

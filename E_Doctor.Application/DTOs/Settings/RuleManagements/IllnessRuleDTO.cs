@@ -1,8 +1,7 @@
 ﻿namespace E_Doctor.Application.DTOs.Settings.RuleManagements;
 
 public sealed record IllnessRuleDTO(
-    int SymptomId,
-    string Question
+    int SymptomId
 );
 
 //public sealed record IllnessRuleDTO(

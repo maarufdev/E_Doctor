@@ -3,6 +3,7 @@ using System;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations.Admin
 {
     [DbContext(typeof(AdminAppDbContext))]
-    partial class AdminAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011140152_MovedQuestionTextToSymptom")]
+    partial class MovedQuestionTextToSymptom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -98,6 +101,10 @@ namespace E_Doctor.Infrastructure.Migrations.Admin
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("IllnessId", "SymptomId");
 

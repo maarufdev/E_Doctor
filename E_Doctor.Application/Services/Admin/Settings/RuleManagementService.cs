@@ -21,7 +21,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
             var symptoms = await _context.Symptoms
                 .Where(x => x.IsActive)
                 .OrderByDescending(x => x.UpdatedOn ?? x.CreatedOn)
-                .Select(x => new GetSymptomDTO(x.Id, x.Name))
+                .Select(x => new GetSymptomDTO(x.Id, x.Name, x.QuestionText))
                 .ToListAsync();
 
             return symptoms;
@@ -126,7 +126,6 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         {
                             IllnessId = illnessEntity.Id,
                             SymptomId = rule.SymptomId,
-                            Question = rule.Question,
                             IsActive = true,
                         };
 
@@ -166,7 +165,6 @@ namespace E_Doctor.Application.Services.Admin.Settings
                         
                         if (existingRule is not null)
                         {
-                            existingRule.Question = rule.Question;
                             existingRule.IsActive = true;
                         }
                         else
@@ -175,7 +173,6 @@ namespace E_Doctor.Application.Services.Admin.Settings
                             {
                                 SymptomId = rule.SymptomId,
                                 IllnessId = illnessId,
-                                Question = rule.Question,
                                 IsActive = true
                             };
 
@@ -223,7 +220,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                 .AsNoTracking()
                 .Where(s => s.IsActive)
                 .OrderBy(s => s.Name)
-                .Select(s => new ExportSymptomDTO(s.Id, s.Name))
+                .Select(s => new ExportSymptomDTO(s.Id, s.Name, s.QuestionText))
                 .ToListAsync();
 
                 var illnesses = await _context.Illnesses
@@ -246,8 +243,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     .Where(s => s.IsActive && s.Symptom.IsActive && s.Illness.IsActive)
                     .Select(r => new ExportRulesDTO(
                         r.SymptomId,
-                        r.IllnessId,
-                        r.Question
+                        r.IllnessId
                         )
                     )
                     .ToListAsync();

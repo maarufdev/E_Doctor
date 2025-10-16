@@ -5,12 +5,18 @@
         <input type="text" id="symptom-search-input" autocomplete="off" class="form-input self-start search-symptom" placeholder="Search symptoms...">
         <button id="symptom-search-btn" class="btn btn-sm btn-secondary self-start">Search</button>
     </div>
-    <button id="new-symptom-btn" class="btn btn-sm btn-primary new-symptom-btn self-start">New Symptom</button>
+    <button id="new-symptom-btn" class="btn btn-sm btn-secondary new-symptom-btn self-start">New Symptom</button>
 </div>
 <div class="card">
     <div class="table-container">
         <table class="data-table">
-            <thead><tr><th>Symptom Name</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Symptom Name</th>
+                    <th>Question Text</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody id="symptoms-table-body"></tbody>
         </table>
     </div>
@@ -31,9 +37,13 @@
                 <label for="symptom-name-input" class="font-semibold">Symptom Name</label>
                 <input type="text" id="symptom-name-input" class="form-input mt-2" placeholder="e.g., High Fever">
             </div>
+            <div>
+                <label for="symptom-name-input" class="font-semibold">Question Text</label>
+                <input type="text" id="symptom-quest-input" class="form-input mt-2" placeholder="e.g., Do you have a fever?">
+            </div>
         </div>
         <div class="modal-footer">
-            <button id="save-symptom-btn" class="btn btn-primary">Save Symptom</button>
+            <button id="save-symptom-btn" class="btn btn-secondary">Save Symptom</button>
         </div>
     </div>
 </div>

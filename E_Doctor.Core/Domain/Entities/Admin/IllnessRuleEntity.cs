@@ -7,7 +7,7 @@ public class IllnessRuleEntity
     public virtual SymptomEntity? Symptom { get; set; }
     public int IllnessId { get; set; }
     public virtual IllnessEntity? Illness { get; set; }
-    public string Question { get; set; } = string.Empty;
+    //public string Question { get; set; } = string.Empty;
     public bool IsActive { get; set; }
 }
 

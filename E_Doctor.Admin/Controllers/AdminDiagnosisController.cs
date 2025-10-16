@@ -25,9 +25,9 @@ namespace E_Doctor.Web.Controllers
                 case AdminDiagnosisTab.Symptom:
                     pageTitle = "Manage Symptoms";
                     break;
-                case AdminDiagnosisTab.Consultation:
-                    pageTitle = "Consulation";
-                    break;
+                //case AdminDiagnosisTab.Consultation:
+                //    pageTitle = "Consulation";
+                //    break;
                 case AdminDiagnosisTab.Illness:
                     pageTitle = "Manage Illnesses";
                     break;

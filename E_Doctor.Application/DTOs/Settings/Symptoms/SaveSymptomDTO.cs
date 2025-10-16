@@ -1,17 +1,18 @@
 ﻿using E_Doctor.Core.Domain.Entities.Admin;
 
 namespace E_Doctor.Application.DTOs.Settings.Symptoms;
-public sealed record SaveSymptomDTO(int SymptomId, string SymptomName);
+public sealed record SaveSymptomDTO(int SymptomId, string SymptomName, string QuestionText);
 
 public static class SaveSymptomMapper
 {
-    public static SymptomEntity ToCreateEntity(this SaveSymptomDTO saveSymptomDTO)
+    public static SymptomEntity CreateSymptomEntity(this SaveSymptomDTO saveSymptomDTO)
     {
         ArgumentNullException.ThrowIfNull(saveSymptomDTO);
 
         var entity = new SymptomEntity
         {
             Name = saveSymptomDTO.SymptomName,
+            QuestionText = saveSymptomDTO.QuestionText,
             IsActive = true,
             CreatedOn = DateTime.UtcNow,
         };
@@ -20,7 +21,7 @@ public static class SaveSymptomMapper
     }
 
 
-    public static SymptomEntity ToUpdateEntity(this SaveSymptomDTO saveSymptomDTO, SymptomEntity entity)
+    public static SymptomEntity UpdateSymptomEntity(this SaveSymptomDTO saveSymptomDTO, SymptomEntity entity)
     {
         ArgumentNullException.ThrowIfNull(saveSymptomDTO);
         ArgumentOutOfRangeException.ThrowIfEqual(saveSymptomDTO.SymptomId, 0);
@@ -28,6 +29,7 @@ public static class SaveSymptomMapper
 
         entity.Id = saveSymptomDTO.SymptomId;
         entity.Name = saveSymptomDTO.SymptomName;
+        entity.QuestionText = saveSymptomDTO.QuestionText;
         entity.IsActive = true;
         entity.UpdatedOn = DateTime.UtcNow;
 

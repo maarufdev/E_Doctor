@@ -1,4 +1,13 @@
-﻿.justify-center {
+﻿
+.consulation-title {
+    font-size: 2.5rem;
+}
+
+    .consulation-title + p {
+        font-size: 1.3rem;
+    }
+
+.justify-center {
     justify-content: center;
 }
 
@@ -41,10 +50,10 @@
     font-weight: 400;
 }
 
-.illness-item-btn:hover {
-    background-color: var(--primary-color);
-    color: #fff;
-}
+    .illness-item-btn:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
 
 /*Symptoms styles*/
 .modal-symptom-content {
@@ -74,29 +83,26 @@
     gap: 30px;
 }
 
-.navigation-symptom-buttons .btn {
-    padding: 10px 20px;
-    border-radius: 30px;
-    flex: 1;
-    justify-content: center;
-}
+    .navigation-symptom-buttons .btn {
+        padding: 10px 20px;
+        border-radius: 30px;
+        flex: 1;
+        justify-content: center;
+    }
 
-.navigation-symptom-buttons .back-button {
-    color: #fff;
-    background-color: #374151;
-    opacity: .7;
-}
+    .navigation-symptom-buttons .back-button {
+        color: #fff;
+        background-color: #374151;
+        opacity: .7;
+    }
 
-.navigation-symptom-buttons .back-button:hover {
-    opacity: 1;
-}
+        .navigation-symptom-buttons .back-button:hover {
+            opacity: 1;
+        }
 
 .question-btn[disabled] {
     cursor: not-allowed;
-}
-
-.question-btn[disabled]:hover {
-        opacity: .7;
+    opacity: .7;
 }
 
 .cancel-symptom-btn {
@@ -110,16 +116,16 @@
     gap: 20px;
 }
 
-.symptom-yes-no-buttons .btn {
-    border-radius: 20px;
-    padding-inline: 30px;
-    padding-block: 7px;
-    margin-top: 20px;
-}
+    .symptom-yes-no-buttons .btn {
+        border-radius: 20px;
+        padding-inline: 30px;
+        padding-block: 7px;
+        margin-top: 20px;
+    }
 
-.symptom-yes-no-buttons .btn.selected {
-    opacity: .5;
-}
+        .symptom-yes-no-buttons .btn.selected {
+            opacity: .5;
+        }
 
 /*Diagnosis Result styles*/
 .modal-diagnosis-content .modal-header,
@@ -144,8 +150,9 @@
 }
 
 .move-left {
-        transform: translateX(-100%);
+    transform: translateX(-100%);
 }
+
 .move-right {
     transform: translateX(100%);
 }
@@ -153,7 +160,37 @@
 .fade-in {
     animation: fadeIn 0.5s ease-in-out forwards;
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.card-slider-btn {
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+    border: none;
+    position: absolute;
+    top: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.card-slider-btn.next {
+    right: -10px;
+    transform: translate(0%, -100%);
+}
+
+.card-slider-btn.back {
+    left: -10px;
+    transform: translate(0%, -100%);
 }

@@ -1,4 +1,9 @@
-﻿.dashboard-cards-grid {
+﻿.page-content {
+    padding-top: 50px;
+    height: 100%;
+}
+
+.dashboard-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;

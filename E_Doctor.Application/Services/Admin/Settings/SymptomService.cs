@@ -22,7 +22,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                 ArgumentNullException.ThrowIfNull(symptom);
             }
 
-            var symptomDTO = new GetSymptomDTO(symptom.Id, symptom.Name);
+            var symptomDTO = new GetSymptomDTO(symptom.Id, symptom.Name, symptom.QuestionText);
 
             return symptomDTO;
 
@@ -46,7 +46,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
             var symptoms = await query
                 .Skip((requestDTO.PageNumber - 1) * requestDTO.PageSize)
                 .Take(requestDTO.PageSize)
-                .Select(x => new GetSymptomDTO(x.Id, x.Name))
+                .Select(x => new GetSymptomDTO(x.Id, x.Name, x.QuestionText))
                 .ToListAsync();
             
 
@@ -78,13 +78,12 @@ namespace E_Doctor.Application.Services.Admin.Settings
                 ArgumentNullException.ThrowIfNull(saveSymptomDto);
             }
 
-            var isExist = await _context.Symptoms.AnyAsync(s => s.Name.ToLower() == saveSymptomDto.SymptomName.ToLower() && s.IsActive);
-
-            if (isExist) return Result.Failure($"{saveSymptomDto.SymptomName} is already exists.");
-
             if(saveSymptomDto.SymptomId == 0)
             {
-                var entity = saveSymptomDto.ToCreateEntity();
+                var isExist = await _context.Symptoms.AnyAsync(s => s.Name.ToLower() == saveSymptomDto.SymptomName.ToLower() && s.IsActive);
+                if (isExist) return Result.Failure($"{saveSymptomDto.SymptomName} is already exists.");
+
+                var entity = saveSymptomDto.CreateSymptomEntity();
                 
                 await _context.Symptoms.AddAsync(entity);
             } 
@@ -97,7 +96,7 @@ namespace E_Doctor.Application.Services.Admin.Settings
                     ArgumentNullException.ThrowIfNull(toUpdate);
                 }
 
-                toUpdate = saveSymptomDto.ToUpdateEntity(toUpdate);
+                toUpdate = saveSymptomDto.UpdateSymptomEntity(toUpdate);
 
                 _context.Symptoms.Update(toUpdate);
             }

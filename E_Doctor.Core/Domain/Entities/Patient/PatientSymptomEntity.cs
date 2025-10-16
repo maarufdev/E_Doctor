@@ -3,6 +3,7 @@ public class PatientSymptomEntity
 {
     public int SymptomId { get; set; }
     public string SymptomName { get; set; } = string.Empty;
+    public string QuestionText { get; set; } = string.Empty;
     public DateTime UpdatedOn { get; set; }
     public ICollection<PatientRulesEntity>? Rules { get; set; }
 }

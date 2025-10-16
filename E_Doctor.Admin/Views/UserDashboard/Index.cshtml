@@ -4,10 +4,15 @@
 <link rel="stylesheet" href="~/features/admin/dashboard/css/dashboard.css" asp-append-version="true" />
 
 <div id="dashboard" class="page-content active">
+    <partial name="/Views/AdminDiagnosis/AdminSettingPartials/_ConsultationTab.cshtml" />
+</div>
+
+@* <div id="dashboard" class="page-content active">
     <div class="flex justify-between mb-4">
         <h2 class="text-2xl font-semibold mb-4">Dashboard</h2>
         <a href="/AdminDiagnosis?TabName=Diagnosis" class="btn btn-primary flex align-center justify-center" style="align-self: start;">Go to Diagnosis</a>
     </div>
+    <partial name="/Views/AdminDiagnosis/AdminSettingPartials/_ConsultationTab.cshtml" />
    <div class="flex flex-column">
         <div id="dashboard-cards" class="dashboard-cards-grid">
             <div class="stat-card">
@@ -50,5 +55,5 @@
         </div>
    </div>
 </div>
-
+ *@
 <script src="~/features/admin/dashboard/js/dashboard.js" asp-append-version="true"></script>
