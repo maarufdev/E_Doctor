@@ -9,7 +9,6 @@
     <h2 class="text-2xl font-semibold mb-4 settings-page-title">@ViewBag.PageTitle</h2>
     <div class="settings-tabs">
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Diagnosis)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Diagnosis ? "active" : "")" data-tab="symptoms-tab">Diagnosis</a>
-        @* <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Consultation)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Consultation ? "active" : "")" data-tab="symptoms-tab">Consultation</a> *@
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Symptom)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Symptom ? "active" : "")" data-tab="symptoms-tab">Symptoms</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Illness)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Illness ? "active" : "")" data-tab="diseases-tab">Illness</a>
     </div>
@@ -20,9 +19,6 @@
             case AdminDiagnosisTab.Diagnosis:
                 <partial name="AdminSettingPartials/_DiagnosisTab.cshtml" />
                 break;
-            @* case AdminDiagnosisTab.Consultation:
-                <partial name="AdminSettingPartials/_ConsultationTab.cshtml" />
-                break; *@
             case AdminDiagnosisTab.Symptom:
                 <partial name="AdminSettingPartials/_SymptomsTab.cshtml" />
                 break;

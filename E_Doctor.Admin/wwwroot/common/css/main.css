@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/Inter_18pt-Regular.ttf') format('truetype');
+    font-display: swap;
+}
+
 /* General Styles & Variables */
 :root {
     --primary-color: #2563eb;
@@ -22,7 +30,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-primary);
     overflow: hidden;

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations.Patient
 {
     /// <inheritdoc />
-    public partial class PatientInitialDatabaseMigrations : Migration
+    public partial class migrationPatientDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,6 +82,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     SymptomId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SymptomName = table.Column<string>(type: "TEXT", nullable: false),
+                    QuestionText = table.Column<string>(type: "TEXT", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -222,8 +223,7 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                 columns: table => new
                 {
                     SymptomId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IllnessId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Question = table.Column<string>(type: "TEXT", nullable: false)
+                    IllnessId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

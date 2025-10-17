@@ -1,7 +1,5 @@
-﻿using E_Doctor.Application.Constants;
-using E_Doctor.Application.DTOs.Common;
+﻿using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,23 +15,10 @@ namespace E_Doctor.Patient.Controllers
         {
             _patientService = patientService;
         }
-        public IActionResult Index(AdminDiagnosisTab? tabName = AdminDiagnosisTab.Diagnosis)
+        public IActionResult Index()
         {
-            ViewBag.ActiveTab = tabName;
             var pageTitle = "Diagnosis";
-
-            switch (tabName)
-            {
-                case AdminDiagnosisTab.Consultation:
-                    pageTitle = "Consulation";
-                    break;
-                default:
-                    pageTitle = "Diagnosis";
-                    break;
-            }
-
             ViewBag.PageTitle = pageTitle;
-
             return View();
         }
 
