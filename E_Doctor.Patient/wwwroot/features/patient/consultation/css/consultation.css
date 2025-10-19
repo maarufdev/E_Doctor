@@ -1,4 +1,13 @@
-﻿.justify-center {
+﻿
+.consulation-title {
+    font-size: 2.5rem;
+}
+
+    .consulation-title + p {
+        font-size: 1.3rem;
+    }
+
+.justify-center {
     justify-content: center;
 }
 
@@ -93,11 +102,8 @@
 
 .question-btn[disabled] {
     cursor: not-allowed;
+    opacity: .7;
 }
-
-    .question-btn[disabled]:hover {
-        opacity: .7;
-    }
 
 .cancel-symptom-btn {
     background-color: #fff;
@@ -166,3 +172,25 @@
         transform: translateY(0);
     }
 }
+
+
+.card-slider-btn {
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+    border: none;
+    position: absolute;
+    top: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+    .card-slider-btn.next {
+        right: -10px;
+        transform: translate(0%, -100%);
+    }
+
+    .card-slider-btn.back {
+        left: -10px;
+        transform: translate(0%, -100%);
+    }

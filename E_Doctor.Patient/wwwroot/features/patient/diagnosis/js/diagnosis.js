@@ -182,7 +182,7 @@
                     elementHolders.common.buttons.newConsultation,
                     "click",
                     function (event) {
-                        window.location.href = "?tabName=Consultation";
+                        window.location.href = "/Dashboard";
                     }
                 );
             },

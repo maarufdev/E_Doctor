@@ -155,10 +155,6 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<int>("SymptomId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("IllnessId", "SymptomId");
 
                     b.HasIndex("SymptomId");
@@ -171,6 +167,10 @@ namespace E_Doctor.Infrastructure.Migrations.Patient
                     b.Property<int>("SymptomId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SymptomName")
                         .IsRequired()
