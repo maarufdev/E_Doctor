@@ -4,5 +4,6 @@ public enum AdminDiagnosisTab
     Diagnosis,
     Consultation,
     Symptom,
-    Illness
+    Illness,
+    ManageUser
 }

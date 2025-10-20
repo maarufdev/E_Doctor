@@ -1,7 +1,7 @@
 ﻿using E_Doctor.Application.Constants;
 using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Admin.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +27,9 @@ namespace E_Doctor.Web.Controllers
                     break;
                 case AdminDiagnosisTab.Illness:
                     pageTitle = "Manage Illnesses";
+                    break;
+                case AdminDiagnosisTab.ManageUser:
+                    pageTitle = "Manage Users";
                     break;
                 default:
                     pageTitle = "Diagnosis";
@@ -73,6 +76,15 @@ namespace E_Doctor.Web.Controllers
             if (result.IsFailure) return BadRequest(result.Value);
 
             return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> DeleteDiagnosisById(int DiagnosisId)
+        {
+            var result = await _diagnosisService.DeleteDiagnosisById(DiagnosisId);
+            
+            if (result.IsFailure) return BadRequest(result.IsFailure);
+
+            return Ok(result.IsSuccess);
         }
     }
 }

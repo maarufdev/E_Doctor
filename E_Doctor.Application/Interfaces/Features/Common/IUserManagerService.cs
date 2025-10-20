@@ -9,6 +9,8 @@ public interface IUserManagerService
     Task<Result> Register(RegisterUserDTO registerDTO);
     Task<Result> Logout();
     Task<int?> GetUserId();
+    Task<string> GetUserFullName();
+    Task<string> GetUserFullNameByUserId();
     Task<UserProfileDTO> GetUserProfile();
     Task<Result> ResetPassword(ResetPasswordDTO resetPasswordDTO);
 }

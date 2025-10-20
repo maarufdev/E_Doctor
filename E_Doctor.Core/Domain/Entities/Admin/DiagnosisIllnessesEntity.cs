@@ -1,10 +1,13 @@
-﻿namespace E_Doctor.Core.Domain.Entities.Admin;
-public class DiagnosisIllnessesEntity
+﻿using E_Doctor.Core.Domain.Entities.Patient;
+
+namespace E_Doctor.Core.Domain.Entities.Admin;
+public class DiagnosisIllnessesEntity : BaseEntity
 {
-    public int Id { get; set; }
     public int DiagnosisId { get; set; }
-    public DiagnosisTestEntity? Diagnosis { get; set; }
-    public int SymptomId { get; set; }
-    public virtual SymptomEntity? Symptom { get; set; }
-    public int Days { get; set; }
+    public DiagnosisEntity? Diagnosis { get; set; }
+    public string Illness { get; set; } = string.Empty;
+    public string Prescription { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Notes { get; set; } = string.Empty;
+    public decimal Score { get; set; }
 }

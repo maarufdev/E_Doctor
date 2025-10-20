@@ -11,6 +11,7 @@
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Diagnosis)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Diagnosis ? "active" : "")" data-tab="symptoms-tab">Diagnosis</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Symptom)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Symptom ? "active" : "")" data-tab="symptoms-tab">Symptoms</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Illness)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Illness ? "active" : "")" data-tab="diseases-tab">Illness</a>
+        <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.ManageUser)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.ManageUser ? "active" : "")" data-tab="manage-user-tab">Manage User</a>
     </div>
 
     <div id="symptoms-tab" class="sub-page active">
@@ -24,6 +25,9 @@
                 break;
             case AdminDiagnosisTab.Illness:
                 <partial name="AdminSettingPartials/_IllnessTab.cshtml" />
+                break;
+            case AdminDiagnosisTab.ManageUser:
+                <partial name="AdminSettingPartials/_ManageUser.cshtml" />
                 break;
             default:
                 <h1>Page is not found!</h1>

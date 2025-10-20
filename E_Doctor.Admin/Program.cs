@@ -16,6 +16,7 @@ var app = builder.Build();
 // seeder
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+await app.SeedRoleAsync(services);
 await app.SeedAdminUser(services, builder.Configuration);
 
 // Configure the HTTP request pipeline.

@@ -6,6 +6,7 @@
         runDiagnosis: `${DIAGNOSIS_BASE_URL}/RunDiagnosis`,
         getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`,
         getDiagnosisById: `${DIAGNOSIS_BASE_URL}/GetDiagnosisById`,
+        deleteDiagnosisById: `${DIAGNOSIS_BASE_URL}/DeleteDiagnosisById`,
     }
     const stateHolders = {
         symptoms: [],
@@ -70,9 +71,13 @@
                     const $tr = $(`
                         <tr>
                             <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
+                            <td style="white-space: normal;">${item.userName}</td>
                             <td style="white-space: normal;">${item.symptoms}</td>
                             <td>${item.illnessName}</td>
-                            <td><a href="#" class="btn-view-diagnosis">View Diagnosis</a></td>
+                            <td>
+                                <a href="#" class="btn-view-diagnosis">View Diagnosis</a>
+                                <a href="#" class="btn-delete-diagnosis">Delete Diagnosis</a>
+                            </td>
                         </tr>
                     `);
 
@@ -87,6 +92,23 @@
                                 services.eventHandlers.handleOnShowDiagnosisResult(result);
                             }
 
+                        }
+                    )
+                    registerEvent(
+                        $tr.find(".btn-delete-diagnosis"),
+                        "click",
+                        async function (event) {
+                            event.preventDefault();
+
+                            const isYes = confirm("Are you sure to delete this Diagnosis?");
+
+                            if (isYes) {
+                                if (diagnosisId) {
+                                    const result = await services.apiService.deleteDiagnosisById(diagnosisId);
+                                    stateHolders.pageNumber = 1;
+                                    await services.eventHandlers.renderDiagnosisTable(result);
+                                }
+                            }
                         }
                     )
                     $diagnosisTblBody.append($tr);
@@ -184,6 +206,15 @@
                         },
                     },
                 );
+            },
+            deleteDiagnosisById: async function (diagnosisId) {
+                return await apiFetch(
+                    URLS.deleteDiagnosisById,
+                    {
+                        params: {
+                            diagnosisId: diagnosisId
+                        },
+                    });
             },
         }
     };

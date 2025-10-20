@@ -1,0 +1,28 @@
+﻿<link rel="stylesheet" href="~/features/admin/manage-user/css/manage-user.css" asp-append-version="true" />
+
+<div id="test" class="page-content">
+    <div class="flex justify-end mb-4">
+        <button id="new-consultation-btn" class="btn btn-secondary self-start">New Consultation</button>
+    </div>
+    <div class="card">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User Id</th>
+                        <th>Full Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-controls">
+            <label style="font-weight: 500;">Page: </label>
+            <select id="manage-user-pagination" value="2" class="form-select" style="width: auto;">
+            </select>
+        </div>
+    </div>
+</div>
+<script src="~/features/admin/manage-user/js/manage-user.js" asp-append-version="true"></script>

@@ -140,7 +140,13 @@
     cursor: pointer;
 }
 
-.btn-view-diagnosis:visited {
+.btn-delete-diagnosis {
+    color: var(--danger-color);
+    cursor: pointer;
+}
+
+.btn-view-diagnosis:visited,
+.btn-delete-diagnosis:visited {
     color: var(--primary-color);
 }
 

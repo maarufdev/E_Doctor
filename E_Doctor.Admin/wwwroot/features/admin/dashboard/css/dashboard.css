@@ -28,6 +28,10 @@
         border-left-color: #f97316;
     }
 
+    .stat-card.red {
+        border-left-color: #EF4444;
+    }
+
     .stat-card .icon-container {
         padding: 1rem;
         border-radius: 50%;

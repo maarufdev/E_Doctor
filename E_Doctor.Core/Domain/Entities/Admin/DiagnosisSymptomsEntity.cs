@@ -1,10 +1,7 @@
 ﻿namespace E_Doctor.Core.Domain.Entities.Admin;
-public class DiagnosisSymptomsEntity
+public class DiagnosisSymptomsEntity : BaseEntity
 {
-    public int Id { get; set; }
     public int DiagnosisId { get; set; }
-    public virtual DiagnosisTestEntity? Diagnosis { get; set; }
-    public int IllnessId { get; set; }
-    public virtual IllnessEntity? Illness { get; set; }
-    public decimal Score { get; set; }
+    public DiagnosisEntity? Diagnosis { get; set; }
+    public string? SymptomName { get; set; }
 }

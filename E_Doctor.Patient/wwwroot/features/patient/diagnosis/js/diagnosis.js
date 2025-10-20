@@ -248,13 +248,13 @@
                     }
                 );
 
-                registerEvent(
-                    common.buttons.showImportFileModal,
-                    "click",
-                    function (event) {
-                        services.eventHandlers.toggleImportFileModal(true);
-                    }
-                );
+                //registerEvent(
+                //    common.buttons.showImportFileModal,
+                //    "click",
+                //    function (event) {
+                //        services.eventHandlers.toggleImportFileModal(true);
+                //    }
+                //);
 
                 registerEvent(
                     importRule.buttons.close,
