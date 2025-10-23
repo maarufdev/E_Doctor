@@ -1,27 +1,125 @@
-﻿using E_Doctor.Application.DTOs.Common;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
+using E_Doctor.Application.DTOs.ManageUsers.RequestDTOs;
+using E_Doctor.Application.DTOs.ManageUsers.ResponseDTOs;
+using E_Doctor.Application.Helpers;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Infrastructure.Constants;
+using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace E_Doctor.Application.Services.Features.Common;
 
 internal class UserManagerService : IUserManagerService
 {
+    private readonly AppDbContext _context;
     private readonly UserManager<AppUserIdentity> _userManager;
     private readonly SignInManager<AppUserIdentity> _signInManager;
+    private readonly RoleManager<IdentityRole<int>> _roleManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     public UserManagerService(
+        AppDbContext context,
         UserManager<AppUserIdentity> userManager,
         SignInManager<AppUserIdentity> signInManager,
-        IHttpContextAccessor contextAccessor)
+        IHttpContextAccessor contextAccessor,
+        RoleManager<IdentityRole<int>> roleManeger)
     {
+        _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
         _httpContextAccessor = contextAccessor;
+        _roleManager = roleManeger;
+    }
+
+    public async Task<Result<ManageUserDetailResponse>> GetManageUserById(int userId)
+    {
+        var user = await _userManager.Users
+            .AsNoTracking()
+            .Where(u => u.Id == userId)
+            .FirstOrDefaultAsync();
+
+        if (user == null) return Result<ManageUserDetailResponse>.Failure("User Cannot Be found");
+
+        var displayStatus = UserStatusHelper.GetUserStatusString(user.Status);
+        var result = new ManageUserDetailResponse(
+            user.Id,
+            user.FirstName,
+            user.MiddleName,
+            user.LastName,
+            user.DateOfBirth,
+            user.Status,
+            user.Email,
+            string.Empty
+            );
+
+        return Result<ManageUserDetailResponse>.Success(result);
+    }
+
+    public async Task<Result<PagedResult<ManageUserResponse>>> GetManageUsers(GetManageUserRequest getManageUserRequest)
+    {
+        var query = _userManager.Users
+            .AsNoTracking()
+            .Where(u => u.IsActive)
+            .OrderBy(u => u.LastName)
+            .AsQueryable();
+
+        query = query
+            .Where(u => _context.UserRoles
+            .Any(ur => ur.UserId == u.Id && _context.Roles
+                .Any(r => r.Id == ur.RoleId && r.Name == RoleConstants.Patient))
+            );
+
+        if (!string.IsNullOrWhiteSpace(getManageUserRequest.SearchText))
+        {
+            var searchText = getManageUserRequest.SearchText.ToLower();
+
+            query = query
+                .Where(u =>
+                    u.FirstName.ToLower().Contains(searchText) ||
+                    u.LastName.ToLower().Contains(searchText) ||
+                    u.MiddleName.ToLower().Contains(searchText) ||
+                    u.Email.ToLower().Contains(searchText)
+                    );
+        }
+
+        if(getManageUserRequest.UserStatusId is not null)
+        {
+            query = query.Where(u => u.Status == getManageUserRequest.UserStatusId);
+        }
+
+        var totalCounts = await query.CountAsync();
+
+        var users = (
+            await query
+            .Skip((getManageUserRequest.PageNumber - 1) * getManageUserRequest.PageSize)
+            .Take(getManageUserRequest.PageSize)
+            .ToListAsync()
+            )
+            .Select(u => new ManageUserResponse(
+                u.Id,
+                $"{u.FirstName} {u.LastName}",
+                u.Email,
+                (int)u.Status,
+                UserStatusHelper.GetUserStatusString(u.Status),
+                DateTimeHelper.CurrentUtcToLocalShortDateTimeString()
+                ))
+            .ToList();
+        
+        var result = new PagedResult<ManageUserResponse>
+        {
+            Items = users,
+            TotalCount = totalCounts,
+            PageNumber = getManageUserRequest.PageNumber,
+            PageSize = getManageUserRequest.PageSize,
+        };
+
+        return Result<PagedResult<ManageUserResponse>>.Success(result);
     }
 
     public async Task<string> GetUserFullName()
@@ -125,6 +223,7 @@ internal class UserManagerService : IUserManagerService
 
         // Check if user already exists
         var existingUser = await _userManager.FindByEmailAsync(registerDTO.UserName);
+        
         if (existingUser != null)
         {
             return Result.Failure("A user with that email/username already exists.");
@@ -140,7 +239,8 @@ internal class UserManagerService : IUserManagerService
             LastName = registerDTO.LastName,
             MiddleName = registerDTO.MiddleName,
             DateOfBirth = registerDTO.DateOfBirth,
-            EmailConfirmed = true,              
+            EmailConfirmed = true,      
+            Status = (int)UserStatus.Active,
             IsActive = true,                    
             SecurityStamp = Guid.NewGuid().ToString("D")
         };
@@ -171,5 +271,80 @@ internal class UserManagerService : IUserManagerService
         if (result.Succeeded) return Result.Success();
 
         return Result.Failure("Password was not reset successfully.");
+    }
+
+    public async Task<Result<string>> SaveManagePatientAccount(SaveManageUserRequest saveManageUserRequest)
+    {
+        ArgumentNullException.ThrowIfNull(saveManageUserRequest);
+        saveManageUserRequest.Validate();
+
+        IdentityResult identityResult;
+        // Create
+        if (saveManageUserRequest.UserId == 0 || saveManageUserRequest.UserId is null)
+        {
+            var userEmail = await _userManager.FindByEmailAsync(saveManageUserRequest.Email);
+
+            if (userEmail is not null)
+            {
+                return Result<string>.Failure("Email is already used");
+            }
+
+            var userToCreate = new AppUserIdentity
+            {
+                UserName = saveManageUserRequest.Email,
+                Email = saveManageUserRequest.Email,
+                FirstName = saveManageUserRequest.FirstName,
+                MiddleName = saveManageUserRequest.MiddleName,
+                LastName = saveManageUserRequest.LastName,
+                DateOfBirth = saveManageUserRequest.DateOfBirth,
+                Status = saveManageUserRequest.UserStatusId,
+                EmailConfirmed = true,
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString("D"),
+            };
+
+            identityResult = await _userManager.CreateAsync(userToCreate, saveManageUserRequest.Password);
+
+            if (!identityResult.Succeeded)
+            {
+                return Result<string>.Failure("Something Went Wrong.");
+            }
+
+            identityResult = await _userManager.AddToRoleAsync(userToCreate, RoleConstants.Patient);
+            
+            if (!identityResult.Succeeded) 
+            { 
+                return Result<string>.Failure("Something Went Wrong.");
+            }
+
+        }
+        // Update
+        else
+        {
+            var userAccountToUpdate = await _userManager.FindByIdAsync(saveManageUserRequest.UserId.ToString()!);
+            
+            if (userAccountToUpdate is null) return Result<string>.Failure("User doesn't exist!");
+
+            if(userAccountToUpdate.Email != saveManageUserRequest.Email)
+            {
+                identityResult = await _userManager.SetEmailAsync(userAccountToUpdate, saveManageUserRequest.Email);
+
+                if (!identityResult.Succeeded) return Result<string>.Failure("Something Went Wrong!");
+            }
+
+            userAccountToUpdate.Email = saveManageUserRequest.Email;
+            userAccountToUpdate.UserName = saveManageUserRequest.Email;
+            userAccountToUpdate.FirstName = saveManageUserRequest.FirstName;
+            userAccountToUpdate.MiddleName = saveManageUserRequest.MiddleName;
+            userAccountToUpdate.LastName = saveManageUserRequest.LastName;
+            userAccountToUpdate.Status = saveManageUserRequest.UserStatusId;
+            userAccountToUpdate.DateOfBirth = saveManageUserRequest.DateOfBirth;
+
+            identityResult = await _userManager.UpdateAsync(userAccountToUpdate);
+
+            if (!identityResult.Succeeded) return Result<string>.Failure("Something Went Wrong!");
+        }
+
+        return Result<string>.Success("Success");
     }
 }

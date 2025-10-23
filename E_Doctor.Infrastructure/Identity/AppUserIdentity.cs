@@ -9,5 +9,6 @@ public class AppUserIdentity : IdentityUser<int>
     public string? MiddleName { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public bool IsActive { get; set; }
-    public DateTime UpdatedOn { get; set; } = DateTime.Now;
+    public int Status { get; set; }
+    public DateTime UpdatedOn { get; set; } = DateTime.UtcNow;
 }

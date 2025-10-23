@@ -1,20 +1,32 @@
 ﻿<link rel="stylesheet" href="~/features/admin/manage-user/css/manage-user.css" asp-append-version="true" />
 
 <div id="test" class="page-content">
-    <div class="flex justify-end mb-4">
-        <button id="new-consultation-btn" class="btn btn-secondary self-start">New Consultation</button>
+    <div class="flex justify-between mb-4">
+        <div class="flex gap-2">
+            <input id="search-manage-account-text" class="manage-user-filter manage-user-filter-search" type="text" placeholder="Search Patient Account" />
+            <select id="filter-manage-account-select" class="manage-user-filter manage-user-filter-status">
+                <option value="*">All Patients</option>
+                <option value="1">Active Patients</option>
+                <option value="2">Archived Patients</option>
+            </select>
+            <button id="seach-manage-account-btn" class="btn btn-secondary self-start">Search</button>
+        </div>
+        <button id="new-manage-user-btn" class="btn btn-secondary self-start"> + New User</button>
     </div>
     <div class="card">
-        <div class="table-container">
+        <div class="table-container manage-user-table">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>User Id</th>
-                        <th>Full Name</th>
-                        <th>Action</th>
+                        <th>PATIENT NAME</th>
+                        <th>EMAIL</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
+                        <th>LAST LOGIN</th>
                     </tr>
                 </thead>
-                <tbody id="history-table-body">
+                <tbody id="manage-user-table-body">
+                    
                 </tbody>
             </table>
         </div>
@@ -25,4 +37,156 @@
         </div>
     </div>
 </div>
+<div id="patient-account-md" class="modal-backdrop">
+    <div class="modal-content patient-account-md-content">
+        <div class="modal-header">
+            <h3 id="patient-account-md-title" class="text-xl font-semibold">Patient Account</h3>
+            <button class="modal-close-btn" id="patient-account-md-close-btn">&times;</button>
+        </div>
+        <div class="modal-body patient-account-md-body flex flex-column">
+            <div class="form-row flex gap-2">
+                <div class="form-item">
+                    <label class="">First Name</label>
+                    <input name="firstName" type="text" id="user-acc-first-name" class="form-input mt-2" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="form-item">
+                    <label for="symptom-name-input" class="">Middle Name</label>
+                    <input name="middleName" type="text" id="user-acc-middle-name" class="form-input mt-2" autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+            <div class="form-row flex gap-2">
+                <div class="form-item">
+                    <label class="">Last Name</label>
+                    <input name="lastName" type="text" id="user-acc-last-name" class="form-input mt-2" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="form-item">
+                    <label class="">Birth Date</label>
+                    <input name="dateOfBirth" type="date" id="user-acc-dob" class="form-input mt-2" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="form-item">
+                    <label class="">Status</label>
+                    <select name="userStatusId" class="form-select mt-2" id="user-acc-status">
+                        <option value="1">Active</option>
+                        <option value="2">Archive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row flex gap-2">
+                <div class="form-item">
+                    <label class="">Email</label>
+                    <input name="email" type="email" required id="user-acc-email" class="form-input mt-2" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="form-item">
+                    <label class="">Password</label>
+                    <input name="password" type="password" required id="user-acc-password" class="form-input mt-2" autocomplete="new-password" spellcheck="false">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="save-user-acc-btn" class="btn btn-primary">Save Account</button>
+        </div>
+    </div>
+</div>
+
+<div id="symptom-modal" class="modal-backdrop">
+    <div class="modal-content patient-account-reset-content">
+        <div class="modal-header">
+            <h3 id="symptom-modal-title" class="text-xl font-semibold">Reset User Password</h3>
+            <button class="modal-close-btn" id="close-symptom-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body patient-account-reset-body flex flex-column">
+            <input type="hidden" id="symptom-id-input">
+            <div class="form-row flex flex-column gap-2">
+                <div class="form-item">
+                    <label class="">Email</label>
+                    <input type="email" readonly required id="user-reset-email" class="form-input mt-2" autocomplete="off">
+                </div>
+                <div class="form-item">
+                    <label class="">Password</label>
+                    <input type="password" required id="user-reset-password" class="form-input mt-2" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="save-symptom-btn" class="btn btn-primary">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<div id="user-history-modal" class="modal-backdrop">
+    <div class="modal-content user-history-content">
+        <div class="modal-header">
+            <h3 id="symptom-modal-title" class="text-xl font-semibold">User Login History</h3>
+            <button class="modal-close-btn" id="close-symptom-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body user-history-md-body flex flex-column">
+           <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>PATIENT NAME</th>
+                                <th>LOGIN DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-user-table-body">
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                            <tr>
+                                <td>MA-ARUF BURAD</td>
+                                <td>12-31-1997 11:00 PM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-controls">
+                    <label style="font-weight: 500;">Page: </label>
+                    <select id="manage-user-pagination" value="2" class="form-select" style="width: auto;">
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+           
+        </div>
+    </div>
+</div>
+
+
 <script src="~/features/admin/manage-user/js/manage-user.js" asp-append-version="true"></script>

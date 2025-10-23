@@ -30,5 +30,10 @@ namespace E_Doctor.Application.Helpers
         {
             return ToLocalShortDateTimeString(DateTime.UtcNow);
         }
+
+        public static string ToInputText(this DateTime input)
+        {
+            return input.ToString("yyyy-MM-dd");
+        }
     }
 }
