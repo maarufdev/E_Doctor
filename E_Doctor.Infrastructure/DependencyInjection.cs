@@ -328,4 +328,21 @@ public static class DependencyInjection
 
         return app;
     }
+
+    public static async Task<IApplicationBuilder> EnsureDatabaseCreatedAsync(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        // You can safely call this — it will create the DB if it doesn’t exist.
+        // Use EnsureCreated() only for development. 
+        // In production, prefer Migrate().
+        #if DEBUG
+                await dbContext.Database.EnsureCreatedAsync();
+        #else
+            await dbContext.Database.MigrateAsync();
+        #endif
+
+        return app;
+    }
 }

@@ -14,6 +14,8 @@ builder.Services.AddHostedService<InActiveUserArchiverService>();
 
 var app = builder.Build();
 
+await app.EnsureDatabaseCreatedAsync();
+
 // seeder
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
