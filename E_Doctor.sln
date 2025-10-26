@@ -18,10 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentations", "Presentati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E_Doctor.Patient", "E_Doctor.Patient\E_Doctor.Patient.csproj", "{CEDC89E8-E0AE-4FBD-9107-14BDC206D42E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{FD58BA51-2549-4C68-8962-BABDB8D9289F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{FD58BA51-2549-4C68-8962-BABDB8D9289F}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\..\Users\maarufb\Downloads\EDoctor.pdf = ..\..\..\..\Users\maarufb\Downloads\EDoctor.pdf
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{6DA723BD-A4F8-4F91-80F9-17A4E8A1D8B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{297CE5F5-C1F0-4236-92EE-4218234B0155} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CEDC89E8-E0AE-4FBD-9107-14BDC206D42E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6DA723BD-A4F8-4F91-80F9-17A4E8A1D8B0} = {FD58BA51-2549-4C68-8962-BABDB8D9289F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49195987-2F8F-49AF-8421-6F77980A9EB6}

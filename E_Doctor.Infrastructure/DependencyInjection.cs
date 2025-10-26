@@ -231,6 +231,8 @@ public static class DependencyInjection
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
             IsActive = true,
+            LastLogInDate = DateTime.UtcNow,
+            Status = (int)UserStatus.Active,
             SecurityStamp = Guid.NewGuid().ToString("D")
         };
 
@@ -300,6 +302,7 @@ public static class DependencyInjection
             PhoneNumberConfirmed = true,
             IsActive = true,
             Status = (int)UserStatus.Active,
+            LastLogInDate = DateTime.UtcNow,
             SecurityStamp = Guid.NewGuid().ToString("D")
         };
 
