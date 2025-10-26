@@ -61,7 +61,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(
-                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=30;",
+                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;",
                    
                     builder =>
                     {

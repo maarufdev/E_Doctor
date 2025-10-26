@@ -183,7 +183,6 @@
                         $createdRow.find(manageUserButtons.viewHistory),
                         "click",
                         function (e) {
-                            console.log("View History")
                         }
                     );
 
@@ -225,7 +224,6 @@
                             $createdRow.find(manageUserButtons.unarchive),
                             "click",
                             function (e) {
-                                console.log("unarchive user")
                             }
                         );
                     }
@@ -234,7 +232,6 @@
                             $createdRow.find(manageUserButtons.archive),
                             "click",
                             function (e) {
-                                console.log("archive user")
                             }
                         );
                     }
@@ -275,6 +272,29 @@
                     //    <td>${lastLoggedIn}</td>
                     //`);
 
+                    //$row.html(`
+                    //    <td>${fullName}</td>
+                    //    <td>${email}</td>
+                    //    <td>
+                    //        <span class="manage-user-status ${isUserActive(userStatusId)}" >${userStatus}</span>
+                    //    </td>
+                    //    <td>
+                    //         <button class="btn btn-primary manage-user-view-history-btn" style="padding: 0.5rem;" title="View Login History">
+                    //                <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    //        </button>
+                    //        <button class="btn manage-user-edit-btn" style="padding: 0.5rem;" title="Edit Account">
+                    //            <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                    //        </button>
+                    //        <button type="button" class="btn manage-user-btn manage-user-reset-btn" title="Reset Password">
+                    //            <svg style ="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"></path><path d="M2.5 22v-6h6"></path><path d="M21.5 8a10 10 0 0 0-18.7-3.2M2.5 16a10 10 0 0 0 18.7 3.2"></path></svg>
+                    //            </button>
+                    //        <button class="btn btn-danger manage-user-delete-btn" style="padding: 0.5rem;" title="Delete Account">
+                    //            <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    //            </button>
+                    //    </td>
+                    //    <td>${lastLoggedIn}</td>
+                    //`);
+
                     $row.html(`
                         <td>${fullName}</td>
                         <td>${email}</td>
@@ -282,9 +302,6 @@
                             <span class="manage-user-status ${isUserActive(userStatusId)}" >${userStatus}</span>
                         </td>
                         <td>
-                             <button class="btn btn-primary manage-user-view-history-btn" style="padding: 0.5rem;" title="View Login History">
-                                    <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
                             <button class="btn manage-user-edit-btn" style="padding: 0.5rem;" title="Edit Account">
                                 <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
                             </button>
@@ -511,7 +528,6 @@
                         [name]: value
                     }
 
-                    console.log(commands.saveUser);
                 }
 
                 async function handleOnSaveAccount() {
@@ -520,7 +536,6 @@
 
                     const result = await services.apiService.saveManageUser(commands.saveUser);
                     if (result == true) {
-                        console.log(commands.saveUser);
                         setTimeout(() => {
                             eventHandlers.toggleManageUserForm({ toggle: false })
                         }, 500);
@@ -559,7 +574,6 @@
                         [name]: value
                     };
 
-                    console.log(stateHolders.commands.resetUser);
                 }
 
                 async function handleOnSaveReset() {
