@@ -53,6 +53,7 @@
                 root: "#diagnosis-result-modal",
                 buttons: {
                     start: "#start-diagnosis-modal-btn",
+                    close: "#close-result-modal-btn",
                 },
                 diagnosisInfo: {
                     result: "#diagnosis-result",
@@ -396,6 +397,14 @@
 
                 registerEvent(
                     modals.diagnosis.buttons.start,
+                    "click",
+                    function (e) {
+                        eventHandlers.diagnosis.handleOnStartNewDiagnosis();
+                    }
+                );
+
+                registerEvent(
+                    modals.diagnosis.buttons.close,
                     "click",
                     function (e) {
                         eventHandlers.diagnosis.handleOnStartNewDiagnosis();

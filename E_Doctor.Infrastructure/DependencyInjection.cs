@@ -1,7 +1,20 @@
-﻿using E_Doctor.Infrastructure.Configurations;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.Interfaces.Features.Admin.Dashboard;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
+using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Patient.Dashboard;
+using E_Doctor.Application.Interfaces.Features.UserActivity;
+using E_Doctor.Infrastructure.Configurations;
 using E_Doctor.Infrastructure.Constants;
 using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
+using E_Doctor.Infrastructure.Services.Features.Admin.Dashboard;
+using E_Doctor.Infrastructure.Services.Features.Admin.Settings;
+using E_Doctor.Infrastructure.Services.Features.Common;
+using E_Doctor.Infrastructure.Services.Features.Diagnosis;
+using E_Doctor.Infrastructure.Services.Features.Patient.Dashboard;
+using E_Doctor.Infrastructure.Services.Features.UserActivity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,9 +31,24 @@ public static class DependencyInjection
     public static IServiceCollection AddAdminInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            //.AddDbContext<AppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
             .AddMSSQL(configuration)
-            .AddAdminCustomIdentityServices();
+            .AddAdminCustomIdentityServices()
+            .RegisterUseCaseServices();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterUseCaseServices(this IServiceCollection services)
+    {
+        services.AddTransient<ICommonService, CommonService>();
+        services.AddTransient<ISymptomService, SymptomService>();
+        services.AddTransient<IRuleManagementService, RuleManagementService>();
+        services.AddTransient<IDiagnosisService, DiagnosisService>();
+        services.AddTransient<IUserManagerService, UserManagerService>();
+        services.AddTransient<IDashboardService, DashboardService>();
+        services.AddTransient<IActivityLoggerService, ActivityLoggerService>();
+        services.AddTransient<IUserActivityService, UserActivityService>();
+        services.AddTransient<IPatientDashboardService, PatientDashboardService>();
 
         return services;
     }
@@ -33,10 +61,13 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(
-                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;",
+                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=30;",
+                   
                     builder =>
                     {
-                        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                        builder.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null);
+                        builder.MigrationsHistoryTable(tableName:"migration-history", schema: "track");
+                        builder.CommandTimeout(120);
                     }
                 );
         });
@@ -49,6 +80,7 @@ public static class DependencyInjection
         services
             //.AddDbContext<PatientAppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
             .AddMSSQL(configuration)
+            .RegisterUseCaseServices()
             .AddPatientCustomIdentityServices();
         
         return services;
@@ -141,17 +173,16 @@ public static class DependencyInjection
         return services;
     }
 
-    public static async Task<IApplicationBuilder> SeedRoleAsync([Required] this IApplicationBuilder app, IServiceProvider serviceProvider)
+    public static async Task SeedRoleAsync([Required] this IApplicationBuilder app)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var scope = app.ApplicationServices.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-        
+
         string[] roles =
         {
-        RoleConstants.Admin,
-        RoleConstants.Patient,
+            RoleConstants.Admin,
+            RoleConstants.Patient,
         };
-
 
         foreach (var roleName in roles)
         {
@@ -160,8 +191,6 @@ public static class DependencyInjection
                 await roleManager.CreateAsync(new IdentityRole<int>(roleName));
             }
         }
-
-        return app;
     }
 
     public static async Task<IApplicationBuilder> SeedAdminUser([Required] this IApplicationBuilder app, IServiceProvider services, IConfiguration config)
@@ -270,6 +299,7 @@ public static class DependencyInjection
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
             IsActive = true,
+            Status = (int)UserStatus.Active,
             SecurityStamp = Guid.NewGuid().ToString("D")
         };
 

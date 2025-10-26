@@ -85,7 +85,7 @@
             services.eventHandlers.renderIllnessTable();
         },
         eventHandlers: {
-            toggleIllnessModaltoggleIllnessModal: function (toOpen, toEdit) {
+            toggleIllnessModal: function (toOpen, toEdit) {
                 const { forms } = elementHolders;
                 $(forms.illness.root).toggleClass("visible", toOpen);
                 $(forms.illness.title).text(toEdit ? "Edit Illness Details" : "Create New Illness");

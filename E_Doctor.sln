@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E_Doctor.Admin", "E_Doctor.Admin\E_Doctor.Admin.csproj", "{297CE5F5-C1F0-4236-92EE-4218234B0155}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E_Doctor.Infrastructure", "E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj", "{CDFB832B-756A-4658-A775-12EBC6F16D77}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F1F2D20-92D6-4EE2-AF97-0ECB26E0BF8F} = {1F1F2D20-92D6-4EE2-AF97-0ECB26E0BF8F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E_Doctor.Core", "E_Doctor.Core\E_Doctor.Core.csproj", "{B29DE660-0FA1-4776-B6C7-97377EB2189B}"
 EndProject

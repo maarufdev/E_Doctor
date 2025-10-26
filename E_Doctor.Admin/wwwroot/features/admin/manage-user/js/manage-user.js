@@ -21,11 +21,14 @@
         getManageUsers: `${MANAGE_USER_BASE_URL}/GetManageUsers`,
         saveManageUser: `${MANAGE_USER_BASE_URL}/SaveManageUser`,
         getManageUserById: `${MANAGE_USER_BASE_URL}/GetManageUserById`,
+        deleteUserById: `${MANAGE_USER_BASE_URL}/DeleteUserById`,
+        resetUserPasswordByAdmin: `${MANAGE_USER_BASE_URL}/ResetUserPasswordByAdmin`,
     }
 
     const stateHolders = {
         commands: {
             saveUser: null,
+            resetUser: null,
         },
         queries: {
             getManageUsers: {
@@ -79,6 +82,22 @@
                     save: "#save-user-acc-btn",
                     close: "#patient-account-md-close-btn",
                 }
+            },
+            resetUser: {
+                root: "#reset-user-modal",
+                fields: {
+                    email: "#user-reset-email",
+                    password: "#user-reset-password",
+                },
+                buttons: {
+                    save: "#user-reset-save-btn",
+                    close: "#reset-user-modal-close-btn",
+                }
+            },
+            userHistory: {
+                root: "",
+                tableBody: "",
+
             }
         }
     }
@@ -88,12 +107,26 @@
             services.eventHandlers.renderManagedUsers();
             services.events.initMain();
             services.events.initManageUserForm();
+            services.events.initResetUserForm();
         },
         eventHandlers: {
             toggleManageUserForm: function ({ toggle, title }) {
                 const { manageUser: { root, title: titleElmt } } = elementHolders.forms;
                 $(root).toggleClass("visible", toggle);
                 $(titleElmt).text(title ?? "");
+            },
+            toggleResetModal: function ({
+                toggle,
+                callback
+            }) {
+                const { resetUser } = elementHolders.forms;
+
+                $(resetUser.root).toggleClass("visible", toggle);
+
+                if (callback) {
+                    callback();
+                }
+
             },
             handleOnGetManageUserById: async function (userId) {
                 const user = await services.apiService.getManageUserById(userId);
@@ -113,6 +146,20 @@
                 stateHolders.commands.saveUser = userData;
 
                 this.toggleManageUserForm({ toggle: true, title: "Edit User Account" });
+            },
+            handleOnShowResetPassword: function (data) {
+                const { userId, email } = data;
+
+                const { resetUser } = elementHolders.forms;
+
+                stateHolders.commands.resetUser = {};
+                stateHolders.commands.resetUser.userId = userId;
+                stateHolders.commands.resetUser.email = email;
+
+                $(resetUser.fields.email).val(email ?? "");
+                $(resetUser.fields.password).val("");
+
+                this.toggleResetModal({ toggle: true });
             },
             renderManagedUsers: async function () {
                 const eventHandlers = this;
@@ -150,15 +197,26 @@
                         $createdRow.find(manageUserButtons.reset),
                         "click",
                         function (e) {
-                            console.log("Reset User Password")
+                            eventHandlers.handleOnShowResetPassword(user);
                         }
                     );
 
                     registerEvent(
                         $createdRow.find(manageUserButtons.delete),
                         "click",
-                        function (e) {
-                            console.log("Delete User")
+                        async function (e) {
+                            const isYes = confirm(`Are you sure to delete ${fullName}`);
+
+                            if (!isYes) return;
+
+                            const result = await services.apiService.deleteUserById(userId);
+                            if (result != true) {
+                                alert("something went wrong.");
+                                return
+                            };
+
+                            stateHolders.queries.getManageUsers.pageNumber = 1;
+                            eventHandlers.renderManagedUsers();
                         }
                     );
 
@@ -302,9 +360,10 @@
                 $(fields.userStatusId).val("1");
                 $(fields.email).val("");
                 $(fields.password).val("");
+                $(fields.password).attr("readonly", false);
 
                 const commands = stateHolders.commands;
-                commands.saveUser = null;
+                commands.saveUser = { userStatusId : 1};
             },
             clearManageUserCommand: function () {
 
@@ -470,6 +529,60 @@
                     }
                 }
             },
+            initResetUserForm: function () {
+                const { resetUser } = elementHolders.forms;
+                const { fields, buttons } = resetUser;
+                const { eventHandlers, apiService } = services;
+
+                registerEvent(
+                    fields.password,
+                    "input",
+                    handleOnChangeInput
+                );
+
+                registerEvent(
+                    buttons.save,
+                    "click",
+                    handleOnSaveReset
+                );
+                registerEvent(
+                    buttons.close,
+                    "click",
+                    handleOnCloseResetForm
+                );
+
+                function handleOnChangeInput(e) {
+                    const { value, name } = e.target;
+
+                    stateHolders.commands.resetUser = {
+                        ...stateHolders.commands.resetUser,
+                        [name]: value
+                    };
+
+                    console.log(stateHolders.commands.resetUser);
+                }
+
+                async function handleOnSaveReset() {
+                    if (IsNullUndefinedEmpty(stateHolders.commands.resetUser.password)) {
+                        alert("Password Is Required.");
+                        return;
+                    }
+
+                    const resetResult = await apiService.resetUserPasswordByAdmin(stateHolders.commands.resetUser);
+                    if (resetResult != true) return;
+
+                    handleOnCloseResetForm();
+                }
+
+                function handleOnCloseResetForm() {
+                    eventHandlers.toggleResetModal({
+                        toggle: false,
+                        function() {
+                            stateHolders.commands.resetUser = {};
+                        }
+                    });
+                }
+            },
         },
         apiService: {
             saveManageUser: async function (command) {
@@ -499,6 +612,26 @@
                     }
                 );
             },
+            deleteUserById: async function (userId) {
+                return await apiFetch(
+                    URLS.deleteUserById,
+                    {
+                        method: "DELETE",
+                        params: {
+                            userId: userId
+                        }
+                    }
+                );
+            },
+            resetUserPasswordByAdmin: async function (command) {
+                return await apiFetch(
+                    URLS.resetUserPasswordByAdmin,
+                    {
+                        method: "PUT",
+                        body: command
+                    }
+                );
+            }
         }
     }
     document.addEventListener("DOMContentLoaded", services.initialize);

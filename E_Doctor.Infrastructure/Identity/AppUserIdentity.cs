@@ -11,4 +11,5 @@ public class AppUserIdentity : IdentityUser<int>
     public bool IsActive { get; set; }
     public int Status { get; set; }
     public DateTime UpdatedOn { get; set; } = DateTime.UtcNow;
+    public DateTime? LastLogInDate { get; set; }
 }

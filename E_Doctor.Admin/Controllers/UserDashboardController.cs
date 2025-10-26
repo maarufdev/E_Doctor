@@ -1,10 +1,11 @@
 ﻿using E_Doctor.Application.Interfaces.Features.Admin.Dashboard;
+using E_Doctor.Infrastructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = RoleConstants.Admin)]
     public class UserDashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;

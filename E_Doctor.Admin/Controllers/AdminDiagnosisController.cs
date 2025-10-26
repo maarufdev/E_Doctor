@@ -2,12 +2,13 @@
 using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
+using E_Doctor.Infrastructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = RoleConstants.Admin)]
     public class AdminDiagnosisController : Controller
     {
         private readonly IDiagnosisService _diagnosisService;

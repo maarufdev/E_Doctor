@@ -1,0 +1,21 @@
+﻿:root {
+    --tw-border-opacity: 1;
+    --tw-text-opacity: 1;
+    --tw-bg-opacity: 1;
+}
+
+.activity-text {
+    padding-inline: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(209 213 219 / var(--tw-border-opacity, 1));
+    min-width: 300px;
+    outline: 0;
+}
+
+.activity-action-text {
+    /*color: rgb(67 56 202 / var(--tw-text-opacity, 1));
+    background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+    padding: 4px 5px;
+    border-radius: 15px;
+    font-size: 14px;*/
+}

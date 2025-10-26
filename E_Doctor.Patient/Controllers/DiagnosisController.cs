@@ -1,6 +1,7 @@
 ﻿using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Admin.Settings;
+using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,19 +11,25 @@ namespace E_Doctor.Patient.Controllers
     [Authorize]
     public class DiagnosisController : Controller
     {
-        //private readonly IPatientService _diagnosisService;
         private readonly IRuleManagementService _ruleManager;
-
         private readonly IDiagnosisService _diagnosisService;
-        public DiagnosisController(IDiagnosisService patientService, IRuleManagementService ruleManager)
+        private readonly IUserManagerService _userManagerService;
+        public DiagnosisController(
+            IDiagnosisService patientService, 
+            IRuleManagementService ruleManager,
+            IUserManagerService userManagerService
+            )
         {
             _diagnosisService = patientService;
             _ruleManager = ruleManager;
+            _userManagerService = userManagerService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var pageTitle = "Diagnosis";
             ViewBag.PageTitle = pageTitle;
+
+            await _userManagerService.UpdateUserLoginDate();
             return View();
         }
 
@@ -84,6 +91,15 @@ namespace E_Doctor.Patient.Controllers
             if (result.IsFailure) return BadRequest(result.Value);
 
             return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> DeleteDiagnosisById(int DiagnosisId)
+        {
+            var result = await _diagnosisService.DeleteDiagnosisById(DiagnosisId);
+
+            if (result.IsFailure) return BadRequest(result.IsFailure);
+
+            return Ok(result.IsSuccess);
         }
     }
 }

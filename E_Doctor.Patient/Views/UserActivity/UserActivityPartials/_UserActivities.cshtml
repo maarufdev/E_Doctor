@@ -1,0 +1,28 @@
+﻿<link rel="stylesheet" href="~/features/patient/user-activities/css/user-activities.css" asp-append-version="true" />
+
+<div class="page-content">
+    <div class="card mt-2">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>ACTION</th>
+                        <th>DESCRIPTION</th>
+                    </tr>
+                </thead>
+                <tbody id="user-activity-tbl-body">
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-controls">
+            <label style="font-weight: 500;">Page: </label>
+            <select name="pageNumber" id="user-activity-pagination" value="2" class="form-select" style="width: auto;">
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/features/patient/user-activities/js/user-activities.js" asp-append-version="true"></script>

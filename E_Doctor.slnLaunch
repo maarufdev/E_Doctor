@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Multiple",
+    "Projects": [
+      {
+        "Path": "E_Doctor.Admin\\E_Doctor.Admin.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "E_Doctor.Patient\\E_Doctor.Patient.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

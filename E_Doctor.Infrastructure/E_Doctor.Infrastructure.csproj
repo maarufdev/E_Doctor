@@ -23,11 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\E_Doctor.Application\E_Doctor.Application.csproj" />
     <ProjectReference Include="..\E_Doctor.Core\E_Doctor.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,7 @@
         runDiagnosis: `${DIAGNOSIS_BASE_URL}/RunDiagnosis`,
         getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`,
         getDiagnosisById: `${DIAGNOSIS_BASE_URL}/GetDiagnosisById`,
+        deleteDiagnosisById: `${DIAGNOSIS_BASE_URL}/DeleteDiagnosisById`,
         importRulesConfiguration: `${DIAGNOSIS_BASE_URL}/ImportRulesConfiguration`
     }
     const stateHolders = {
@@ -82,12 +83,28 @@
 
                 diagnosisReponse.forEach(item => {
                     const { diagnosisId } = item;
+                    //const $tr = $(`
+                    //    <tr>
+                    //        <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
+                    //        <td style="white-space: normal;">${item.symptoms}</td>
+                    //        <td>${item.illnessName}</td>
+                    //        <td><a href="#" class="btn-view-diagnosis">View Diagnosis</a></td>
+                    //    </tr>
+                    //`);
+
                     const $tr = $(`
                         <tr>
                             <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
                             <td style="white-space: normal;">${item.symptoms}</td>
                             <td>${item.illnessName}</td>
-                            <td><a href="#" class="btn-view-diagnosis">View Diagnosis</a></td>
+                            <td>
+                                <button class="btn btn-primary btn-view-diagnosis" style="padding: 0.5rem;" title="View Diagnosis">
+                                        <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </button>
+                                <button class="btn btn-danger btn-delete-diagnosis" style="padding: 0.5rem;" title="Delete Diagnosis">
+                                    <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                             </td>
                         </tr>
                     `);
 
@@ -102,6 +119,24 @@
                                 services.eventHandlers.handleOnShowDiagnosisResult(result);
                             }
 
+                        }
+                    )
+
+                    registerEvent(
+                        $tr.find(".btn-delete-diagnosis"),
+                        "click",
+                        async function (event) {
+                            event.preventDefault();
+
+                            const isYes = confirm("Are you sure to delete this Diagnosis?");
+
+                            if (isYes) {
+                                if (diagnosisId) {
+                                    const result = await services.apiService.deleteDiagnosisById(diagnosisId);
+                                    stateHolders.pageNumber = 1;
+                                    await services.eventHandlers.renderDiagnosisTable(result);
+                                }
+                            }
                         }
                     )
                     $diagnosisTblBody.append($tr);
@@ -303,6 +338,15 @@
                         },
                     },
                 );
+            },
+            deleteDiagnosisById: async function (diagnosisId) {
+                return await apiFetch(
+                    URLS.deleteDiagnosisById,
+                    {
+                        params: {
+                            diagnosisId: diagnosisId
+                        },
+                    });
             },
         }
     };

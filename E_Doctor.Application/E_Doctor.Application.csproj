@@ -12,11 +12,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E_Doctor.Core\E_Doctor.Core.csproj" />
-    <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Common\" />
+    <Folder Include="Interfaces\Data\" />
   </ItemGroup>
 
 </Project>

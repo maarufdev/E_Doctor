@@ -209,6 +209,31 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.ToTable("Symptoms");
                 });
 
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Common.UserActivityEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserActivities");
+                });
+
             modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>
                 {
                     b.Property<int>("Id")
@@ -239,6 +264,9 @@ namespace E_Doctor.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastLogInDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");

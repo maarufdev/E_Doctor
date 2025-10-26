@@ -83,32 +83,32 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button id="save-user-acc-btn" class="btn btn-primary">Save Account</button>
+            <button id="save-user-acc-btn" class="btn btn-primary">Save Account Changes</button>
         </div>
     </div>
 </div>
 
-<div id="symptom-modal" class="modal-backdrop">
+<div id="reset-user-modal" class="modal-backdrop">
     <div class="modal-content patient-account-reset-content">
         <div class="modal-header">
             <h3 id="symptom-modal-title" class="text-xl font-semibold">Reset User Password</h3>
-            <button class="modal-close-btn" id="close-symptom-modal-btn">&times;</button>
+            <button class="modal-close-btn" id="reset-user-modal-close-btn">&times;</button>
         </div>
         <div class="modal-body patient-account-reset-body flex flex-column">
             <input type="hidden" id="symptom-id-input">
             <div class="form-row flex flex-column gap-2">
                 <div class="form-item">
                     <label class="">Email</label>
-                    <input type="email" readonly required id="user-reset-email" class="form-input mt-2" autocomplete="off">
+                    <input name="email" type="email" readonly required id="user-reset-email" class="form-input mt-2" autocomplete="off">
                 </div>
                 <div class="form-item">
                     <label class="">Password</label>
-                    <input type="password" required id="user-reset-password" class="form-input mt-2" autocomplete="off">
+                    <input name="password" type="password" required id="user-reset-password" class="form-input mt-2" autocomplete="off">
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button id="save-symptom-btn" class="btn btn-primary">Reset Password</button>
+            <button id="user-reset-save-btn" class="btn btn-primary">Save Changes</button>
         </div>
     </div>
 </div>

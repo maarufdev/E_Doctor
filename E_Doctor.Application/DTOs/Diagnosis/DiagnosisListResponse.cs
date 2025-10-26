@@ -3,7 +3,7 @@
 public sealed record DiagnosisListResponse(
     int DiagnosisId,
     DateTime? DiagnoseDate,
-    string UserName,
+    string DisplayName,
     string Symptoms,
     string IllnessName,
     string Prescription);

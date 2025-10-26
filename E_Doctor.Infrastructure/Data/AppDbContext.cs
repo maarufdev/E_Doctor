@@ -1,4 +1,5 @@
 ﻿using E_Doctor.Core.Domain.Entities.Admin;
+using E_Doctor.Core.Domain.Entities.Common;
 using E_Doctor.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>
     public DbSet<DiagnosisIllnessesEntity> DiagnosisIllnesses { get; set; }
     public DbSet<DiagnosisSymptomsEntity> DiagnosisSymptoms { get; set; }
     public DbSet<AppUserIdentity> UserAccounts { get; set; }
+    public DbSet<UserActivityEntity> UserActivities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +86,11 @@ public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>
             e.HasOne(d => d.Diagnosis)
             .WithMany(d => d.DiagnosSymptoms)
             .HasForeignKey(d => d.DiagnosisId);
+        });
+
+        modelBuilder.Entity<UserActivityEntity>(e =>
+        {
+            e.HasKey(pd => pd.Id);
         });
     }
 }

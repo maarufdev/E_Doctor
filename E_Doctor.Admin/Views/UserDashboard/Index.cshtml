@@ -27,8 +27,8 @@
                 <div class="info"><h4>Total Patients</h4><p>@Model.GetDashboardCardDetails.TotalPatients</p></div>
             </div>
         </div>
-        <div class="card mt-2 mb-2" style="">
-            <h3 class="mb-3">Recent Diagnosis</h3>
+        <div class="card mt-2" style="margin-top: 20px;">
+            <h3 class="mb-3">Recent 10 Diagnosis</h3>
             <div class="table-container mt-2">
                 <table class="data-table">
                     <thead>
@@ -45,7 +45,7 @@
                         {
                             <tr>
                                 <td>@item.Date</td>
-                                <td style="white-space: normal;">@item.UserName</td>
+                                <td style="white-space: normal;">@item.DisplayName</td>
                                 <td style="white-space: normal;">@item.Symptoms</td>
                                 <td style="white-space: normal;">@item.Result</td>
                             </tr>

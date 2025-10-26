@@ -68,15 +68,35 @@
 
                 diagnosisReponse.forEach(item => {
                     const { diagnosisId } = item;
+                    //const $tr = $(`
+                    //    <tr>
+                    //        <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
+                    //        <td style="white-space: normal;">${item.displayName}</td>
+                    //        <td style="white-space: normal;">${item.symptoms}</td>
+                    //        <td>${item.illnessName}</td>
+                    //        <td>
+                    //        <button class="btn btn-primary btn-view-diagnosis" style="padding: 0.5rem;" title="View Diagnosis">
+                    //                <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    //        </button>
+                    //            <a href="#" class="btn-view-diagnosis">View Diagnosis</a>
+                    //            <a href="#" class="btn-delete-diagnosis">Delete Diagnosis</a>
+                    //        </td>
+                    //    </tr>
+                    //`);
+
                     const $tr = $(`
                         <tr>
                             <td>${convertDateTimeToLocal(item.diagnoseDate)}</td>
-                            <td style="white-space: normal;">${item.userName}</td>
+                            <td style="white-space: normal;">${item.displayName}</td>
                             <td style="white-space: normal;">${item.symptoms}</td>
                             <td>${item.illnessName}</td>
                             <td>
-                                <a href="#" class="btn-view-diagnosis">View Diagnosis</a>
-                                <a href="#" class="btn-delete-diagnosis">Delete Diagnosis</a>
+                                <button class="btn btn-primary btn-view-diagnosis" style="padding: 0.5rem;" title="View Diagnosis">
+                                        <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </button>
+                                <button class="btn btn-danger btn-delete-diagnosis" style="padding: 0.5rem;" title="Delete Diagnosis">
+                                    <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
                             </td>
                         </tr>
                     `);

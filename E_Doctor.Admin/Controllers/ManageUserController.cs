@@ -1,17 +1,24 @@
 ﻿using E_Doctor.Application.DTOs.ManageUsers.RequestDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Infrastructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Admin.Controllers;
 
-[Authorize]
+[Authorize(Roles = RoleConstants.Admin)]
 public class ManageUserController : Controller
 {
     private readonly IUserManagerService _userManagerService;
     public ManageUserController(IUserManagerService userManagerService)
     {
         _userManagerService = userManagerService;
+    }
+
+    public IActionResult Index()
+    {
+        ViewBag.PageTitle = "Manage Users";
+        return View();
     }
 
     public async Task<IActionResult> GetManageUsers([FromQuery] GetManageUserRequest request)
@@ -44,5 +51,29 @@ public class ManageUserController : Controller
         if (result.IsFailure) return BadRequest(result.Error);
 
         return Ok(result.Value);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUserById(int userId)
+    {
+        if (userId == 0) return BadRequest("Invalid User Id");
+
+        var result = await _userManagerService.DeleteUserById(userId);
+
+        if (result.IsFailure) return BadRequest(result.Error);
+
+        return Ok(result.IsSuccess);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> ResetUserPasswordByAdmin([FromBody]ResetPasswordRequest request)
+    {
+        if(request is null) return BadRequest("Please fill required fields.");
+
+        var result = await _userManagerService.ResetUserPasswordByAdmin(request);
+
+        if (result.IsFailure) return BadRequest(result.Error);
+
+        return Ok(result.IsSuccess);
     }
 }

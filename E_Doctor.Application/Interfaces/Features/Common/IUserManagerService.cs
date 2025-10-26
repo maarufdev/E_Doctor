@@ -9,7 +9,9 @@ public interface IUserManagerService
 {
     Task<Result<string>> Login(LoginDTO loginDTO);
     Task<Result> Register(RegisterUserDTO registerDTO);
+    Task UpdateUserLoginDate();
     Task<Result> Logout();
+    Task<string> GetUserNameById(string userId);
     Task<int?> GetUserId();
     Task<string> GetUserFullName();
     Task<string> GetUserFullNameByUserId();
@@ -18,4 +20,7 @@ public interface IUserManagerService
     Task<Result<PagedResult<ManageUserResponse>>> GetManageUsers(GetManageUserRequest getManageUserRequest);
     Task<Result<string>> SaveManagePatientAccount(SaveManageUserRequest saveManageUserRequest);
     Task<Result<ManageUserDetailResponse>> GetManageUserById(int userId);
+    Task<Result> DeleteUserById(int userId);
+    Task<Result> ResetUserPasswordByAdmin(ResetPasswordRequest resetPasswordDTO);
+    Task<bool> IsUserAdmin();
 }

@@ -1,0 +1,28 @@
+﻿@using E_Doctor.Application.Constants;
+@{
+    UserActivityTab activeTab = ViewBag.ActiveTab ?? UserActivityTab.Users;
+}
+
+<div class="page-content mb-0">
+    <h2 class="text-2xl font-semibold mb-4 settings-page-title">@ViewBag.PageTitle</h2>
+   @*  <div class="custom-tabs">
+        <a asp-action="Index" asp-route-tabName="@(UserActivityTab.Users)" class="custom-tab-btn @(activeTab == UserActivityTab.Users ? "active" : "")">Users</a>
+        <a asp-action="Index" asp-route-tabName="@(UserActivityTab.Admin)" class="custom-tab-btn @(activeTab == UserActivityTab.Admin ? "active" : "")">Admin</a>
+    </div> *@
+    <div class="sub-page active">
+        <partial name="UserActivityPartials/_UserActivities.cshtml" />
+
+        @* @switch (activeTab)
+        {
+            case UserActivityTab.Users:
+                <partial name="UserActivityPartials/_UserActivities.cshtml" />
+                break;
+            case UserActivityTab.Admin:
+                <partial name="UserActivityPartials/_AdminActivities.cshtml" />
+                break;
+            default:
+                <h1>Page is Not Found</h1>
+                break;
+        } *@
+    </div>
+</div>
