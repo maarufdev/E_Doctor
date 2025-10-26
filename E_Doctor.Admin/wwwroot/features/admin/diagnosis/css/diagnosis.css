@@ -1,4 +1,10 @@
-﻿.searchable-dropdown {
+﻿:root {
+    --tw-border-opacity: 1;
+    --tw-text-opacity: 1;
+    --tw-bg-opacity: 1;
+}
+
+.searchable-dropdown {
     position: relative;
     z-index: 10000;
 }
@@ -20,6 +26,7 @@
 }
 
 .searchable-dropdown-item {
+    padding: 0.5rem 0.75rem;
     padding: 0.5rem 0.75rem;
     cursor: pointer;
 }
@@ -135,12 +142,8 @@
     gap: 10px;
 }
 
-.btn-view-diagnosis {
-    color: var(--primary-color);
-    cursor: pointer;
-}
-
-.btn-view-diagnosis:visited {
+.btn-view-diagnosis:visited,
+.btn-delete-diagnosis:visited {
     color: var(--primary-color);
 }
 
@@ -170,3 +173,4 @@
 .start-diagnosis-modal-btn {
     margin-top: 0 !important;
 }
+

@@ -1,5 +1,5 @@
-using E_Doctor.Application;
 using E_Doctor.Infrastructure;
+using E_Doctor.Infrastructure.ApplicationBackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +8,18 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddSession();
 
 builder.Services
-    .AddAdminInfrastructure(builder.Configuration)
-    .AddAdminApplication();
+    .AddAdminInfrastructure(builder.Configuration);
+
+builder.Services.AddHostedService<InActiveUserArchiverService>();
 
 var app = builder.Build();
+
+await app.EnsureDatabaseCreatedAsync();
 
 // seeder
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+await app.SeedRoleAsync();
 await app.SeedAdminUser(services, builder.Configuration);
 
 // Configure the HTTP request pipeline.

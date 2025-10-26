@@ -1,0 +1,33 @@
+﻿<link rel="stylesheet" href="~/features/admin/user-activities/css/user-activities.css" asp-append-version="true" />
+
+<div class="page-content">
+    <div class="flex gap-2 mb-3">
+        <input name="searchText" id="search-user-activity-text" class="activity-text" type="text" placeholder="Search Account" />
+        <button id="seach-user-btn" class="btn btn-secondary self-start">Search</button>
+    </div>
+    <div class="card mt-2">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>USER</th>
+                        <th>ACTION</th>
+                        <th>DESCRIPTION</th>
+                    </tr>
+                </thead>
+                <tbody id="user-activity-tbl-body">
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-controls">
+            <label style="font-weight: 500;">Page: </label>
+            <select name="pageNumber" id="user-activity-pagination" value="2" class="form-select" style="width: auto;">
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/features/admin/user-activities/js/user-activities.js" asp-append-version="true"></script>

@@ -1,47 +1,58 @@
 ﻿using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.Patient.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
+using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
 namespace E_Doctor.Patient.Controllers
 {
     [Authorize]
     public class DiagnosisController : Controller
     {
-        private readonly IPatientService _patientService;
-        public DiagnosisController(IPatientService patientService)
+        private readonly IRuleManagementService _ruleManager;
+        private readonly IDiagnosisService _diagnosisService;
+        private readonly IUserManagerService _userManagerService;
+        public DiagnosisController(
+            IDiagnosisService patientService, 
+            IRuleManagementService ruleManager,
+            IUserManagerService userManagerService
+            )
         {
-            _patientService = patientService;
+            _diagnosisService = patientService;
+            _ruleManager = ruleManager;
+            _userManagerService = userManagerService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var pageTitle = "Diagnosis";
             ViewBag.PageTitle = pageTitle;
+
+            await _userManagerService.UpdateUserLoginDate();
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ImportRulesConfiguration([FromForm] IFormFile file)
-        {
-            if (file is null) return BadRequest();
+        //[HttpPost]
+        //public async Task<IActionResult> ImportRulesConfiguration([FromForm] IFormFile file)
+        //{
+        //    if (file is null) return BadRequest();
 
-            string jsonContent;
+        //    string jsonContent;
             
-            using var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
-            jsonContent = await reader.ReadToEndAsync();
+        //    using var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
+        //    jsonContent = await reader.ReadToEndAsync();
 
-            if(string.IsNullOrWhiteSpace(jsonContent)) return BadRequest();
+        //    if(string.IsNullOrWhiteSpace(jsonContent)) return BadRequest();
 
-            var result = await _patientService.MigrateRules(jsonContent);
+        //    var result = await _diagnosisService.MigrateRules(jsonContent);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         public async Task<IActionResult> GetSymptoms()
         {
-            return Ok(await _patientService.GetSymtoms());
+            return Ok(await _ruleManager.GetSymptoms());
         }
 
         [HttpPost]
@@ -49,7 +60,7 @@ namespace E_Doctor.Patient.Controllers
         {
             if (requestDTO is null) return BadRequest("Please provide diagnosis");
 
-            var result = await _patientService.RunDiagnosis(requestDTO);
+            var result = await _diagnosisService.RunDiagnosis(requestDTO);
 
             if (result.IsFailure) return BadRequest(result.Value);
 
@@ -58,28 +69,37 @@ namespace E_Doctor.Patient.Controllers
 
         public async Task<IActionResult> GetDiagnosis(GetDiagnosisParamsDTO getDiagnosisParams)
         {
-            return Ok(await _patientService.GetDiagnosis(getDiagnosisParams));
+            return Ok(await _diagnosisService.GetDiagnosis(getDiagnosisParams));
         }
 
         public async Task<IActionResult> GetDiagnosisById(int diagnosisId)
         {
-            return Ok(await _patientService.GetDiagnosisById(diagnosisId));
+            return Ok(await _diagnosisService.GetDiagnosisById(diagnosisId));
         }
 
         public async Task<IActionResult> GetConsultationIllnessList()
         {
-            var result = await _patientService.GetConsultationIllnessList();
+            var result = await _diagnosisService.GetConsultationIllnessList();
 
             return Ok(result);
         }
 
         public async Task<IActionResult> GetConsultationSymptomByIllnessId(int IllnessId)
         {
-            var result = await _patientService.GetConsultationSymptomByIllnessId(IllnessId);
+            var result = await _diagnosisService.GetConsultationSymptomByIllnessId(IllnessId);
 
             if (result.IsFailure) return BadRequest(result.Value);
 
             return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> DeleteDiagnosisById(int DiagnosisId)
+        {
+            var result = await _diagnosisService.DeleteDiagnosisById(DiagnosisId);
+
+            if (result.IsFailure) return BadRequest(result.IsFailure);
+
+            return Ok(result.IsSuccess);
         }
     }
 }

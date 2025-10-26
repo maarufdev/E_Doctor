@@ -1,11 +1,27 @@
-﻿using E_Doctor.Infrastructure.Data;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.Interfaces.Features.Admin.Dashboard;
+using E_Doctor.Application.Interfaces.Features.Admin.Settings;
+using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Application.Interfaces.Features.Diagnosis;
+using E_Doctor.Application.Interfaces.Features.Patient.Dashboard;
+using E_Doctor.Application.Interfaces.Features.UserActivity;
+using E_Doctor.Infrastructure.Configurations;
+using E_Doctor.Infrastructure.Constants;
+using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
+using E_Doctor.Infrastructure.Services.Features.Admin.Dashboard;
+using E_Doctor.Infrastructure.Services.Features.Admin.Settings;
+using E_Doctor.Infrastructure.Services.Features.Common;
+using E_Doctor.Infrastructure.Services.Features.Diagnosis;
+using E_Doctor.Infrastructure.Services.Features.Patient.Dashboard;
+using E_Doctor.Infrastructure.Services.Features.UserActivity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace E_Doctor.Infrastructure;
@@ -15,8 +31,46 @@ public static class DependencyInjection
     public static IServiceCollection AddAdminInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddDbContext<AdminAppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
-            .AddAdminCustomIdentityServices();
+            .AddMSSQL(configuration)
+            .AddAdminCustomIdentityServices()
+            .RegisterUseCaseServices();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterUseCaseServices(this IServiceCollection services)
+    {
+        services.AddTransient<ICommonService, CommonService>();
+        services.AddTransient<ISymptomService, SymptomService>();
+        services.AddTransient<IRuleManagementService, RuleManagementService>();
+        services.AddTransient<IDiagnosisService, DiagnosisService>();
+        services.AddTransient<IUserManagerService, UserManagerService>();
+        services.AddTransient<IDashboardService, DashboardService>();
+        services.AddTransient<IActivityLoggerService, ActivityLoggerService>();
+        services.AddTransient<IUserActivityService, UserActivityService>();
+        services.AddTransient<IPatientDashboardService, PatientDashboardService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddMSSQL(this IServiceCollection services, IConfiguration configuration)
+    {
+        MSSQLConfig mssqlConfig = new();
+        configuration.Bind("MSSQLConnectionStrings", mssqlConfig);
+
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseSqlServer(
+                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;",
+                   
+                    builder =>
+                    {
+                        builder.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null);
+                        builder.MigrationsHistoryTable(tableName:"migration-history", schema: "track");
+                        builder.CommandTimeout(120);
+                    }
+                );
+        });
 
         return services;
     }
@@ -24,7 +78,9 @@ public static class DependencyInjection
     public static IServiceCollection AddPatientInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddDbContext<PatientAppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
+            //.AddDbContext<PatientAppDbContext>(options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")))
+            .AddMSSQL(configuration)
+            .RegisterUseCaseServices()
             .AddPatientCustomIdentityServices();
         
         return services;
@@ -43,7 +99,7 @@ public static class DependencyInjection
             options.Password.RequiredLength = 6;                  // optional: set min length
             options.Password.RequiredUniqueChars = 1;
         })
-            .AddEntityFrameworkStores<AdminAppDbContext>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         // We configure the cookie authentication settings first.
@@ -88,7 +144,7 @@ public static class DependencyInjection
             options.Password.RequiredLength = 6;                  // optional: set min length
             options.Password.RequiredUniqueChars = 1;
         })
-            .AddEntityFrameworkStores<PatientAppDbContext>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         // We configure the cookie authentication settings first.
@@ -117,15 +173,41 @@ public static class DependencyInjection
         return services;
     }
 
+    public static async Task SeedRoleAsync([Required] this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+        string[] roles =
+        {
+            RoleConstants.Admin,
+            RoleConstants.Patient,
+        };
+
+        foreach (var roleName in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole<int>(roleName));
+            }
+        }
+    }
+
     public static async Task<IApplicationBuilder> SeedAdminUser([Required] this IApplicationBuilder app, IServiceProvider services, IConfiguration config)
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         using var scope = services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AdminAppDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUserIdentity>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
         ArgumentNullException.ThrowIfNull(context, nameof(context));
+
+        if (!await roleManager.RoleExistsAsync(RoleConstants.Admin))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(RoleConstants.Admin));
+        }
 
         var username = config["InitialUser:Username"];
         var password = config["InitialUser:Password"];
@@ -162,6 +244,17 @@ public static class DependencyInjection
         {
             throw new Exception("Failed to create initial user: " +
                string.Join("; ", result.Errors.Select(e => e.Description)));
+        }
+
+        var addedToRole = await userManager.AddToRoleAsync(userToCreate, RoleConstants.Admin);
+
+        if (addedToRole.Succeeded)
+        {
+            Console.WriteLine($"[SUCCESS] User '{username}' created and added to role '{RoleConstants.Admin}'.");
+        }
+        else
+        {
+            Console.WriteLine($"[WARN] User created but failed to add to role: {string.Join(", ", addedToRole.Errors.Select(e => e.Description))}");
         }
 
         return app;
@@ -172,10 +265,17 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         using var scope = services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<PatientAppDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUserIdentity>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
         ArgumentNullException.ThrowIfNull(context, nameof(context));
+
+
+        if (!await roleManager.RoleExistsAsync(RoleConstants.Patient))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(RoleConstants.Patient));
+        }
 
         var username = config["InitialUser:Username"];
         var password = config["InitialUser:Password"];
@@ -199,6 +299,7 @@ public static class DependencyInjection
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
             IsActive = true,
+            Status = (int)UserStatus.Active,
             SecurityStamp = Guid.NewGuid().ToString("D")
         };
 
@@ -213,6 +314,34 @@ public static class DependencyInjection
             throw new Exception("Failed to create initial user: " +
                string.Join("; ", result.Errors.Select(e => e.Description)));
         }
+
+        var addedToRole = await userManager.AddToRoleAsync(userToCreate, RoleConstants.Patient);
+
+        if (addedToRole.Succeeded)
+        {
+            Console.WriteLine($"[SUCCESS] User '{username}' created and added to role '{RoleConstants.Patient}'.");
+        }
+        else
+        {
+            Console.WriteLine($"[WARN] User created but failed to add to role: {string.Join(", ", addedToRole.Errors.Select(e => e.Description))}");
+        }
+
+        return app;
+    }
+
+    public static async Task<IApplicationBuilder> EnsureDatabaseCreatedAsync(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        // You can safely call this — it will create the DB if it doesn’t exist.
+        // Use EnsureCreated() only for development. 
+        // In production, prefer Migrate().
+        #if DEBUG
+                await dbContext.Database.EnsureCreatedAsync();
+        #else
+            await dbContext.Database.MigrateAsync();
+        #endif
 
         return app;
     }

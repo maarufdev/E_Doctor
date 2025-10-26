@@ -2,14 +2,16 @@
 public sealed record GetDashboardCardDetailsDTO(
     int TotalSymptoms,
     int TotalIllnesses,
-    int TotalRules
+    int TotalRules,
+    int TotalPatients
     )
 {
     public static GetDashboardCardDetailsDTO Create(
         int symptomsCount, 
         int illnessesCount, 
-        int rulesCount)
+        int rulesCount,
+        int totalPatient)
     {
-        return new GetDashboardCardDetailsDTO(symptomsCount, illnessesCount, rulesCount);
+        return new GetDashboardCardDetailsDTO(symptomsCount, illnessesCount, rulesCount, totalPatient);
     }
 }

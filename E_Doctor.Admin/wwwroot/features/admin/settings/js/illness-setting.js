@@ -471,13 +471,13 @@
                     }
                 );
 
-                registerEvent(
-                    buttons.exportRulesBtn,
-                    "click",
-                    function (e) {
-                        eventHandlers.handleOnExportRules();
-                    }
-                );
+                //registerEvent(
+                //    buttons.exportRulesBtn,
+                //    "click",
+                //    function (e) {
+                //        eventHandlers.handleOnExportRules();
+                //    }
+                //);
             },
             searchEvent: function () {
                 const { searchSection } = elementHolders;

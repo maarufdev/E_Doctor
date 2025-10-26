@@ -1,0 +1,164 @@
+﻿.searchable-dropdown {
+    position: relative;
+    z-index: 10000;
+}
+
+.searchable-dropdown-list {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1001;
+    display: none;
+}
+
+.searchable-dropdown-list.visible {
+    display: block;
+}
+
+.searchable-dropdown-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+}
+
+.searchable-dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+.selected-symptoms-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    min-height: 40px;
+}
+
+.symptom-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.symptom-tag {
+    background-color: #dbeafe;
+    color: var(--primary-hover);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.symptom-tag button {
+    background: none;
+    border: none;
+    color: var(--primary-hover);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.selected-symtoms-message:has(+ .patient-symptom:not(.hidden)) {
+    display: none;
+}
+
+.consultation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 300px;
+}
+
+#consultation-modal-body:has( > .diagnosis-result-content.hidden) {
+    min-height: 300px;
+}
+
+.duration-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.patient-symptom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 20px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px
+}
+
+.patient-question {
+    line-height: .4rem;
+    display: flex;
+    gap: 10px;
+    height: 30px;
+}
+
+.symptom-duration {
+    flex-grow: 0 !important;
+    flex-shrink: 1;
+    padding: .5rem;
+    line-height: .4rem;
+    width: 70px;
+    text-align: center;
+}
+
+.remove-patient-symptom-btn {
+    padding-inline: 10px;
+}
+
+.diagnosis-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.diagnosis-result-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.diagnosis-result-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-view-diagnosis {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+.btn-view-diagnosis:visited {
+    color: var(--primary-color);
+}
+
+.diagnosis-result-modal-content {
+    max-width: 500px;
+}
+
+.diagnosis-content-card {
+    background-color: #F3F4F6;
+    min-height: 200px;
+    border-radius: 15px;
+    padding: 10px 20px;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.start-diagnosis-modal-btn {
+    margin-top: 0 !important;
+}

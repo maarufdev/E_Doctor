@@ -1,4 +1,4 @@
-﻿using E_Doctor.Application.Interfaces.Features.Patient.Dashboard;
+﻿using E_Doctor.Application.Interfaces.Features.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,16 +7,16 @@ namespace E_Doctor.Patient.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        private readonly IPatientDashboardService _patientDashboardService;
-        public DashboardController(IPatientDashboardService patientDashboardService)
+        private readonly IUserManagerService _userManagerService;
+        public DashboardController(IUserManagerService userManagerService)
         {
-            _patientDashboardService = patientDashboardService;
+            _userManagerService = userManagerService;
         }
         public async Task<IActionResult> Index()
         {
-            var result = await _patientDashboardService.GetDashboardDetails();
+            await _userManagerService.UpdateUserLoginDate();
 
-            return View(result.Value);
+            return View();
         }
     }
 }

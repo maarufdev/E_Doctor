@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace E_Doctor.Application.Helpers
 {
-    internal static class EnumHelper
+    public static class EnumHelper
     {
         public static List<ConditionRuleDTO> GetIllnessRuleConditions()
         {

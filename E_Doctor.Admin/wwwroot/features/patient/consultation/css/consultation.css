@@ -1,0 +1,196 @@
+﻿
+.consulation-title {
+    font-size: 2.5rem;
+}
+
+    .consulation-title + p {
+        font-size: 1.3rem;
+    }
+
+.justify-center {
+    justify-content: center;
+}
+
+.consultation-content {
+    margin-top: 20px;
+}
+
+.start-new-diagnosis-btn {
+    width: 250px;
+    margin-inline: auto;
+    margin-top: 20px;
+    justify-content: center;
+    border-radius: 20px;
+}
+
+.modal-illness-content {
+    max-width: 30rem;
+}
+
+.modal-illness-content {
+}
+
+.illness-content {
+    padding: 10px 20px;
+    min-height: 100px;
+}
+
+.illness-list {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.illness-item-btn {
+    --bg-opacity: 1;
+    background-color: rgb(229 231 235 / var(--bg-opacity, 1));
+    color: #000;
+    font-weight: 400;
+}
+
+    .illness-item-btn:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+/*Symptoms styles*/
+.modal-symptom-content {
+    max-width: 35rem;
+    padding-bottom: 10px;
+}
+
+.symptoms-content {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.symptom-card-container {
+    gap: 20px;
+    transition: transform 0.5s ease-in-out;
+    transform: translateX(0);
+    min-width: 100%;
+}
+
+.navigation-symptom-buttons {
+    gap: 30px;
+}
+
+    .navigation-symptom-buttons .btn {
+        padding: 10px 20px;
+        border-radius: 30px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .navigation-symptom-buttons .back-button {
+        color: #fff;
+        background-color: #374151;
+        opacity: .7;
+    }
+
+        .navigation-symptom-buttons .back-button:hover {
+            opacity: 1;
+        }
+
+.question-btn[disabled] {
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.cancel-symptom-btn {
+    background-color: #fff;
+    color: var(--danger-color);
+    margin-inline: auto;
+}
+
+.symptom-yes-no-buttons {
+    justify-content: center;
+    gap: 20px;
+}
+
+    .symptom-yes-no-buttons .btn {
+        border-radius: 20px;
+        padding-inline: 30px;
+        padding-block: 7px;
+        margin-top: 20px;
+    }
+
+        .symptom-yes-no-buttons .btn.selected {
+            opacity: .5;
+        }
+
+/*Diagnosis Result styles*/
+.modal-diagnosis-content .modal-header,
+.modal-diagnosis-content .modal-footer {
+    border: none;
+}
+
+.diagnosis-content-card {
+    background-color: #F3F4F6;
+    min-height: 200px;
+    border-radius: 15px;
+    padding: 10px 20px;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.start-diagnosis-modal-btn {
+    margin-top: 0 !important;
+}
+
+.move-left {
+    transform: translateX(-100%);
+}
+
+.move-right {
+    transform: translateX(100%);
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.card-slider-btn {
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+    border: none;
+    position: absolute;
+    top: 50%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+    .card-slider-btn.next {
+        right: -10px;
+        transform: translate(0%, -100%);
+    }
+
+    .card-slider-btn.back {
+        left: -10px;
+        transform: translate(0%, -100%);
+    }

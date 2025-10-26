@@ -120,3 +120,32 @@ function convertDateTimeToLocal(utcDateString) {
 
     return `${month}-${day}-${year} ${hours}:${minutes} ${ampm}`;
 }
+
+/**
+* Recursively freezes an object and all of its nested objects.
+* This ensures true immutability for complex, nested data structures.
+*
+* @param {object} object - The object to be deep-frozen.
+* @returns {object} The deep-frozen object.
+*/
+function deepFreeze(object) {
+    // 1. Get all the property names of the object
+    const propertyNames = Object.getOwnPropertyNames(object);
+
+    // 2. Iterate over each property
+    for (const name of propertyNames) {
+        const value = object[name];
+
+        // 3. Check if the property's value is an object (and not null)
+        //    'typeof null' is 'object', so we must explicitly check for null.
+        if (value && typeof value === 'object') {
+            // 4. If it's an object, recursively call deepFreeze on it.
+            //    This is the "deep" part—it freezes the inner object first.
+            deepFreeze(value);
+        }
+    }
+
+    // 5. Finally, freeze the current (outer) object.
+    //    By this point, all nested objects have already been frozen.
+    return Object.freeze(object);
+}

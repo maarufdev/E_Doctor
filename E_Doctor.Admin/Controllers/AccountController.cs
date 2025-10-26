@@ -1,5 +1,7 @@
 ﻿using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Infrastructure.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Web.Controllers
@@ -26,6 +28,13 @@ namespace E_Doctor.Web.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
             var result = await _userService.Login(login);
+
+            var isAdmin = await _userService.IsUserAdmin();
+            
+            if (!isAdmin)
+            {
+                return Unauthorized("You are not authorized to perform this action.");
+            }
 
             if (result.IsFailure)
             {

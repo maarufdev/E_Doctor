@@ -16,6 +16,8 @@ namespace E_Doctor.Patient.Controllers
         public async Task<IActionResult> Index()
         {
             var result = await _userManagerService.GetUserProfile();
+            await _userManagerService.UpdateUserLoginDate();
+
             return View(result);
         }
     }

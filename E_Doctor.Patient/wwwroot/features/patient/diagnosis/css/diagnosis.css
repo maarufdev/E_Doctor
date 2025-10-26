@@ -134,15 +134,6 @@
     gap: 10px;
 }
 
-.btn-view-diagnosis {
-    color: var(--primary-color);
-    cursor: pointer;
-}
-
-.btn-view-diagnosis:visited {
-    color: var(--primary-color);
-}
-
 .diagnosis-result-modal-content {
     max-width: 500px;
 }

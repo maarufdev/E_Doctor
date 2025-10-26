@@ -1,5 +1,5 @@
-using E_Doctor.Application;
 using E_Doctor.Infrastructure;
+using E_Doctor.Infrastructure.ApplicationBackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services
-    .AddPatientInfrastructure(builder.Configuration)
-    .AddPatientApplication();
+    .AddPatientInfrastructure(builder.Configuration);
+
+builder.Services.AddHostedService<InActiveUserArchiverService>();
 
 var app = builder.Build();
 // seeder
