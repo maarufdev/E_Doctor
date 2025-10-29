@@ -58,11 +58,13 @@ public static class DependencyInjection
         MSSQLConfig mssqlConfig = new();
         configuration.Bind("MSSQLConnectionStrings", mssqlConfig);
 
+        //var conString = $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;";
+        var conString = $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;";
+
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(
-                    $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;",
-                   
+                   conString,
                     builder =>
                     {
                         builder.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null);
