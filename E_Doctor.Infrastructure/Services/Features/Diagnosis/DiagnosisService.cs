@@ -133,6 +133,7 @@ internal class DiagnosisService : IDiagnosisService
                    MatchedRules = i.Rules.Where(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)).ToList(),
                    MatchedRuleCount = i.Rules.Count(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)),
                })
+               .OrderByDescending(o => o.MatchedRuleCount)
                .FirstOrDefaultAsync();
 
             if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
