@@ -310,14 +310,18 @@
                     }
 
                 },
-                populateDiagnosisResult: function ({ result, description, prescription, notes }) {
+                populateDiagnosisResult: function ({ result, description, prescription, notes, isSuccess }) {
                     services.eventHandlers.modal.toggleDiagnosisResult(true);
 
                     const { diagnosisInfo: elmt } = this.elements;
-                    $(elmt.result).text(result ?? "");
+                    $(elmt.result)
+                        .text(result ?? "")
+                        .toggleClass("warning-text", !isSuccess);
                     $(elmt.description).text(description ?? "");
                     $(elmt.prescription).text(prescription ?? "");
-                    $(elmt.notes).text(notes ?? "");
+                    $(elmt.notes)
+                        .text(notes ?? "")
+                        .toggleClass("warning-text", !isSuccess);
                 },
                 clearDiagnosisText: function () {
                     const { diagnosisInfo: elmt } = this.elements;

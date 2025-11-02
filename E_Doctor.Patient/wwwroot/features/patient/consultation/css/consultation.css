@@ -194,3 +194,8 @@
         left: -10px;
         transform: translate(0%, -100%);
     }
+
+
+.warning-text {
+    color: red;
+}

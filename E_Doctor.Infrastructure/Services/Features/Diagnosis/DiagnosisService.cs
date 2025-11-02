@@ -117,10 +117,11 @@ internal class DiagnosisService : IDiagnosisService
             var result = new List<DiagnosisResultDTO>();
             var diagnosisResult = new DiagnosisDetailsDTO();
 
-            var illness = await _appDbContext.Illnesses
+            var potentialIllnessResult = await _appDbContext.Illnesses
                .AsNoTracking()
                .Include(r => r.Rules)
                .ThenInclude(s => s.Symptom)
+               .Where(i => i.IsActive == true)
                .Select(i => new
                {
                    IllnessId = i.Id,
@@ -133,12 +134,58 @@ internal class DiagnosisService : IDiagnosisService
                    MatchedRules = i.Rules.Where(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)).ToList(),
                    MatchedRuleCount = i.Rules.Count(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId)),
                })
+               .Where(i => i.MatchedRuleCount > 0)
                .OrderByDescending(o => o.MatchedRuleCount)
-               .FirstOrDefaultAsync();
+               .ToListAsync();
 
-            if (illness is null) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
+            if (!potentialIllnessResult.Any()) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
 
-            var score = (double)illness.MatchedRuleCount / illness.RuleCount * 100;
+            var potentialResultWithScore = potentialIllnessResult
+                .Select(illness =>
+                {
+                    var score = illness.RuleCount > 0
+                        ? (double)illness.MatchedRuleCount / illness.RuleCount * 100
+                        : 0;
+
+                    return new
+                    {
+                        illness.IllnessId,
+                        illness.IllnessName,
+                        illness.Prescription,
+                        illness.Description,
+                        illness.Notes,
+                        illness.MatchedRules,
+                        Score = score
+                    };
+                })
+                .OrderByDescending(i => i.Score)
+                .ToList();
+
+            var maxScore = potentialResultWithScore.Max(r => r.Score);
+            var topResults = potentialResultWithScore.Where(r => Math.Abs(r.Score - maxScore) < 0.0001).ToList();
+            var hasTie = (topResults.Count > 1);
+            if (hasTie)
+            {
+                var tiedIllnesses = string.Join(", ", topResults.Select(r => r.IllnessName));
+                diagnosisResult = DiagnosisDetailsDTO.Create(
+                   "Multiple illnesses have similar match scores.",
+                   $"Possible illnesses: {tiedIllnesses}.",
+                   string.Empty,
+                   "It’s advised to consult a doctor for a proper diagnosis.",
+                   false
+               );
+
+                await _activityLoggerService.LogAsync(
+                    userId,
+                    UserActivityTypes.PatientDiagnosis,
+                    diagnosisResult.Result ?? "Tie diagnosis - advised doctor consultation."
+                );
+
+                return Result<DiagnosisDetailsDTO>.Success(diagnosisResult);
+            }
+
+            var firstResult = topResults.First();
+            var score = firstResult.Score;
 
             var toSaveDiagnosis = new DiagnosisEntity
             {
@@ -152,10 +199,10 @@ internal class DiagnosisService : IDiagnosisService
             var patientIllness = new DiagnosisIllnessesEntity
             {
                 DiagnosisId = toSaveDiagnosis.Id,
-                Illness = illness.IllnessName,
-                Description = illness.Description,
-                Prescription = illness.Prescription ?? string.Empty,
-                Notes = illness.Notes,
+                Illness = firstResult.IllnessName,
+                Description = firstResult.Description,
+                Prescription = firstResult.Prescription ?? string.Empty,
+                Notes = firstResult.Notes,
                 Score = (decimal)score,
                 IsActive = true,
                 CreatedOn = DateTime.Now,
@@ -163,7 +210,7 @@ internal class DiagnosisService : IDiagnosisService
 
             toSaveDiagnosis.DiagnosIllnesses.Add(patientIllness);
 
-            foreach (var symptom in illness.MatchedRules)
+            foreach (var symptom in firstResult.MatchedRules)
             {
                 toSaveDiagnosis.DiagnosSymptoms.Add(new DiagnosisSymptomsEntity
                 {
