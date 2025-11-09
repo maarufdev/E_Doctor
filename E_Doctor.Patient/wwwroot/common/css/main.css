@@ -547,8 +547,10 @@ a {
     opacity: 0;
     cursor: pointer;
     /* Important for accessibility: ensure it's still tabbable */
-    width: 0;
-    height: 0;
+    width: 24px; /* set size, just hidden */
+    height: 24px;
+/*    width: 0;
+    height: 0;*/
 }
 
 .custom-checkbox-label {

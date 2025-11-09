@@ -1,240 +1,321 @@
-﻿<link rel="stylesheet" href="~/features/user/css/registration.css" asp-append-version="true" />
+﻿@model E_Doctor.Patient.ViewModels.RegisterPatientVM.RegisterUserVM;
+
+@{
+    var civilStatOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Single", Text = "Single" },
+        new SelectListItem { Value = "Married", Text = "Married" },
+        new SelectListItem { Value = "Divorced", Text = "Divorced" },
+        new SelectListItem { Value = "Other", Text = "Other" },
+    };
+
+    var genderOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Male", Text = "Male" },
+        new SelectListItem { Value = "Female", Text = "Female" },
+        new SelectListItem { Value = "Other", Text = "Other" }
+    };
+}
+
+<link rel="stylesheet" href="~/features/user/css/registration.css" asp-append-version="true" />
 
 <div class="register-form-container">
     <div class="register-form-container__header">
         <h1 class="register-form-title">Patient Registration Form</h1>
         <p class="text-lg mt-2 register-form-subtitle">Please complete all required fields (*).</p>
     </div>
-    <form id="register-form" autocomplete="off" class="register-form">
-        <div class="register-form-content ">
-            @* Personal Information *@
+    <form id="register-form"
+          autocomplete="off"
+          class="register-form"
+          asp-controller="Account"
+          asp-action="RegisterUser"
+          method="POST">
+
+        <div class="register-form-content">
+
             <div class="registration-form__group">
                 <div class="registration-form__group-header">
                     <h3>PERSONAL INFORMATION</h3>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label>Last Name</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="LastName">Last Name</label>
+                        <input asp-for="LastName" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label>First Name</label>
-                        <input type="text" id="reg-password" class="form-input" required autocomplete="off">
+                        <label asp-for="FirstName">First Name</label>
+                        <input asp-for="FirstName" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label>Middle Name</label>
-                        <input type="text" id="reg-firstname" class="form-input" required autocomplete="off">
+                        <label asp-for="MiddleName">Middle Name</label>
+                        <input asp-for="MiddleName" class="form-input" />
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label>Religion</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="Religion">Religion</label>
+                        <input asp-for="Religion" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-middlename">Civil Status</label>
-                        <select class="form-select">
-                            <option>Single</option>
-                            <option>Married</option>
-                            <option>Divorced</option>
+                        <label asp-for="DOB">Date Of Birth</label>
+                        <input type="date" asp-for="DOB" class="form-input" />
+                    </div>
+
+                    <div class="form-group-field">
+                        <label asp-for="CivilStatus">Civil Status</label>
+                        <select asp-for="CivilStatus" asp-items="civilStatOptions" class="form-select">
+                            <option value="">-- Select Status --</option>
                         </select>
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-middlename">Sex</label>
-                        <select class="form-select">
-                            <option>Male</option>
-                            <option>Female</option>
+                        <label asp-for="Gender">Sex</label>
+                        <select asp-for="Gender" asp-items="genderOptions" class="form-select">
+                            <option value="">-- Select Sex --</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label>Occupation</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="Occupation">Occupation</label>
+                        <input asp-for="Occupation" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label>Address</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="Address">Address</label>
+                        <input asp-for="Address" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label>Nationality</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="Nationality">Nationality</label>
+                        <input asp-for="Nationality" class="form-input" />
                     </div>
                 </div>
             </div>
 
-            @* Past Medical Record *@
             <div class="registration-form__group">
                 <div class="registration-form__group-header">
                     <h3>PAST MEDICAL RECORD</h3>
                 </div>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid form-grid-2">
                     <div class="form-group-field">
-                        <label for="reg-username">Previous Hospitalization?</label>
-                        <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.PreviousHospitalization">Previous Hospitalization?</label>
+                        <input asp-for="PastMedicalRecord.PreviousHospitalization" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Past Surgery</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.PastSurgery">Past Surgery</label>
+                        <input asp-for="PastMedicalRecord.PastSurgery" class="form-input" />
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid form-grid-3">
                     <div class="form-group-field">
-                        <label for="reg-password">Diabetes</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.Diabetes">Diabetes</label>
+                        <input asp-for="PastMedicalRecord.Diabetes" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Hypertension</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.Hypertension">Hypertension</label>
+                        <input asp-for="PastMedicalRecord.Hypertension" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Allergy to meds</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.AllergyToMeds">Allergy to Meds</label>
+                        <input asp-for="PastMedicalRecord.AllergyToMeds" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Heart Problem</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.HeartProblem">Heart Problem</label>
+                        <input asp-for="PastMedicalRecord.HeartProblem" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Ashtma</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.Asthma">Asthma</label>
+                        <input asp-for="PastMedicalRecord.Asthma" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label for="reg-password">Food Allergies</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.FoodAllergies">Food Allergies</label>
+                        <input asp-for="PastMedicalRecord.FoodAllergies" class="form-input" />
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid form-grid-3">
                     <div class="form-group-field">
-                        <label for="reg-password">Cancer</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.Cancer">Cancer</label>
+                        <input asp-for="PastMedicalRecord.Cancer" class="form-input" />
                     </div>
+
                     <div class="form-group-field grid-span">
-                        <label for="reg-password">Other Illnesses</label>
-                        <input type="text" class="form-input" required autocomplete="off">
+                        <label asp-for="PastMedicalRecord.OtherIllnesses">Other Illnesses</label>
+                        <input asp-for="PastMedicalRecord.OtherIllnesses" class="form-input" />
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2">
                     <div class="form-group-field flex flex-column items-start gap-2">
-                        <label for="reg-password">Maintenance Medications:</label>
-                        <textarea class="form-input" required autocomplete="off" rows="5"></textarea>
+                        <label asp-for="PastMedicalRecord.MaintenanceMeds">Maintenance Medications:</label>
+                        <textarea asp-for="PastMedicalRecord.MaintenanceMeds" class="form-input" rows="5"></textarea>
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2">
                     <div class="form-group-field flex flex-column items-start gap-2">
-                        <label for="reg-password">OB-GYNE History:</label>
-                        <textarea class="form-input" required autocomplete="off" rows="3"></textarea>
+                        <label asp-for="PastMedicalRecord.OBGyneHistory">OB-GYNE History:</label>
+                        <textarea asp-for="PastMedicalRecord.OBGyneHistory" class="form-input" rows="3"></textarea>
                     </div>
                 </div>
+
                 <div class="registration-form__group-field-container mt-4">
-                    <div class="registration-form__sub-group-field-container flex items-start flex-column gap-2 text-nowrap">
+                    <div class="registration-form__sub-group-field-container flex flex-column gap-2">
                         <span>Family History:</span>
-                        <div class="sub-form-group-field form-grid form-grid-4 justify-center w-full">
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input type="checkbox" class="custom-checkbox-input form-checkbox" id="ckbox-ptb" required autocomplete="off">
-                                    <label class="custom-checkbox-label" for="ckbox-ptb">PTB</label>
-                                </div>
+
+                        <div class="sub-form-group-field form-grid form-grid-4 w-full">
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-PTB"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.PTB" />
+                                <label for="fh-PTB" class="custom-checkbox-label">PTB</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input type="checkbox" id="ckbox-hypertension" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label class="custom-checkbox-label" for="ckbox-hypertension">Hypertension</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-Hypertension"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.Hypertension" />
+                                <label for="fh-Hypertension" class="custom-checkbox-label">Hypertension</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input id="ckbox-cardiac" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-cardiac" class="custom-checkbox-label">Cardiac</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-Cardiac"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.Cardiac" />
+                                <label for="fh-Cardiac" class="custom-checkbox-label">Cardiac</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input id="ckbox-none" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-none" class="custom-checkbox-label">None</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-None"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.None" />
+                                <label for="fh-None" class="custom-checkbox-label">None</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input id="ckbox-diabetes" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-diabetes" class="custom-checkbox-label">diabetes</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-Diabetes"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.Diabetes" />
+                                <label for="fh-Diabetes" class="custom-checkbox-label">Diabetes</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input id="ckbox-ashtma" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-ashtma" class="custom-checkbox-label">Asthma</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-Asthma"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.Asthma" />
+                                <label for="fh-Asthma" class="custom-checkbox-label">Asthma</label>
                             </div>
-                            <div class="form-group-field">
-                                <div class="custom-checkbox">
-                                    <input id="ckbox-cancer" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-cancer" class="custom-checkbox-label">Cancer</label>
-                                </div>
+
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-Cancer"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.Cancer" />
+                                <label for="fh-Cancer" class="custom-checkbox-label">Cancer</label>
                             </div>
+
                             <div class="form-group-field flex items-center gap-2 w-full">
-                                <label for="reg-password">Others</label>
-                                <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                                <label asp-for="FamilyHistory.Others">Others</label>
+                                <input asp-for="FamilyHistory.Others" class="form-input" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @* Personal History *@
                 <div class="registration-form__group-field-container mt-4">
-                    <div class="registration-form__sub-group-field-container flex items-start flex-column gap-2 text-nowrap">
+                    <div class="registration-form__sub-group-field-container flex flex-column gap-2">
                         <span>Personal History:</span>
-                        <div class="sub-form-group-field form-grid form-grid-4 justify-center w-full">
+
+                        <div class="sub-form-group-field form-grid form-grid-4 w-full">
+
                             <div class="form-group-field">
                                 <div class="custom-checkbox">
-                                    <input type="checkbox" class="custom-checkbox-input form-checkbox" id="ckbox-personalh-smoker" required autocomplete="off">
-                                    <label class="custom-checkbox-label" for="ckbox-personalh-smoker">Smoker</label>
+                                    <input type="checkbox"
+                                           id="ph-Smoker"
+                                           class="custom-checkbox-input form-checkbox"
+                                           asp-for="PersonalHistory.Smoker" />
+                                    <label for="ph-Smoker" class="custom-checkbox-label">Smoker</label>
                                 </div>
                             </div>
+
                             <div class="form-group-field">
                                 <div class="custom-checkbox">
-                                    <input type="checkbox" id="ckbox-personalh-alchoholic-drinker" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label class="custom-checkbox-label" for="ckbox-personalh-alchoholic-drinker">Alchoholic Beverage drinker</label>
+                                    <input type="checkbox"
+                                           id="ph-AlchoholBeverageDrinker"
+                                           class="custom-checkbox-input form-checkbox"
+                                           asp-for="PersonalHistory.AlchoholBeverageDrinker" />
+                                    <label for="ph-AlchoholBeverageDrinker" class="custom-checkbox-label">AlchoholBeverageDrinker</label>
                                 </div>
                             </div>
+
                             <div class="form-group-field">
                                 <div class="custom-checkbox">
-                                    <input id="ckbox-personalh-illicit-d-user" type="checkbox" class="custom-checkbox-input form-checkbox" required autocomplete="off">
-                                    <label for="ckbox-personalh-illicit-d-user" class="custom-checkbox-label">ILLICIT DRug User</label>
+                                    <input type="checkbox"
+                                           id="ph-IllicitDrugUser"
+                                           class="custom-checkbox-input form-checkbox"
+                                           asp-for="PersonalHistory.IllicitDrugUser" />
+                                    <label for="ph-IllicitDrugUser" class="custom-checkbox-label">IllicitDrugUser</label>
                                 </div>
                             </div>
+
                             <div class="form-group-field flex items-center gap-2 w-full">
-                                <label for="reg-password">Others</label>
-                                <input type="text" id="reg-username" class="form-input" required autocomplete="off">
+                                <label asp-for="PersonalHistory.Others">Others</label>
+                                <input asp-for="PersonalHistory.Others" class="form-input" />
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-            @* Family History *@
+
             <div class="registration-form__group">
                 <div class="registration-form__group-header">
-                    <h3>System Account</h3>
+                    <h3>Patient Account</h3>
                 </div>
+
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label>Username</label>
-                        <input type="email" id="reg-username" class="form-input" required autocomplete="off">
+                        <label asp-for="Username">Username (Email)</label>
+                        <input asp-for="Username" type="email" class="form-input" />
                     </div>
+
                     <div class="form-group-field">
-                        <label>Password</label>
-                        <input type="password" id="reg-password" class="form-input" required autocomplete="off">
+                        <label asp-for="Password">Password</label>
+                        <input asp-for="Password" type="password" class="form-input" />
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="form-group-buttons">
             <button type="submit" class="btn btn-primary form-btn-register">Register Patient</button>
-            <p class="auth-link">Already have an account? <a asp-controller="Account" asp-action="Login" id="show-login-link">Login</a></p>
+            <p class="auth-link">Already have an account? <a asp-controller="Account" asp-action="Login">Login</a></p>
         </div>
+
     </form>
 </div>
 
-<script src="~/features/user/js/register.js" asp-append-version="true"></script>
+@* <script src="~/features/user/js/register.js" asp-append-version="true"></script> *@

@@ -1,5 +1,6 @@
 ﻿using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Patient.ViewModels.RegisterPatientVM;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Patient.Controllers
@@ -37,12 +38,20 @@ namespace E_Doctor.Patient.Controllers
 
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterUserVM());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterUserDTO register)
+        [HttpPost(Name = "RegisterUser")]
+        //public async Task<IActionResult> Register([FromBody] RegisterUserDTO register)
+        public async Task<IActionResult> RegisterUser(RegisterUserVM registerVM)
         {
+            if(!ModelState.IsValid)
+            {
+                return RedirectToAction("Register", registerVM);
+            }
+
+            RegisterUserDTO register = new RegisterUserDTO();
+
             var result = await _userService.Register(register);
 
             if (result.IsFailure)
