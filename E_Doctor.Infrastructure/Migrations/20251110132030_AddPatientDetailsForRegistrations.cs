@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Doctor.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrations : Migration
+    public partial class AddPatientDetailsForRegistrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -241,6 +241,41 @@ namespace E_Doctor.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PatientInformations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Religion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CivilStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Occupation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PatientPastMedicalRecordId = table.Column<int>(type: "int", nullable: false),
+                    PatientFamilyHistoryId = table.Column<int>(type: "int", nullable: false),
+                    PatientPersonalHistoryId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientInformations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientInformations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IllnessRules",
                 columns: table => new
                 {
@@ -315,6 +350,96 @@ namespace E_Doctor.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PatientFamilyHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientInfoId = table.Column<int>(type: "int", nullable: false),
+                    PTB = table.Column<bool>(type: "bit", nullable: false),
+                    Hypertension = table.Column<bool>(type: "bit", nullable: false),
+                    Cardiac = table.Column<bool>(type: "bit", nullable: false),
+                    None = table.Column<bool>(type: "bit", nullable: false),
+                    Diabetes = table.Column<bool>(type: "bit", nullable: false),
+                    Asthma = table.Column<bool>(type: "bit", nullable: false),
+                    Cancer = table.Column<bool>(type: "bit", nullable: false),
+                    Others = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientFamilyHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientFamilyHistory_PatientInformations_PatientInfoId",
+                        column: x => x.PatientInfoId,
+                        principalTable: "PatientInformations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientPastMedicalRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientInfoId = table.Column<int>(type: "int", nullable: false),
+                    PreviousHospitalization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PastSurgery = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Diabetes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Hypertension = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AllergyToMeds = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HeartProblem = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Asthma = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FoodAllergies = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cancer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtherIllnesses = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaintenanceMeds = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OBGyneHistory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientPastMedicalRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientPastMedicalRecords_PatientInformations_PatientInfoId",
+                        column: x => x.PatientInfoId,
+                        principalTable: "PatientInformations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientPersonalHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientInfoId = table.Column<int>(type: "int", nullable: false),
+                    Smoker = table.Column<bool>(type: "bit", nullable: false),
+                    AlchoholBeverageDrinker = table.Column<bool>(type: "bit", nullable: false),
+                    IllicitDrugUser = table.Column<bool>(type: "bit", nullable: false),
+                    Others = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientPersonalHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientPersonalHistory_PatientInformations_PatientInfoId",
+                        column: x => x.PatientInfoId,
+                        principalTable: "PatientInformations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -373,6 +498,30 @@ namespace E_Doctor.Infrastructure.Migrations
                 name: "IX_IllnessRules_SymptomId",
                 table: "IllnessRules",
                 column: "SymptomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientFamilyHistory_PatientInfoId",
+                table: "PatientFamilyHistory",
+                column: "PatientInfoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientInformations_UserId",
+                table: "PatientInformations",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientPastMedicalRecords_PatientInfoId",
+                table: "PatientPastMedicalRecords",
+                column: "PatientInfoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientPersonalHistory_PatientInfoId",
+                table: "PatientPersonalHistory",
+                column: "PatientInfoId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -403,6 +552,15 @@ namespace E_Doctor.Infrastructure.Migrations
                 name: "IllnessRules");
 
             migrationBuilder.DropTable(
+                name: "PatientFamilyHistory");
+
+            migrationBuilder.DropTable(
+                name: "PatientPastMedicalRecords");
+
+            migrationBuilder.DropTable(
+                name: "PatientPersonalHistory");
+
+            migrationBuilder.DropTable(
                 name: "UserActivities");
 
             migrationBuilder.DropTable(
@@ -416,6 +574,9 @@ namespace E_Doctor.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Symptoms");
+
+            migrationBuilder.DropTable(
+                name: "PatientInformations");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

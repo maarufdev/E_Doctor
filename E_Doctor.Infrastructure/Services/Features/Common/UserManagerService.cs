@@ -7,11 +7,13 @@ using E_Doctor.Application.DTOs.ManageUsers.ResponseDTOs;
 using E_Doctor.Application.Helpers;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Core.Constants.Enums;
+using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Constants;
 using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -350,64 +352,152 @@ internal class UserManagerService : IUserManagerService
         return user?.Email ?? string.Empty;
     }
 
-    public async Task<Result> Register(RegisterUserDTO registerDTO)
+    public async Task<Result> RegisterPatient(RegisterPatientDTO registerDTO)
     {
-        // Validate incoming DTO
-        if (string.IsNullOrWhiteSpace(registerDTO.UserName) ||
-            string.IsNullOrWhiteSpace(registerDTO.Password) ||
-            string.IsNullOrWhiteSpace(registerDTO.FirstName) ||
-            string.IsNullOrWhiteSpace(registerDTO.LastName))
+        try
         {
-            return Result.Failure("Required fields are missing.");
+            if (registerDTO is null) return Result.Failure("Register Patient fields are empty.");
+            
+            registerDTO.Validate();
+
+            // Check if user already exists
+            var existingUser = await _userManager.FindByEmailAsync(registerDTO.UserName);
+
+            if (existingUser != null)
+            {
+                return Result.Failure("A user with that email/username already exists.");
+            }
+
+            // Map DTO to AppUserIdentity
+
+            var newUser = new AppUserIdentity
+            {
+                UserName = registerDTO.UserName,
+                Email = registerDTO.UserName,
+                FirstName = registerDTO.FirstName,
+                LastName = registerDTO.LastName,
+                MiddleName = registerDTO.MiddleName,
+                DateOfBirth = registerDTO.DateOfBirth,
+                EmailConfirmed = true,
+                Status = (int)UserStatus.Active,
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString("D")
+            };
+
+            // Create user
+            var result = await _userManager.CreateAsync(newUser, registerDTO.Password);
+            if (!result.Succeeded)
+            {
+                // Collect all error messages into one readable string
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                return Result.Failure(errors);
+            }
+
+            result = await _userManager.AddToRoleAsync(newUser, RoleConstants.Patient);
+
+            if (!result.Succeeded)
+            {
+                return Result.Failure("Something Went Wrong.");
+            }
+
+            var userId = newUser.Id;
+
+            var patientInfo = new PatientInformationEntity
+            {
+                UserId = userId,
+                LastName = newUser.LastName,
+                FirstName = newUser.FirstName,
+                MiddleName = newUser.MiddleName,
+                DateOfBirth = (DateTime)newUser.DateOfBirth,
+                Religion = registerDTO.Religion,
+                Gender = registerDTO.Gender,
+                Address = registerDTO.Address,
+                CivilStatus = registerDTO.CivilStatus,
+                Nationality = registerDTO.Nationality,
+                Occupation = registerDTO.Occupation,
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            var pastMedRecord = new PatientPastMedicalRecordEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if (registerDTO.PatientPastMedicalRecord is not null)
+            {
+                var pastRec = registerDTO.PatientPastMedicalRecord;
+
+                pastMedRecord.PreviousHospitalization = pastRec.PreviousHospitalization;
+                pastMedRecord.PastSurgery = pastRec.PastSurgery;
+                pastMedRecord.Diabetes = pastRec.Diabetes;
+                pastMedRecord.Hypertension = pastRec.Hypertension;
+                pastMedRecord.AllergyToMeds = pastRec.AllergyToMeds;
+                pastMedRecord.HeartProblem = pastRec.HeartProblem;
+                pastMedRecord.Asthma = pastRec.Asthma;
+                pastMedRecord.FoodAllergies = pastRec.FoodAllergies;
+                pastMedRecord.Cancer = pastRec.Cancer;
+                pastMedRecord.OtherIllnesses = pastRec.OtherIllnesses;
+                pastMedRecord.OBGyneHistory = pastRec.OBGyneHistory;
+                pastMedRecord.MaintenanceMeds = pastRec.MaintenanceMeds;
+            }
+            
+            patientInfo.PatientPastMedicalRecord = pastMedRecord;
+
+            var personalHistory = new PatientPersonalHistoryEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if (registerDTO.PatientPersonalHistory is not null)
+            {
+                var perHistDTO = registerDTO.PatientPersonalHistory;
+                personalHistory.Smoker = perHistDTO.Smoker;
+                personalHistory.AlchoholBeverageDrinker = perHistDTO.AlchoholBeverageDrinker;
+                personalHistory.IllicitDrugUser = perHistDTO.IllicitDrugUser;
+                personalHistory.Others = perHistDTO.Others;
+            }
+
+            patientInfo.PatientPersonalHistory = personalHistory;
+
+            var famHistory = new PatientFamilyHistoryEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if(registerDTO.PatientFamilyHistory is not null)
+            {
+                var famHistoryDTO = registerDTO.PatientFamilyHistory;
+                famHistory.PTB = famHistoryDTO.PTB;
+                famHistory.Hypertension = famHistoryDTO.Hypertension;
+                famHistory.Cardiac = famHistoryDTO.Cardiac;
+                famHistory.None = famHistoryDTO.None;
+                famHistory.Diabetes = famHistoryDTO.Diabetes;
+                famHistory.Asthma = famHistoryDTO.Asthma;
+                famHistory.Cancer = famHistoryDTO.Cancer;
+                famHistory.Others = famHistoryDTO.Others;
+            }
+            
+            patientInfo.PatientFamilyHistory = famHistory;
+
+            await _context.PatientInformations.AddAsync(patientInfo);
+            var isSuccessSavePatientInfoResult = await _context.SaveChangesAsync() > 0;
+
+            if (!isSuccessSavePatientInfoResult) return Result.Failure("Something went wrong saving patient info");
+
+            await _activityLogger.LogAsync(
+                newUser.Id,
+                UserActivityTypes.Login,
+                newUser.Email
+            );
+
+            return Result.Success();
         }
-
-        // Check if user already exists
-        var existingUser = await _userManager.FindByEmailAsync(registerDTO.UserName);
-        
-        if (existingUser != null)
+        catch(Exception ex)
         {
-            return Result.Failure("A user with that email/username already exists.");
+            Console.WriteLine(ex.Message.ToString());
+            return Result.Failure("Something went wrong.");
         }
-
-        // Map DTO to AppUserIdentity
-
-        var newUser = new AppUserIdentity
-        {
-            UserName = registerDTO.UserName,
-            Email = registerDTO.UserName,
-            FirstName = registerDTO.FirstName,
-            LastName = registerDTO.LastName,
-            MiddleName = registerDTO.MiddleName,
-            DateOfBirth = registerDTO.DateOfBirth,
-            EmailConfirmed = true,      
-            Status = (int)UserStatus.Active,
-            IsActive = true,                    
-            SecurityStamp = Guid.NewGuid().ToString("D")
-        };
-
-        // Create user
-        var result = await _userManager.CreateAsync(newUser, registerDTO.Password);
-        if (!result.Succeeded)
-        {
-            // Collect all error messages into one readable string
-            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            return Result.Failure(errors);
-        }
-
-        result = await _userManager.AddToRoleAsync(newUser, RoleConstants.Patient);
-
-        if (!result.Succeeded)
-        {
-            return Result.Failure("Something Went Wrong.");
-        }
-
-        await _activityLogger.LogAsync(
-            newUser.Id,
-            UserActivityTypes.Login,
-            newUser.Email
-        );
-
-        return Result.Success();
     }
 
     public async Task<Result> ResetPassword(ResetPasswordDTO resetPasswordDTO)

@@ -2,7 +2,7 @@
 public class PatientPastMedicalRecordEntity : BaseEntity
 {
     public int PatientInfoId { get; set; }
-    public PatientInfoEntity? PatientInfoEntity { get; set; }
+    public PatientInformationEntity? PatientInformation { get; set; }
     public string? PreviousHospitalization { get; set; } = string.Empty;
     public string? PastSurgery { get; set; } = string.Empty;
     public string? Diabetes { get; set; } = string.Empty;

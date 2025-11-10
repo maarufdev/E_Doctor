@@ -3,7 +3,7 @@
 @{
     var civilStatOptions = new List<SelectListItem>
     {
-        new SelectListItem { Value = "Single", Text = "Single" },
+        new SelectListItem { Value = "Single", Text = "Single" , Selected = true },
         new SelectListItem { Value = "Married", Text = "Married" },
         new SelectListItem { Value = "Divorced", Text = "Divorced" },
         new SelectListItem { Value = "Other", Text = "Other" },
@@ -11,7 +11,7 @@
 
     var genderOptions = new List<SelectListItem>
     {
-        new SelectListItem { Value = "Male", Text = "Male" },
+        new SelectListItem { Value = "Male", Text = "Male", Selected = true },
         new SelectListItem { Value = "Female", Text = "Female" },
         new SelectListItem { Value = "Other", Text = "Other" }
     };
@@ -40,43 +40,41 @@
 
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label asp-for="LastName">Last Name</label>
+                        <label asp-for="LastName">Last Name (*)</label>
                         <input asp-for="LastName" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="FirstName">First Name</label>
+                        <label asp-for="FirstName">First Name (*)</label>
                         <input asp-for="FirstName" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="MiddleName">Middle Name</label>
+                        <label asp-for="MiddleName">Middle Name (*)</label>
                         <input asp-for="MiddleName" class="form-input" />
                     </div>
                 </div>
 
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label asp-for="Religion">Religion</label>
+                        <label asp-for="Religion">Religion (*)</label>
                         <input asp-for="Religion" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="DOB">Date Of Birth</label>
+                        <label asp-for="DOB">Date Of Birth (*)</label>
                         <input type="date" asp-for="DOB" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="CivilStatus">Civil Status</label>
+                        <label asp-for="CivilStatus">Civil Status (*)</label>
                         <select asp-for="CivilStatus" asp-items="civilStatOptions" class="form-select">
-                            <option value="">-- Select Status --</option>
                         </select>
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="Gender">Sex</label>
+                        <label asp-for="Gender">Sex (*)</label>
                         <select asp-for="Gender" asp-items="genderOptions" class="form-select">
-                            <option value="">-- Select Sex --</option>
                         </select>
                     </div>
                 </div>
@@ -88,12 +86,12 @@
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="Address">Address</label>
+                        <label asp-for="Address">Address (*)</label>
                         <input asp-for="Address" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="Nationality">Nationality</label>
+                        <label asp-for="Nationality">Nationality (*)</label>
                         <input asp-for="Nationality" class="form-input" />
                     </div>
                 </div>
@@ -178,9 +176,18 @@
 
                 <div class="registration-form__group-field-container mt-4">
                     <div class="registration-form__sub-group-field-container flex flex-column gap-2">
-                        <span>Family History:</span>
-
-                        <div class="sub-form-group-field form-grid form-grid-4 w-full">
+                        <div class="flex items-center">
+                            <span>Family History:</span>
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="fh-None"
+                                       class="custom-checkbox-input form-checkbox"
+                                       asp-for="FamilyHistory.None" />
+                                <label for="fh-None" class="custom-checkbox-label">None</label>
+                            </div>
+                        </div>
+                        
+                        <div class="sub-form-group-field form-grid form-grid-4 w-full family-history-fields-section">
 
                             <div class="custom-checkbox">
                                 <input type="checkbox"
@@ -205,15 +212,6 @@
                                        asp-for="FamilyHistory.Cardiac" />
                                 <label for="fh-Cardiac" class="custom-checkbox-label">Cardiac</label>
                             </div>
-
-                            <div class="custom-checkbox">
-                                <input type="checkbox"
-                                       id="fh-None"
-                                       class="custom-checkbox-input form-checkbox"
-                                       asp-for="FamilyHistory.None" />
-                                <label for="fh-None" class="custom-checkbox-label">None</label>
-                            </div>
-
                             <div class="custom-checkbox">
                                 <input type="checkbox"
                                        id="fh-Diabetes"
@@ -238,7 +236,7 @@
                                 <label for="fh-Cancer" class="custom-checkbox-label">Cancer</label>
                             </div>
 
-                            <div class="form-group-field flex items-center gap-2 w-full">
+                            <div class="form-group-field flex items-center gap-2 grid-span">
                                 <label asp-for="FamilyHistory.Others">Others</label>
                                 <input asp-for="FamilyHistory.Others" class="form-input" />
                             </div>
@@ -298,12 +296,12 @@
 
                 <div class="registration-form__group-field-container mt-2 form-grid">
                     <div class="form-group-field">
-                        <label asp-for="Username">Username (Email)</label>
+                        <label asp-for="Username">Username (Email) (*)</label>
                         <input asp-for="Username" type="email" class="form-input" />
                     </div>
 
                     <div class="form-group-field">
-                        <label asp-for="Password">Password</label>
+                        <label asp-for="Password">Password (*)</label>
                         <input asp-for="Password" type="password" class="form-input" />
                     </div>
                 </div>
@@ -318,4 +316,36 @@
     </form>
 </div>
 
-@* <script src="~/features/user/js/register.js" asp-append-version="true"></script> *@
+@ViewData.TryGetValue("MissingFields", out var MissingFieldsObj);
+
+@{
+    string MissingFields = string.Empty;
+
+    if(MissingFieldsObj is not null)
+    {
+        MissingFields = MissingFieldsObj?.ToString();
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(MissingFields))
+{
+    <div id="registrationAlert" class="modal-backdrop visible">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="consultation-modal-title" class="text-xl font-semibold">Alert</h3>
+                <button id="closeAlertModal" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Following Fields are required:</p>
+                <ul>
+                    @foreach (var field in MissingFields.Split(", "))
+                    {
+                        <li>- @field</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/features/user/js/register.js" asp-append-version="true"></script>

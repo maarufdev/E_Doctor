@@ -1,5 +1,6 @@
 ﻿using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
+using E_Doctor.Patient.Helpers;
 using E_Doctor.Patient.ViewModels.RegisterPatientVM;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,24 +43,27 @@ namespace E_Doctor.Patient.Controllers
         }
 
         [HttpPost(Name = "RegisterUser")]
-        //public async Task<IActionResult> Register([FromBody] RegisterUserDTO register)
         public async Task<IActionResult> RegisterUser(RegisterUserVM registerVM)
         {
-            if(!ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(registerVM.GetMissingFields()))
             {
-                return RedirectToAction("Register", registerVM);
+                ViewData["MissingFields"] = registerVM.GetMissingFields();
+
+                return View("Register", registerVM);
             }
 
-            RegisterUserDTO register = new RegisterUserDTO();
+            RegisterPatientDTO register = registerVM.ToDto();
 
-            var result = await _userService.Register(register);
+            var result = await _userService.RegisterPatient(register);
 
             if (result.IsFailure)
             {
-                return BadRequest(result.Error);
+                return RedirectToAction("Register", registerVM);
+                //return BadRequest(result.Error);
             }
 
-            return Ok(result.IsSuccess);
+            return RedirectToAction("Login");
+            //return Ok(result.IsSuccess);
         }
 
         public async Task<IActionResult> Logout()

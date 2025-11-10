@@ -4,6 +4,7 @@ using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110132030_AddPatientDetailsForRegistrations")]
+    partial class AddPatientDetailsForRegistrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,6 +329,15 @@ namespace E_Doctor.Infrastructure.Migrations
 
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientFamilyHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PatientPastMedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PatientPersonalHistoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Religion")
                         .HasColumnType("nvarchar(max)");

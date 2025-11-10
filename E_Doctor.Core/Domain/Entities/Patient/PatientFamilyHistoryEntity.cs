@@ -2,7 +2,7 @@
 public class PatientFamilyHistoryEntity : BaseEntity
 {
     public int PatientInfoId { get; set; }
-    public PatientInfoEntity? PatientInfoEntity { get; set; }
+    public PatientInformationEntity? PatientInformation { get; set; }
     public bool PTB { get; set; }
     public bool Hypertension { get; set; }
     public bool Cardiac { get; set; }

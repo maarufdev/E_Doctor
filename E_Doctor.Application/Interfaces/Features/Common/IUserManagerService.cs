@@ -8,7 +8,7 @@ namespace E_Doctor.Application.Interfaces.Features.Common;
 public interface IUserManagerService
 {
     Task<Result<string>> Login(LoginDTO loginDTO);
-    Task<Result> Register(RegisterUserDTO registerDTO);
+    Task<Result> RegisterPatient(RegisterPatientDTO registerDTO);
     Task UpdateUserLoginDate();
     Task<Result> Logout();
     Task<string> GetUserNameById(string userId);
