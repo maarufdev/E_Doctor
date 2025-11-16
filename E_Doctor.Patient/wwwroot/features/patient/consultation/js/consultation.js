@@ -190,7 +190,7 @@
 
                     const $card = $(`
                         <div class="symptom-card-container text-center ${animateDirectionClass}">
-                            <p class="text-xl">${symptom.question}?</p>
+                            <p class="text-xl">${symptom.symptomName}</p>
                             <div class="flex symptom-yes-no-buttons">
                                 <button class="btn btn-danger no-button yes-no-button" id="quest-no-btn">No</button>
                                 <button class="btn btn-secondary yes-button yes-no-button" id="quest-yes-btn">Yes</button>

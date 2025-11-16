@@ -174,3 +174,32 @@
     margin-top: 0 !important;
 }
 
+/*Phyical report section*/
+.physical-report-modal-content {
+    max-width: 70vw;
+}
+
+.tbl-data .form-textarea {
+    min-height: 30px !important;
+    resize: vertical;
+}
+
+.pyhical-report-header-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-block: 1rem;
+    padding-inline: 2rem;
+}
+
+.header-field {
+    text-wrap: nowrap;
+}
+
+.header-field .form-input {
+    padding: 0.25rem;
+}
+
+.font-uppercase {
+    text-transform: uppercase;
+}

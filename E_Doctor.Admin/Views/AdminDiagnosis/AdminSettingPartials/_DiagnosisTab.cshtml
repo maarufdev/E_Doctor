@@ -6,7 +6,6 @@
         @* <button id="new-consultation-btn" class="btn btn-secondary self-start">New Consultation</button> *@
     </div>
     <div class="card">
-        
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -14,7 +13,7 @@
                         <th>Date</th>
                         <th>User</th>
                         <th>Symptoms</th>
-                        <th>Result</th>
+                        <th>Pre-Result</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -49,6 +48,246 @@
                     <h4 class="text-lg font-semibold text-gray-800 mb-2">Doctor's Note / Referral:</h4>
                     <p id="diagnosis-notes" class="text-gray-700">If your cough lasts for more than three weeks or is accompanied by a high fever, you should see a doctor.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Physical Report *@
+<div id="physicalReportModal" class="modal-backdrop visible">
+    <div class="modal-content physical-report-modal-content">
+        <div class="modal-header">
+            <h3 class="text-xl font-semibold">PHYSICAL EXAMINATION REPORT</h3>
+            <button id="closePhysicalReportBtn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-4 font-uppercase">
+                Patient Name: <span id="patientPhysicalReportName"></span>
+            </div>
+            <div class="physical-report-header-form font-uppercase">
+                <p class="mb-3">Vital Signs:</p>
+                <div class="pyhical-report-header-fields">
+                    <div class="header-field flex items-center gap-4">
+                        <label>BP:</label>
+                        <input id="patientBP" class="form-input" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>HR:</label>
+                        <input id="patientHR" class="form-input" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>RR:</label>
+                        <input id="patientRR" class="form-input" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>TEMP:</label>
+                        <input id="patientTemp" class="form-input" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>WEIGHT:</label>
+                        <input id="patientWeight" class="form-input" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>O2 SAT.:</label>
+                        <input id="patientO2Sat" class="form-input" />
+                    </div>
+                </div>
+                <hr />
+            </div>
+            <div class="table-container mt-4">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>DESCRIBE THE FOLLOWING:</th>
+                            <th>NORMAL</th>
+                            <th>ABNORMAL FINDINGS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pyhsicalReportTableBody" class="font-uppercase">
+                        <tr>
+                            <td class="tbl-data checklist-title">Head</td>
+                            <td class="tbl-data normal-col checklist-normal-field" data-input-type="checkbox">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Eyes</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Ears</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Nose</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Throat</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Neck</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Chest/Lungs</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Heart</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">Abdomen</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">GUT</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">BACK</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">EXTREMITIES</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">NEUROLOGIC</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">SKIN</td>
+                            <td class="tbl-data normal-col">
+                                <div class="custom-checkbox">
+                                    <input id="headCkbx" type="checkbox" class="custom-checkbox-input">
+                                    <label for="headCkbx" class="custom-checkbox-label"></label>
+                                </div>
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbl-data desc-col">OTHERS</td>
+                            <td class="tbl-data normal-col">
+                                <input type="text" class="form-input">
+                            </td>
+                            <td class="tbl-data abnormal-col">
+                                <textarea class="form-textarea"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <button class="btn btn-primary">Save Changes</button>
             </div>
         </div>
     </div>

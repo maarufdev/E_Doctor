@@ -12,7 +12,7 @@ public static class SaveSymptomMapper
         var entity = new SymptomEntity
         {
             Name = saveSymptomDTO.SymptomName,
-            QuestionText = saveSymptomDTO.QuestionText,
+            QuestionText = saveSymptomDTO.QuestionText ?? string.Empty,
             IsActive = true,
             CreatedOn = DateTime.UtcNow,
         };
@@ -29,7 +29,7 @@ public static class SaveSymptomMapper
 
         entity.Id = saveSymptomDTO.SymptomId;
         entity.Name = saveSymptomDTO.SymptomName;
-        entity.QuestionText = saveSymptomDTO.QuestionText;
+        entity.QuestionText = saveSymptomDTO.QuestionText ?? string.Empty;
         entity.IsActive = true;
         entity.UpdatedOn = DateTime.UtcNow;
 
