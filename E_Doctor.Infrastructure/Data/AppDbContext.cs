@@ -1,6 +1,8 @@
-﻿using E_Doctor.Core.Domain.Entities.Admin;
+﻿using E_Doctor.Core.Constants.Enums;
+using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Core.Domain.Entities.Common;
 using E_Doctor.Core.Domain.Entities.Patient;
+using E_Doctor.Core.Domain.Entities.Patient.PhysicalExam;
 using E_Doctor.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 namespace E_Doctor.Infrastructure.Data;
 public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>, int>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        
+
     }
 
     public DbSet<SymptomEntity> Symptoms { get; set; }
@@ -26,12 +28,14 @@ public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>
     public DbSet<PatientPastMedicalRecordEntity> PatientPastMedicalRecords { get; set; }
     public DbSet<PatientFamilyHistoryEntity> PatientFamilyHistory { get; set; }
     public DbSet<PatientPersonalHistoryEntity> PatientPersonalHistory { get; set; }
-
+    public DbSet<PhysicalExamEntity> PhysicalExams { get; set; }
+    public DbSet<PhysicalExamFindingsEntity> PhysicalExamFindings { get; set; }
+    public DbSet<PhysicalExamItemsEntity> PhysicalExamItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //base.OnModelCreating(modelBuilder);
-        
+        base.OnModelCreating(modelBuilder);
+
         var currentDate = DateTime.UtcNow;
         #region Symptoms Seeding and Config
         modelBuilder.Entity<SymptomEntity>(entity =>
@@ -79,7 +83,7 @@ public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>
             e.HasKey(pd => pd.Id);
             e.Property(e => e.Score)
                 .HasPrecision(18, 4);
-            
+
             e.HasOne(d => d.Diagnosis)
             .WithMany(d => d.DiagnosIllnesses)
             .HasForeignKey(d => d.DiagnosisId);
@@ -161,6 +165,181 @@ public class AppDbContext : IdentityDbContext<AppUserIdentity, IdentityRole<int>
              .OnDelete(DeleteBehavior.Cascade);
         });
 
-        base.OnModelCreating(modelBuilder);
+        #region Physical Exam Sections
+        modelBuilder.Entity<PhysicalExamEntity>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            e.HasMany(e => e.PhysicalExamFindings)
+            .WithOne(e => e.PhysicalExam)
+            .HasForeignKey(e => e.PhysicalExamId)
+            .OnDelete(DeleteBehavior.ClientCascade);
+        });
+        #endregion
+
+        #region Physical Exam Findings
+        modelBuilder.Entity<PhysicalExamFindingsEntity>(e =>
+        {
+            e.HasKey(p => p.Id);
+
+            e.HasOne(p => p.PhysicalExamItem)
+            .WithMany()
+            .HasForeignKey(p => p.PhysicalItemId)
+            .OnDelete(DeleteBehavior.Restrict);
+        });
+        #endregion
+
+        #region Physical exam items
+        modelBuilder.Entity<PhysicalExamItemsEntity>(e =>
+        {
+            e.HasKey(e => e.Id);
+        });
+        #endregion
+
+        var seedDate = DateTime.UtcNow; // CURRENT UTC DATE (at migration time)
+
+        #region Physical Exam items seeding
+        modelBuilder.Entity<PhysicalExamItemsEntity>().HasData(
+     new PhysicalExamItemsEntity
+     {
+         Id = 1,
+         Label = "General",
+         SortOrder = 1,
+         CreatedOn = seedDate,
+         IsActive = false,
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 2,
+         Label = "Head",
+         SortOrder = 2,
+         CreatedOn = seedDate,
+         IsActive = true,
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 3,
+         Label = "Eyes",
+         SortOrder = 3,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 4,
+         Label = "Ears",
+         SortOrder = 4,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 5,
+         Label = "Nose",
+         SortOrder = 5,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 6,
+         Label = "Throat",
+         SortOrder = 6,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 7,
+         Label = "Neck",
+         SortOrder = 7,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 8,
+         Label = "Breast",
+         SortOrder = 8,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 9,
+         Label = "Chest/Lungs",
+         SortOrder = 9,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+     new PhysicalExamItemsEntity
+     {
+         Id = 10,
+         Label = "Heart",
+         SortOrder = 10,
+         CreatedOn = seedDate,
+         IsActive = true
+     },
+      new PhysicalExamItemsEntity
+      {
+          Id = 11,
+          Label = "Abdomen",
+          SortOrder = 11,
+          CreatedOn = seedDate,
+          IsActive = true
+      },
+       new PhysicalExamItemsEntity
+       {
+           Id = 12,
+           Label = "Gut",
+           SortOrder = 12,
+           CreatedOn = seedDate,
+           IsActive = true
+       },
+        new PhysicalExamItemsEntity
+        {
+            Id = 13,
+            Label = "Back",
+            SortOrder = 13,
+            CreatedOn = seedDate,
+            IsActive = true
+        },
+         new PhysicalExamItemsEntity
+         {
+             Id = 14,
+             Label = "Extremities",
+             SortOrder = 14,
+             CreatedOn = seedDate,
+             IsActive = true
+         },
+          new PhysicalExamItemsEntity
+          {
+              Id = 15,
+              Label = "Neurologic",
+              SortOrder = 15,
+              CreatedOn = seedDate,
+              IsActive = true
+          },
+           new PhysicalExamItemsEntity
+           {
+               Id = 16,
+               Label = "Skin",
+               SortOrder = 16,
+               CreatedOn = seedDate,
+               IsActive = true
+           },
+            new PhysicalExamItemsEntity
+            {
+                Id = 17,
+                Label = "Others",
+                SortOrder = 17,
+                CreatedOn = seedDate,
+                IsActive = true
+            }
+ );
+
+
+
+        #endregion
     }
 }

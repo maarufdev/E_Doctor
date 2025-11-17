@@ -1,5 +1,5 @@
 ﻿namespace E_Doctor.Core.Constants.Enums;
-internal static class PhysicalExamInputType
+public static class PhysicalExamInputType
 {
     public const string TEXT = "text";
     public const string TEXTAREA = "textarea";
