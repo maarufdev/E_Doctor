@@ -348,4 +348,23 @@ internal class DiagnosisService : IDiagnosisService
 
          return Result.Success();
     }
+
+    public async Task<Result<IEnumerable<PhysicalExamItemDTO>>> GetPhysicalItems()
+    {
+        try
+        {
+            var result = await _appDbContext.PhysicalExamItems
+                .AsNoTracking()
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.SortOrder)
+                .Select(p => new PhysicalExamItemDTO(p.Id, p.Label))
+                .ToListAsync();
+
+            return Result<IEnumerable<PhysicalExamItemDTO>>.Success(result);
+        }
+        catch (Exception)
+        {
+            return Result<IEnumerable<PhysicalExamItemDTO>>.Failure("Something went wrong.");
+        }
+    }
 }

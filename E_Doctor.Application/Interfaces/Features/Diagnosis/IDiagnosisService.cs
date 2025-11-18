@@ -12,4 +12,5 @@ public interface IDiagnosisService
     Task<List<GetConsultationIllnessDTO>> GetConsultationIllnessList();
     Task<Result<List<GetConsultationSymptomByIllnessIdDTO>>> GetConsultationSymptomByIllnessId(int illnessId);
     Task<Result> DeleteDiagnosisById(int diagnosisId);
+    Task<Result<IEnumerable<PhysicalExamItemDTO>>> GetPhysicalItems();
 }

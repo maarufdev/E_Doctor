@@ -7,6 +7,7 @@
         getDiagnosis: `${DIAGNOSIS_BASE_URL}/GetDiagnosis`,
         getDiagnosisById: `${DIAGNOSIS_BASE_URL}/GetDiagnosisById`,
         deleteDiagnosisById: `${DIAGNOSIS_BASE_URL}/DeleteDiagnosisById`,
+        getPhysicalExamItems: `${DIAGNOSIS_BASE_URL}/GetPhysicalExamItems`,
     }
     const stateHolders = {
         symptoms: [],
@@ -18,6 +19,7 @@
         diagnosisPaginatedResult: {
             totalPages: 0,
         },
+        physicalExamItems: [],
     }
     const elementHolders = {
         common: {
@@ -25,6 +27,7 @@
                 newConsultation: "#new-consultation-btn",
             },
             diagnosisPagination: "#diagnosis-pagination",
+            closeModalBtn: ".modal-close-btn",
         },
         tables: {
             diagnosis: {
@@ -64,8 +67,17 @@
             },
         },
     }
+
+    async function setPhysicalExamState() {
+        const result = await services.apiService.getPhysicalExamItems();
+
+        stateHolders.physicalExamItems = result ?? [];
+    }
+
     const services = {
         initialize: function () {
+            setPhysicalExamState();
+
             services.eventHandlers.renderDiagnosisTable();
             services.events.initDiagnosis();
             services.events.initCommonEvents();
@@ -153,7 +165,17 @@
                                 }
                             }
                         }
-                    )
+                    );
+
+                    // Physical exam report
+                    registerEvent(
+                        $tr.find(".btn-view-physical-exam"),
+                        "click",
+                        async function (event) {
+                            services.eventHandlers.handleOnClickPhysicalExam(diagnosisId);
+
+                        }
+                    );
                     $diagnosisTblBody.append($tr);
                 });
 
@@ -199,6 +221,10 @@
             handleOnCreateNewConsultation: function () {
                
             },
+            handleOnClickPhysicalExam: function (diagnosisId) {
+                $(elementHolders.modals.physicalReport.root).addClass("visible");
+            }
+
         },
         events: {
             initCommonEvents: function () {
@@ -207,6 +233,17 @@
                     "click",
                     function (event) {
                         window.location.href = "/";
+                    }
+                );
+
+                registerEvent(
+                    elementHolders.common.closeModalBtn,
+                    "click",
+                    function (event) {
+                        const targetModal = $(event.target).attr("data-target-modal");
+                        if (targetModal == "physicalReportModal") {
+                            $(`#${targetModal}`).removeClass("visible");
+                        }
                     }
                 );
             },
@@ -258,6 +295,9 @@
                             diagnosisId: diagnosisId
                         },
                     });
+            },
+            getPhysicalExamItems: async function () {
+                return await apiFetch(URLS.getPhysicalExamItems);
             },
         }
     };

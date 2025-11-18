@@ -3,6 +3,7 @@ using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Infrastructure.Constants;
+using E_Doctor.Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -86,6 +87,15 @@ namespace E_Doctor.Web.Controllers
             if (result.IsFailure) return BadRequest(result.IsFailure);
 
             return Ok(result.IsSuccess);
+        }
+
+        public async Task<IActionResult> GetPhysicalExamItems()
+        {
+            var result = await _diagnosisService.GetPhysicalItems();
+            
+            if (result.IsFailure) return BadRequest(result.Error);
+            
+            return Ok(result.Value);
         }
     }
 }
