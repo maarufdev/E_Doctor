@@ -1,6 +1,7 @@
 ﻿using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Diagnosis;
+using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.UserActivity;
@@ -64,19 +65,40 @@ internal class DiagnosisService : IDiagnosisService
                     UserId = d.User.IsActive,
                     FullName = $"{d.User.FirstName} {d.User.LastName}"
                 })
-                .Select(d => new DiagnosisListResponse(
-                    d.Id,
-                    d.UpdatedOn,
-                    d.FullName,
-                    d.Symptoms,
-                    d.IllnessName,
-                    string.Empty
-                 ))
                 .ToListAsync();
+
+            var diagnosisIds = diagnosisResult.Select(x => x.Id).ToList();
+            //var diagnosisPhysicalExamIds = await _appDbContext.PhysicalExams
+            //    .AsNoTracking()
+            //    .Where(p => diagnosisIds.Contains(p.DiagnosisId))
+            //    .Select(p => new { p.DiagnosisId, PhysicalExamId = p.Id })
+            //    .ToListAsync();
+
+            List<DiagnosisListResponse> diagnosisListResponse = new();
+
+            foreach(var item in diagnosisResult)
+            {
+                var examId = await _appDbContext.PhysicalExams
+                    .AsNoTracking()
+                    .Where(p => p.DiagnosisId == item.Id)
+                    .Select(p => p.Id)
+                    .FirstOrDefaultAsync();
+
+                diagnosisListResponse.Add(new DiagnosisListResponse(
+                    item.Id,
+                    item.UpdatedOn,
+                    item.FullName,
+                    item.Symptoms,
+                    item.IllnessName,
+                    string.Empty,
+                    examId
+                    ));
+            }
+
 
             return new PagedResult<DiagnosisListResponse>
             {
-                Items = diagnosisResult,
+                Items = diagnosisListResponse,
                 TotalCount = totalCount,
                 PageSize = requestParams.PageSize,
                 PageNumber = requestParams.PageNumber,
@@ -365,6 +387,46 @@ internal class DiagnosisService : IDiagnosisService
         catch (Exception)
         {
             return Result<IEnumerable<PhysicalExamItemDTO>>.Failure("Something went wrong.");
+        }
+    }
+
+    public async Task<Result<PhysicalExamDTO>> GetPhysicalExamById(int physicalExamId)
+    {
+        try
+        {
+            var result = await _appDbContext.PhysicalExams
+            .Include(p => p.PhysicalExamFindings)
+            .ThenInclude(p => p.PhysicalExamItem)
+            .Where(p => p.Id == physicalExamId && p.IsActive)
+            .FirstOrDefaultAsync();
+
+            if (result is null) return Result<PhysicalExamDTO>.Failure("Physical exam report not found");
+
+            var physicalExamDTO = new PhysicalExamDTO
+            {
+                ExamId = physicalExamId,
+                BP = result.BP ?? string.Empty,
+                HR = result.HR ?? string.Empty,
+                RR = result.RR ?? string.Empty,
+                Temp = result.Temp ?? string.Empty,
+                Weight = result.Weight ?? string.Empty,
+                O2Sat = result.O2Sat ?? string.Empty,
+                PhysicalExamFindings = result.PhysicalExamFindings
+                    .Select(p => new PhysicalExamFindingDTO
+                    {
+                        PhysicalExamId = p.PhysicalExamId,
+                        PhysicalItemId = p.PhysicalItemId,
+                        IsNormal = p.IsNormal,
+                        NormalDescription = p.NormalDescription,
+                        AbnormalFindings = p.AbnormalFindings
+                    }).ToList()
+            };
+
+            return Result<PhysicalExamDTO>.Success(physicalExamDTO);
+        }
+        catch (Exception)
+        {
+            return Result<PhysicalExamDTO>.Failure("Something went wrong during physical exam report request.");
         }
     }
 }
