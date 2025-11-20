@@ -1,6 +1,7 @@
 ﻿using E_Doctor.Application.Constants;
 using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
+using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Infrastructure.Constants;
 using E_Doctor.Infrastructure.Migrations;
@@ -96,6 +97,17 @@ namespace E_Doctor.Web.Controllers
             if (result.IsFailure) return BadRequest(result.Error);
             
             return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> SavePhysicalExamReport([FromBody] SavePhysicalExamRequest request)
+        {
+            if (request == null) return BadRequest("Physical Exam Report is empty.");
+
+            var result = await _diagnosisService.SavePhysicalExamReport(request);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.IsSuccess);
         }
     }
 }

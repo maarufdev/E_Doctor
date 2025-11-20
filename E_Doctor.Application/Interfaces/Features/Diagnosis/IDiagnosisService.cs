@@ -15,4 +15,5 @@ public interface IDiagnosisService
     Task<Result> DeleteDiagnosisById(int diagnosisId);
     Task<Result<IEnumerable<PhysicalExamItemDTO>>> GetPhysicalItems();
     Task<Result<PhysicalExamDTO>> GetPhysicalExamById(int physicalExamId);
+    Task<Result> SavePhysicalExamReport(SavePhysicalExamRequest request);
 }

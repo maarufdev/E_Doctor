@@ -8,6 +8,7 @@
         getDiagnosisById: `${DIAGNOSIS_BASE_URL}/GetDiagnosisById`,
         deleteDiagnosisById: `${DIAGNOSIS_BASE_URL}/DeleteDiagnosisById`,
         getPhysicalExamItems: `${DIAGNOSIS_BASE_URL}/GetPhysicalExamItems`,
+        savePhysicalExamReport: `${DIAGNOSIS_BASE_URL}/SavePhysicalExamReport`,
     }
     const stateHolders = {
         symptoms: [],
@@ -20,6 +21,10 @@
             totalPages: 0,
         },
         physicalExamItems: [],
+        selectedPhysicalExamData: {
+            diagnosisId: 0,
+            physicalExamId: 0
+        },
     }
     const elementHolders = {
         common: {
@@ -52,6 +57,7 @@
                 root: "#physicalReportModal",
                 tableBody: "#pyhsicalReportTableBody",
                 patientName: "#patientPhysicalReportName",
+                vitalSignsFields: ".physical-exam-vital-sign-field",
                 headerFields: {
                     bp: "#patientBP",
                     hr: "#patientHR",
@@ -63,7 +69,9 @@
                 checklistFields: {
                     normalFields: "",
                     abnormalFindingsFields: ""
-                }
+                },
+                savePhysicalExamBtn: "#savePhysicalExam",
+                closePhysicalExamModalBtn: "#closePhysicalReportBtn"
             },
         },
     }
@@ -81,6 +89,7 @@
             services.eventHandlers.renderDiagnosisTable();
             services.events.initDiagnosis();
             services.events.initCommonEvents();
+            services.events.initPhysicalExam();
         },
         eventHandlers: {
             toggleDiagnosisModal: function (toOpen) {
@@ -172,7 +181,7 @@
                         $tr.find(".btn-view-physical-exam"),
                         "click",
                         async function (event) {
-                            services.eventHandlers.handleOnClickPhysicalExam(diagnosisId);
+                            services.eventHandlers.handleOnClickPhysicalExam(item);
 
                         }
                     );
@@ -221,10 +230,119 @@
             handleOnCreateNewConsultation: function () {
                
             },
-            handleOnClickPhysicalExam: function (diagnosisId) {
-                $(elementHolders.modals.physicalReport.root).addClass("visible");
-            }
+            handleOnClickPhysicalExam: function (diagnosis) {
+                const { physicalReport: physicalReportElmts } = elementHolders.modals;
+                stateHolders.selectedPhysicalExamData.diagnosisId = diagnosis.diagnosisId;
+                stateHolders.selectedPhysicalExamData.physicalExamId = diagnosis.physicalExamId;
 
+                console.log(diagnosis);
+                const { physicalExamId, displayName } = diagnosis;
+
+                $(physicalReportElmts.patientName).text(displayName);
+                this.createPhysicalExamTable();
+
+                if (physicalExamId != 0) {
+                    // populate physical report fields
+                }
+
+                $(physicalReportElmts.root).addClass("visible");
+            },
+            createPhysicalExamTable: function () {
+                const { physicalReport: physicalReportElmts } = elementHolders.modals;
+                const $tblBody = $(physicalReportElmts.tableBody);
+
+                stateHolders.physicalExamItems.forEach(item => {
+                    const $tr = $("<tr>");
+
+                    const $descDataCol = $(`<td class="tbl-data desc-col">`).html(item.label);
+                    const $isNormalDataCol = $(`<td class="tbl-data normal-col">`);
+                    const $abNormalFindingsDataCol = $(`<td class="tbl-data abnormal-col">`);
+
+                    if (item.label.toLowerCase() == "others") {
+                        const $isNormalTxtField = $(`<input id="physical-item-isnormal-${item.physicalItemId}" placeholder="${item.label} Normal Findings"  type="text" class="form-input">`)
+                        $isNormalDataCol.append($isNormalTxtField);
+                    }
+                    else {
+                        const $isNormalCkbx = $(`
+                                <div class="custom-checkbox">
+                                    <input id="physical-item-isnormal-${item.physicalItemId}" type="checkbox" class="custom-checkbox-input">
+                                    <label for="physical-item-isnormal-${item.physicalItemId}" class="custom-checkbox-label"></label>
+                                </div>
+                        `);
+
+                        $isNormalDataCol.append($isNormalCkbx);
+                    }
+
+                    const $abnormalFindingsField = $(`<textarea id="physical-item-abnormalfindings-${item.physicalItemId}" class="form-textarea"></textarea>`);
+                    $abNormalFindingsDataCol.append($abnormalFindingsField);
+
+                    $tr.append($descDataCol);
+                    $tr.append($isNormalDataCol);
+                    $tr.append($abNormalFindingsDataCol);
+
+                    $tblBody.append($tr);
+                });
+
+            },
+            handleOnClickSavePhysicalExam: async function () {
+
+                const { physicalReport: physicalReportElmts } = elementHolders.modals;
+                let physicalExamData = {
+                    diagnosisId: stateHolders.selectedPhysicalExamData.diagnosisId,
+                    physicalExamId: stateHolders.selectedPhysicalExamData.physicalExamId,
+                    physicalExamFindings: [],
+                };
+
+                [...$(".physical-exam-vital-sign-field")].forEach(item => {
+                    const value = $(item).val();
+                    const name = $(item).attr("name");
+                    physicalExamData = {
+                        ...physicalExamData,
+                        [name]: value
+                    }
+                });
+                stateHolders.physicalExamItems.forEach(x => {
+                    const $isNormalItem = $(`#physical-item-isnormal-${x.physicalItemId}`);
+                    let isNormal = false;
+                    let normalDescription = null;
+
+                    if ($isNormalItem.attr("type") == "checkbox") {
+                        isNormal = $isNormalItem.is(":checked");
+                    } else {
+                        normalDescription = $isNormalItem.val();
+                    }
+
+                    const $abnormalFindingsItem = $(`#physical-item-abnormalfindings-${x.physicalItemId}`);
+                    const abnormalFindings = $abnormalFindingsItem.val();
+
+                    physicalExamData.physicalExamFindings.push({
+                        physicalItemId: x.physicalItemId,
+                        isNormal: isNormal,
+                        normalDescriptions: normalDescription,
+                        abnormalFindings: abnormalFindings,
+                    });
+
+                });
+                console.log(physicalExamData);
+
+                const savePhysicalReportResult = await services.apiService.savePhysicalExamReport(physicalExamData);
+
+                if (savePhysicalReportResult == true) {
+                    this.renderDiagnosisTable();
+                }
+                console.log(savePhysicalReportResult);
+            },
+            handleOnClosePhysicalExamModal: function () {
+                const { physicalReport: physicalReportElmts } = elementHolders.modals;
+                $(physicalReportElmts.root).removeClass("visible");
+                $(physicalReportElmts.vitalSignsFields).val("");
+                //$(physicalReportElmts.headerFields.bp).val("");
+                //$(physicalReportElmts.headerFields.hr).val("");
+                //$(physicalReportElmts.headerFields.rr).val("");
+                //$(physicalReportElmts.headerFields.temp).val("");
+                //$(physicalReportElmts.headerFields.weight).val("");
+                //$(physicalReportElmts.headerFields.o2Sat).val("");
+            }
         },
         events: {
             initCommonEvents: function () {
@@ -233,17 +351,6 @@
                     "click",
                     function (event) {
                         window.location.href = "/";
-                    }
-                );
-
-                registerEvent(
-                    elementHolders.common.closeModalBtn,
-                    "click",
-                    function (event) {
-                        const targetModal = $(event.target).attr("data-target-modal");
-                        if (targetModal == "physicalReportModal") {
-                            $(`#${targetModal}`).removeClass("visible");
-                        }
                     }
                 );
             },
@@ -268,6 +375,24 @@
                     }
                 );
             },
+            initPhysicalExam: function () {
+
+                registerEvent(
+                    elementHolders.modals.physicalReport.savePhysicalExamBtn,
+                    "click",
+                    function () {
+                        services.eventHandlers.handleOnClickSavePhysicalExam();
+                    }
+                )
+
+                registerEvent(
+                    elementHolders.modals.physicalReport.closePhysicalExamModalBtn,
+                    "click",
+                    function (event) {
+                        services.eventHandlers.handleOnClosePhysicalExamModal();
+                    }
+                );
+            }
         },
         apiService: {
             getDiagnosis: async function () {
@@ -299,6 +424,14 @@
             getPhysicalExamItems: async function () {
                 return await apiFetch(URLS.getPhysicalExamItems);
             },
+            savePhysicalExamReport: async function (command) {
+                return await apiFetch(
+                    URLS.savePhysicalExamReport,
+                    {
+                        method: "POST",
+                        body: command
+                    });
+            }
         }
     };
     document.addEventListener("DOMContentLoaded", services.initialize);

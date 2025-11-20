@@ -7,8 +7,10 @@ using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Application.Interfaces.Features.UserActivity;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Admin;
+using E_Doctor.Core.Domain.Entities.Patient.PhysicalExam;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace E_Doctor.Infrastructure.Services.Features.Diagnosis;
 
@@ -427,6 +429,110 @@ internal class DiagnosisService : IDiagnosisService
         catch (Exception)
         {
             return Result<PhysicalExamDTO>.Failure("Something went wrong during physical exam report request.");
+        }
+    }
+
+    public async Task<Result> SavePhysicalExamReport(SavePhysicalExamRequest request)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(nameof(request));
+
+            var diagnosisId = request.DiagnosisId;
+            var physicalExamId = request.PhysicalExamId;
+
+            if(physicalExamId == 0)
+            {
+                var physcalExamToCreate = new PhysicalExamEntity
+                {
+                    DiagnosisId = diagnosisId,
+                    BP = request.BP,
+                    HR = request.HR,
+                    RR = request.RR,
+                    Temp = request.Temp,
+                    Weight = request.Weight,
+                    O2Sat = request.O2Sat,
+                    PhysicalExamFindings = new List<PhysicalExamFindingsEntity>(),
+                    IsActive = true,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                var physicalExamFindings = new List<PhysicalExamFindingsEntity>();
+
+                foreach(var item in request.PhysicalExamFindings)
+                {
+                    var physicalExamFindingsToCreate = new PhysicalExamFindingsEntity
+                    {
+                        PhysicalItemId = item.PhysicalItemId,
+                        IsNormal = item.IsNormal,
+                        NormalDescription = item.NormalDescriptions,
+                        AbnormalFindings = item.AbnormalFindings,
+                        IsActive = true,
+                        CreatedOn = DateTime.UtcNow
+                    };
+
+                    physicalExamFindings.Add(physicalExamFindingsToCreate);
+                }
+
+                physcalExamToCreate.PhysicalExamFindings = physicalExamFindings;
+
+                await _appDbContext.PhysicalExams.AddAsync(physcalExamToCreate);
+            } 
+            else
+            {
+                var toUpdatePhysicalExam = await _appDbContext.PhysicalExams
+                    .Include(p => p.PhysicalExamFindings)
+                    .Where(p => p.Id == physicalExamId)
+                    .FirstOrDefaultAsync();
+
+                if (toUpdatePhysicalExam is null) return Result.Failure("Unable to update a physical examination that don't exists.");
+
+                toUpdatePhysicalExam.BP = request.BP;
+                toUpdatePhysicalExam.HR = request.HR;
+                toUpdatePhysicalExam.RR = request.HR;
+                toUpdatePhysicalExam.Temp = request.HR;
+                toUpdatePhysicalExam.Weight = request.HR;
+                toUpdatePhysicalExam.O2Sat = request.HR;
+                toUpdatePhysicalExam.UpdatedOn = DateTime.UtcNow;
+
+                if(toUpdatePhysicalExam.PhysicalExamFindings is not null)
+                {
+                    var newFindings = request.PhysicalExamFindings;
+
+                    foreach(var finding in toUpdatePhysicalExam.PhysicalExamFindings)
+                    {
+                        var newFindingUpdate = newFindings
+                            .Where(x => x.PhysicalItemId == finding.PhysicalItemId)
+                            .FirstOrDefault();
+
+                        if (newFindingUpdate is null) continue;
+
+                        finding.IsNormal = newFindingUpdate.IsNormal;
+                        finding.NormalDescription = newFindingUpdate.NormalDescriptions;
+                        finding.AbnormalFindings = newFindingUpdate.AbnormalFindings;
+                        finding.UpdatedOn = DateTime.UtcNow;
+                    }
+                }
+
+                _appDbContext.PhysicalExams.Update(toUpdatePhysicalExam);
+            }
+
+            var isSuccess = await _appDbContext.SaveChangesAsync() > 0;
+
+            if (!isSuccess)
+            {
+                var operation = physicalExamId == 0 ? "creation" : "updating";
+
+                return Result.Failure($"Something went wrong during {operation} of physical examination report" );
+            }
+
+            return Result.Success();
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return Result.Failure("Something Went Wrong");
         }
     }
 }
