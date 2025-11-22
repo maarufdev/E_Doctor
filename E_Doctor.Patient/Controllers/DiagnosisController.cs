@@ -101,5 +101,25 @@ namespace E_Doctor.Patient.Controllers
 
             return Ok(result.IsSuccess);
         }
+
+        public async Task<IActionResult> GetPhysicalExamById(int physicalExamId)
+        {
+            if (physicalExamId == 0) return BadRequest("Physical Exam Report is not valid.");
+
+            var result = await _diagnosisService.GetPhysicalExamById(physicalExamId);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> GetPhysicalExamItems()
+        {
+            var result = await _diagnosisService.GetPhysicalItems();
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
+        }
     }
 }

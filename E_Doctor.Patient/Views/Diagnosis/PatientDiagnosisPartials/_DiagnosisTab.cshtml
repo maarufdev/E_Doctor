@@ -14,6 +14,7 @@
                 <th>Symptoms</th>
                 <th>Pre-Result</th>
                 <th>Action</th>
+                <th>P.E Report Status</th>
             </tr>
             <tbody id="history-table-body">
             </tbody>
@@ -55,5 +56,68 @@
         </div>
     </div>
 </div>
+@* Physical Report *@
+<div id="physicalReportModal" class="modal-backdrop">
+    <div class="modal-content physical-report-modal-content">
+        <div class="modal-header">
+            <h3 class="text-xl font-semibold">PHYSICAL EXAMINATION REPORT</h3>
+            <button id="closePhysicalReportBtn" class="modal-close-btn" data-target-modal="physicalReportModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-4 font-uppercase">
+                Patient Name: <span class="font-bold" id="patientPhysicalReportName"></span>
+            </div>
+            <div class="physical-report-header-form font-uppercase">
+                <p class="mb-3">Vital Signs:</p>
+                <div class="pyhical-report-header-fields">
+                    <div class="header-field flex items-center gap-4">
+                        <label>BP:</label>
+                        <input id="patientBP" name="bp" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>HR:</label>
+                        <input id="patientHR" name="hr" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>RR:</label>
+                        <input id="patientRR" name="rr" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>TEMP:</label>
+                        <input id="patientTemp" name="temp" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>WEIGHT:</label>
+                        <input id="patientWeight" name="weight" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>O2 SAT.:</label>
+                        <input id="patientO2Sat" name="o2Sat" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                </div>
+                <hr />
+            </div>
+            <div class="table-container mt-4">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>DESCRIBE THE FOLLOWING:</th>
+                            <th>NORMAL</th>
+                            <th>ABNORMAL FINDINGS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pyhsicalReportTableBody" class="font-uppercase">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      @*   <div class="modal-footer">
+            <div>
+                <button id="savePhysicalExam" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div> *@
+    </div>
+</div>
+
 
 <script src="~/features/patient/diagnosis/js/diagnosis.js" asp-append-version="true"></script>
