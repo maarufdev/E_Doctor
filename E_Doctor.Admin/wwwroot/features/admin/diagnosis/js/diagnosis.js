@@ -9,6 +9,7 @@
         deleteDiagnosisById: `${DIAGNOSIS_BASE_URL}/DeleteDiagnosisById`,
         getPhysicalExamItems: `${DIAGNOSIS_BASE_URL}/GetPhysicalExamItems`,
         savePhysicalExamReport: `${DIAGNOSIS_BASE_URL}/SavePhysicalExamReport`,
+        getPhysicalExamById: `${DIAGNOSIS_BASE_URL}/GetPhysicalExamById`,
     }
     const stateHolders = {
         symptoms: [],
@@ -142,6 +143,7 @@
                                     <svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </td>
+                            <td><span>${item.physicalExamId == 0 ? "Pending" : "Completed"}</span></td>
                         </tr>
                     `);
 
@@ -183,6 +185,86 @@
                         async function (event) {
                             services.eventHandlers.handleOnClickPhysicalExam(item);
 
+                        }
+                    );
+
+                    // Print Receipt
+                    registerEvent(
+                        $tr.find(".btn-print-receipt"),
+                        "click",
+                        async function (event) {
+                            // Assume jsPDF is loaded globally
+                            const { jsPDF } = window.jspdf;
+
+                            // --- CONFIGURATION ---
+                            const imagePath = "/print_receipt.png";
+                            const pdfFilename = "Print Receipt.pdf";
+                            // ---------------------
+
+                            /**
+                             * Creates the jsPDF document and adds the loaded Image object, filling the entire page.
+                             * * @param {HTMLImageElement} img - The fully loaded Image object.
+                             * @param {string} filename - The desired name for the PDF file.
+                             */
+                            function createPDF(img, filename) {
+                                // Initialize jsPDF document (Portrait, millimeters, A4 size is default)
+                                const doc = new jsPDF({
+                                    orientation: 'portrait',
+                                    unit: 'mm',
+                                    format: 'a4'
+                                });
+
+                                if (!(img instanceof HTMLImageElement)) {
+                                    console.error("PDF creation failed: Image object is invalid or not fully loaded.");
+                                    return;
+                                }
+
+                                // --- KEY CHANGE: FORCING IMAGE TO FILL PAGE ---
+                                const pageHeight = doc.internal.pageSize.getHeight();
+                                const pageWidth = doc.internal.pageSize.getWidth();
+
+                                // The image's new dimensions are set directly to the page's dimensions.
+                                // This will stretch or squash the image to fit the entire page.
+                                const newWidth = pageWidth;
+                                const newHeight = pageHeight;
+
+                                // Since the image fills the page, it starts at the top-left corner (0, 0).
+                                const x = 0;
+                                const y = 0;
+                                // --- END KEY CHANGE ---
+
+                                // Add the image to the PDF
+                                // The image is added with no margin and fills the page completely.
+                                doc.addImage(img, 'PNG', x, y, newWidth, newHeight);
+
+                                // Save the PDF and trigger the client-side download
+                                doc.save(filename);
+                                console.log(`PDF successfully generated and saved as: ${filename}`);
+                            }
+
+
+                            /**
+                             * Function to start the PDF generation process from a hosted image path.
+                             * Loads the image asynchronously, and calls createPDF upon success.
+                             */
+                            function generatePDFFromHostedImage(imagePath, pdfFilename) {
+                                const img = new Image();
+                                img.crossOrigin = '';
+
+                                img.onload = function () {
+                                    createPDF(img, pdfFilename);
+                                };
+
+                                img.onerror = function () {
+                                    console.error(`ERROR: Failed to load image from: ${imagePath}. Check the path.`);
+                                };
+
+                                img.src = imagePath;
+                            }
+
+                            // --- EXECUTION ---
+                            // Call the main function that handles image loading and then PDF creation
+                            generatePDFFromHostedImage(imagePath, pdfFilename);
                         }
                     );
                     $diagnosisTblBody.append($tr);
@@ -235,22 +317,48 @@
                 stateHolders.selectedPhysicalExamData.diagnosisId = diagnosis.diagnosisId;
                 stateHolders.selectedPhysicalExamData.physicalExamId = diagnosis.physicalExamId;
 
-                console.log(diagnosis);
                 const { physicalExamId, displayName } = diagnosis;
 
                 $(physicalReportElmts.patientName).text(displayName);
                 this.createPhysicalExamTable();
 
                 if (physicalExamId != 0) {
-                    // populate physical report fields
-                }
+                    this.handleOnGetPhysicalExam(physicalExamId);
+                } 
 
                 $(physicalReportElmts.root).addClass("visible");
+            },
+            handleOnGetPhysicalExam: async function (physicalExamId) {
+                const { physicalReport: physicalReportElmts } = elementHolders.modals;
+                const result = await services.apiService.getPhysicalExamById(physicalExamId);
+
+                $(physicalReportElmts.headerFields.bp).val(result.bp ?? "");
+                $(physicalReportElmts.headerFields.hr).val(result.hr ?? "");
+                $(physicalReportElmts.headerFields.o2Sat).val(result.o2Sat ?? "");
+                $(physicalReportElmts.headerFields.rr).val(result.rr ?? "");
+                $(physicalReportElmts.headerFields.temp).val(result.temp ?? "");
+                $(physicalReportElmts.headerFields.weight).val(result.weight ?? "");
+
+                if (result.physicalExamFindings != null && result.physicalExamFindings.length > 0) {
+                    result.physicalExamFindings.map(item => {
+                        const { physicalItemId, isNormal, normalDescription, abnormalFindings } = item;
+                        const $isNormalElmt = $(`#physical-item-isnormal-${physicalItemId}`);
+
+                        if ($isNormalElmt.attr("type") == "checkbox") {
+                            $isNormalElmt.prop("checked", isNormal);
+                        } else {
+                            $isNormalElmt.val(normalDescription ?? "");
+                        }
+
+                        const $abnormalFindingsElmt = $(`#physical-item-abnormalfindings-${physicalItemId}`);
+                        $abnormalFindingsElmt.val(abnormalFindings ?? "");
+                    });
+                }
             },
             createPhysicalExamTable: function () {
                 const { physicalReport: physicalReportElmts } = elementHolders.modals;
                 const $tblBody = $(physicalReportElmts.tableBody);
-
+                $tblBody.empty();
                 stateHolders.physicalExamItems.forEach(item => {
                     const $tr = $("<tr>");
 
@@ -282,7 +390,6 @@
 
                     $tblBody.append($tr);
                 });
-
             },
             handleOnClickSavePhysicalExam: async function () {
 
@@ -323,25 +430,18 @@
                     });
 
                 });
-                console.log(physicalExamData);
 
                 const savePhysicalReportResult = await services.apiService.savePhysicalExamReport(physicalExamData);
 
                 if (savePhysicalReportResult == true) {
+                    this.handleOnClosePhysicalExamModal();
                     this.renderDiagnosisTable();
                 }
-                console.log(savePhysicalReportResult);
             },
             handleOnClosePhysicalExamModal: function () {
                 const { physicalReport: physicalReportElmts } = elementHolders.modals;
                 $(physicalReportElmts.root).removeClass("visible");
                 $(physicalReportElmts.vitalSignsFields).val("");
-                //$(physicalReportElmts.headerFields.bp).val("");
-                //$(physicalReportElmts.headerFields.hr).val("");
-                //$(physicalReportElmts.headerFields.rr).val("");
-                //$(physicalReportElmts.headerFields.temp).val("");
-                //$(physicalReportElmts.headerFields.weight).val("");
-                //$(physicalReportElmts.headerFields.o2Sat).val("");
             }
         },
         events: {
@@ -431,7 +531,16 @@
                         method: "POST",
                         body: command
                     });
-            }
+            },
+            getPhysicalExamById: async function (physicalExamId) {
+                return await apiFetch(
+                    URLS.getPhysicalExamById,
+                    {
+                        params: {
+                            physicalExamId: physicalExamId
+                        },
+                    });
+            },
         }
     };
     document.addEventListener("DOMContentLoaded", services.initialize);

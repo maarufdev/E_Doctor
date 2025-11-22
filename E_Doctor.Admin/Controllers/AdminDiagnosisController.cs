@@ -4,7 +4,6 @@ using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Infrastructure.Constants;
-using E_Doctor.Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +20,7 @@ namespace E_Doctor.Web.Controllers
         public IActionResult Index(AdminDiagnosisTab? tabName = AdminDiagnosisTab.Diagnosis)
         {
             ViewBag.ActiveTab = tabName;
-            var pageTitle = "Diagnosis";
+            var pageTitle = "Consultation History";
 
             switch (tabName)
             {
@@ -35,7 +34,7 @@ namespace E_Doctor.Web.Controllers
                     pageTitle = "Manage Users";
                     break;
                 default:
-                    pageTitle = "Diagnosis";
+                    pageTitle = "Consultation History";
                     break;
             }
 
@@ -108,6 +107,17 @@ namespace E_Doctor.Web.Controllers
             if (result.IsFailure) return BadRequest(result.Error);
 
             return Ok(result.IsSuccess);
+        }
+
+        public async Task<IActionResult> GetPhysicalExamById(int physicalExamId)
+        {
+            if (physicalExamId == 0) return BadRequest("Physical Exam Report is not valid.");
+
+            var result = await _diagnosisService.GetPhysicalExamById(physicalExamId);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
         }
     }
 }

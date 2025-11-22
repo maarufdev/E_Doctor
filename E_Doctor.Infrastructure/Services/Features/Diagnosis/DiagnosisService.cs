@@ -82,7 +82,7 @@ internal class DiagnosisService : IDiagnosisService
             {
                 var examId = await _appDbContext.PhysicalExams
                     .AsNoTracking()
-                    .Where(p => p.DiagnosisId == item.Id)
+                    .Where(p => p.DiagnosisId == item.Id && p.IsActive)
                     .Select(p => p.Id)
                     .FirstOrDefaultAsync();
 
@@ -419,8 +419,8 @@ internal class DiagnosisService : IDiagnosisService
                         PhysicalExamId = p.PhysicalExamId,
                         PhysicalItemId = p.PhysicalItemId,
                         IsNormal = p.IsNormal,
-                        NormalDescription = p.NormalDescription,
-                        AbnormalFindings = p.AbnormalFindings
+                        NormalDescription = p.NormalDescription ?? string.Empty,
+                        AbnormalFindings = p.AbnormalFindings ?? string.Empty
                     }).ToList()
             };
 
@@ -483,6 +483,7 @@ internal class DiagnosisService : IDiagnosisService
                 var toUpdatePhysicalExam = await _appDbContext.PhysicalExams
                     .Include(p => p.PhysicalExamFindings)
                     .Where(p => p.Id == physicalExamId)
+                    .OrderByDescending(p => p.CreatedOn ?? p.UpdatedOn)
                     .FirstOrDefaultAsync();
 
                 if (toUpdatePhysicalExam is null) return Result.Failure("Unable to update a physical examination that don't exists.");
