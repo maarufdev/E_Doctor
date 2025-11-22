@@ -475,12 +475,20 @@ a {
     align-items: center;
 }
 
+.items-start {
+    align-items: flex-start;
+}
+
 .items-end {
     align-items: flex-end;
 }
 
 .justify-between {
     justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
 }
 
 .justify-end {
@@ -491,6 +499,11 @@ a {
 .flex-column {
     flex-direction: column;
 }
+
+.flex-grow {
+    flex-grow: 1;
+}
+
 
 .text-center {
     text-align: center;

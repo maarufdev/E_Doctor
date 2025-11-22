@@ -160,7 +160,7 @@
 
 .diagnosis-content-card {
     background-color: #F3F4F6;
-    min-height: 200px;
+    min-height: 60px;
     border-radius: 15px;
     padding: 10px 20px;
     --tw-ring-offset-shadow: 0 0 #0000;

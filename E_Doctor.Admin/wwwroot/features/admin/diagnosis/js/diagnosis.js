@@ -293,16 +293,10 @@
             populateDiagnosisResult: function ({ result, description, prescription, notes }) {
                 const { diagnosis } = elementHolders.modals;
 
-                $(diagnosis.diagnosisInfo.result).text(" ");
-                $(diagnosis.diagnosisInfo.prescription).text(" ");
-                $(diagnosis.diagnosisInfo.description).text(" ");
-                $(diagnosis.diagnosisInfo.notes).text(" ");
+                $(diagnosis.diagnosisInfo.result).text("");
 
                 if (result) {
                     $(diagnosis.diagnosisInfo.result).text(result ?? " ");
-                    $(diagnosis.diagnosisInfo.prescription).text(prescription ?? " ");
-                    $(diagnosis.diagnosisInfo.description).text(description ?? " ");
-                    $(diagnosis.diagnosisInfo.notes).text(notes ?? " ");
                 } 
             },
             handleOnShowDiagnosisResult: function (result) {
