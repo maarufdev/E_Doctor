@@ -131,9 +131,9 @@ namespace E_Doctor.Infrastructure.Services.Features.Admin.Settings
                     var illnessEntity = new IllnessEntity
                     {
                         IllnessName = requestDto.IllnessName,
-                        Description = requestDto.Description,
-                        Prescription = requestDto.Prescription,
-                        Notes = requestDto.Notes,
+                        //Description = requestDto.Description ?? string.Empty,
+                        //Prescription = requestDto.Prescription ?? string.Empty,
+                        //Notes = requestDto.Notes ?? string.Empty,
                         Rules = [],
                         IsActive = true,
                         CreatedOn = DateTime.UtcNow
@@ -166,9 +166,9 @@ namespace E_Doctor.Infrastructure.Services.Features.Admin.Settings
                     if (illness == null) return Result.Failure("Illness to be updated does not exist.");
 
                     illness.IllnessName = requestDto.IllnessName;
-                    illness.Description = requestDto.Description;
-                    illness.Prescription = requestDto.Prescription;
-                    illness.Notes = requestDto.Notes;
+                    //illness.Description = requestDto.Description;
+                    //illness.Prescription = requestDto.Prescription;
+                    //illness.Notes = requestDto.Notes;
                     illness.UpdatedOn = DateTime.UtcNow;
 
                     var existingRules = illness.Rules?.ToList() ?? [];
@@ -238,7 +238,7 @@ namespace E_Doctor.Infrastructure.Services.Features.Admin.Settings
         private static void ValidateSaveIllnessRequestDto(IllnessDTO requestDto)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.IllnessName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.Description);
+            //ArgumentException.ThrowIfNullOrWhiteSpace(requestDto.Description);
             ArgumentNullException.ThrowIfNull(requestDto.Rules);
             ArgumentOutOfRangeException.ThrowIfEqual(0, requestDto.Rules.Count);
         }

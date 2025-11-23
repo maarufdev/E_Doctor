@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using E_Doctor.Core.Domain.Entities.Patient;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Doctor.Infrastructure.Identity;
 
@@ -12,4 +13,6 @@ public class AppUserIdentity : IdentityUser<int>
     public int Status { get; set; }
     public DateTime UpdatedOn { get; set; } = DateTime.UtcNow;
     public DateTime? LastLogInDate { get; set; }
+
+    public PatientInformationEntity? PatientInformation { get; set; }
 }

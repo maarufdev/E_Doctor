@@ -26,4 +26,8 @@
     <ProjectReference Include="..\E_Doctor.Infrastructure\E_Doctor.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\UserProfile\" />
+  </ItemGroup>
+
 </Project>

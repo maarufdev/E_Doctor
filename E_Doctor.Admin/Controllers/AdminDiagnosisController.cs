@@ -1,6 +1,7 @@
 ﻿using E_Doctor.Application.Constants;
 using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Diagnosis;
+using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
 using E_Doctor.Infrastructure.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace E_Doctor.Web.Controllers
         public IActionResult Index(AdminDiagnosisTab? tabName = AdminDiagnosisTab.Diagnosis)
         {
             ViewBag.ActiveTab = tabName;
-            var pageTitle = "Diagnosis";
+            var pageTitle = "Consultation History";
 
             switch (tabName)
             {
@@ -33,7 +34,7 @@ namespace E_Doctor.Web.Controllers
                     pageTitle = "Manage Users";
                     break;
                 default:
-                    pageTitle = "Diagnosis";
+                    pageTitle = "Consultation History";
                     break;
             }
 
@@ -86,6 +87,37 @@ namespace E_Doctor.Web.Controllers
             if (result.IsFailure) return BadRequest(result.IsFailure);
 
             return Ok(result.IsSuccess);
+        }
+
+        public async Task<IActionResult> GetPhysicalExamItems()
+        {
+            var result = await _diagnosisService.GetPhysicalItems();
+            
+            if (result.IsFailure) return BadRequest(result.Error);
+            
+            return Ok(result.Value);
+        }
+
+        public async Task<IActionResult> SavePhysicalExamReport([FromBody] SavePhysicalExamRequest request)
+        {
+            if (request == null) return BadRequest("Physical Exam Report is empty.");
+
+            var result = await _diagnosisService.SavePhysicalExamReport(request);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.IsSuccess);
+        }
+
+        public async Task<IActionResult> GetPhysicalExamById(int physicalExamId)
+        {
+            if (physicalExamId == 0) return BadRequest("Physical Exam Report is not valid.");
+
+            var result = await _diagnosisService.GetPhysicalExamById(physicalExamId);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
         }
     }
 }

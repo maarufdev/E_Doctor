@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251025164948_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20251110143208_RemoveUnNecessaryFKOnPatientInfoEntity")]
+    partial class RemoveUnNecessaryFKOnPatientInfoEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,6 +235,220 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserActivities");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientFamilyHistoryEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asthma")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Cancer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Cardiac")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Diabetes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Hypertension")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("None")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Others")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PTB")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PatientInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientInfoId")
+                        .IsUnique();
+
+                    b.ToTable("PatientFamilyHistory");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CivilStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Religion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PatientInformations");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientPastMedicalRecordEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllergyToMeds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Asthma")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cancer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Diabetes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FoodAllergies")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeartProblem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hypertension")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaintenanceMeds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OBGyneHistory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtherIllnesses")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PastSurgery")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PreviousHospitalization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientInfoId")
+                        .IsUnique();
+
+                    b.ToTable("PatientPastMedicalRecords");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientPersonalHistoryEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AlchoholBeverageDrinker")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IllicitDrugUser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Others")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Smoker")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientInfoId")
+                        .IsUnique();
+
+                    b.ToTable("PatientPersonalHistory");
                 });
 
             modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>
@@ -512,6 +726,48 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Navigation("Symptom");
                 });
 
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientFamilyHistoryEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", "PatientInformation")
+                        .WithOne("PatientFamilyHistory")
+                        .HasForeignKey("E_Doctor.Core.Domain.Entities.Patient.PatientFamilyHistoryEntity", "PatientInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PatientInformation");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Infrastructure.Identity.AppUserIdentity", null)
+                        .WithOne("PatientInformation")
+                        .HasForeignKey("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientPastMedicalRecordEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", "PatientInformation")
+                        .WithOne("PatientPastMedicalRecord")
+                        .HasForeignKey("E_Doctor.Core.Domain.Entities.Patient.PatientPastMedicalRecordEntity", "PatientInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PatientInformation");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientPersonalHistoryEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", "PatientInformation")
+                        .WithOne("PatientPersonalHistory")
+                        .HasForeignKey("E_Doctor.Core.Domain.Entities.Patient.PatientPersonalHistoryEntity", "PatientInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PatientInformation");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -578,6 +834,20 @@ namespace E_Doctor.Infrastructure.Migrations
             modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Admin.SymptomEntity", b =>
                 {
                     b.Navigation("Rules");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PatientInformationEntity", b =>
+                {
+                    b.Navigation("PatientFamilyHistory");
+
+                    b.Navigation("PatientPastMedicalRecord");
+
+                    b.Navigation("PatientPersonalHistory");
+                });
+
+            modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>
+                {
+                    b.Navigation("PatientInformation");
                 });
 #pragma warning restore 612, 618
         }

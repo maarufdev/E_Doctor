@@ -7,10 +7,12 @@ using E_Doctor.Application.DTOs.ManageUsers.ResponseDTOs;
 using E_Doctor.Application.Helpers;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Core.Constants.Enums;
+using E_Doctor.Core.Domain.Entities.Patient;
 using E_Doctor.Infrastructure.Constants;
 using E_Doctor.Infrastructure.Data;
 using E_Doctor.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -350,64 +352,152 @@ internal class UserManagerService : IUserManagerService
         return user?.Email ?? string.Empty;
     }
 
-    public async Task<Result> Register(RegisterUserDTO registerDTO)
+    public async Task<Result> RegisterPatient(RegisterPatientDTO request)
     {
-        // Validate incoming DTO
-        if (string.IsNullOrWhiteSpace(registerDTO.UserName) ||
-            string.IsNullOrWhiteSpace(registerDTO.Password) ||
-            string.IsNullOrWhiteSpace(registerDTO.FirstName) ||
-            string.IsNullOrWhiteSpace(registerDTO.LastName))
+        try
         {
-            return Result.Failure("Required fields are missing.");
+            if (request is null) return Result.Failure("Register Patient fields are empty.");
+            
+            request.Validate();
+
+            // Check if user already exists
+            var existingUser = await _userManager.FindByEmailAsync(request.UserName);
+
+            if (existingUser != null)
+            {
+                return Result.Failure($"A user with username {request.UserName} is already exists.");
+            }
+
+            // Map DTO to AppUserIdentity
+
+            var newUser = new AppUserIdentity
+            {
+                UserName = request.UserName,
+                Email = request.UserName,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                MiddleName = request.MiddleName,
+                DateOfBirth = request.DateOfBirth,
+                EmailConfirmed = true,
+                Status = (int)UserStatus.Active,
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString("D")
+            };
+
+            // Create user
+            var result = await _userManager.CreateAsync(newUser, request.Password);
+            if (!result.Succeeded)
+            {
+                // Collect all error messages into one readable string
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                return Result.Failure(errors);
+            }
+
+            result = await _userManager.AddToRoleAsync(newUser, RoleConstants.Patient);
+
+            if (!result.Succeeded)
+            {
+                return Result.Failure("Something Went Wrong.");
+            }
+
+            var userId = newUser.Id;
+
+            var patientInfo = new PatientInformationEntity
+            {
+                UserId = userId,
+                LastName = newUser.LastName,
+                FirstName = newUser.FirstName,
+                MiddleName = newUser.MiddleName,
+                DateOfBirth = (DateTime)newUser.DateOfBirth,
+                Religion = request.Religion,
+                Gender = request.Gender,
+                Address = request.Address,
+                CivilStatus = request.CivilStatus,
+                Nationality = request.Nationality,
+                Occupation = request.Occupation,
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            var pastMedRecord = new PatientPastMedicalRecordEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if (request.PatientPastMedicalRecord is not null)
+            {
+                var pastRec = request.PatientPastMedicalRecord;
+
+                pastMedRecord.PreviousHospitalization = pastRec.PreviousHospitalization;
+                pastMedRecord.PastSurgery = pastRec.PastSurgery;
+                pastMedRecord.Diabetes = pastRec.Diabetes;
+                pastMedRecord.Hypertension = pastRec.Hypertension;
+                pastMedRecord.AllergyToMeds = pastRec.AllergyToMeds;
+                pastMedRecord.HeartProblem = pastRec.HeartProblem;
+                pastMedRecord.Asthma = pastRec.Asthma;
+                pastMedRecord.FoodAllergies = pastRec.FoodAllergies;
+                pastMedRecord.Cancer = pastRec.Cancer;
+                pastMedRecord.OtherIllnesses = pastRec.OtherIllnesses ?? string.Empty;
+                pastMedRecord.OBGyneHistory = pastRec.OBGyneHistory;
+                pastMedRecord.MaintenanceMeds = pastRec.MaintenanceMeds;
+            }
+            
+            patientInfo.PatientPastMedicalRecord = pastMedRecord;
+
+            var personalHistory = new PatientPersonalHistoryEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if (request.PatientPersonalHistory is not null)
+            {
+                var perHistDTO = request.PatientPersonalHistory;
+                personalHistory.Smoker = perHistDTO.Smoker;
+                personalHistory.AlchoholBeverageDrinker = perHistDTO.AlchoholBeverageDrinker;
+                personalHistory.IllicitDrugUser = perHistDTO.IllicitDrugUser;
+                personalHistory.Others = perHistDTO.Others;
+            }
+
+            patientInfo.PatientPersonalHistory = personalHistory;
+
+            var famHistory = new PatientFamilyHistoryEntity
+            {
+                PatientInfoId = patientInfo.Id
+            };
+
+            if(request.PatientFamilyHistory is not null)
+            {
+                var famHistoryDTO = request.PatientFamilyHistory;
+                famHistory.PTB = famHistoryDTO.PTB;
+                famHistory.Hypertension = famHistoryDTO.Hypertension;
+                famHistory.Cardiac = famHistoryDTO.Cardiac;
+                famHistory.None = famHistoryDTO.None;
+                famHistory.Diabetes = famHistoryDTO.Diabetes;
+                famHistory.Asthma = famHistoryDTO.Asthma;
+                famHistory.Cancer = famHistoryDTO.Cancer;
+                famHistory.Others = famHistoryDTO.Others;
+            }
+            
+            patientInfo.PatientFamilyHistory = famHistory;
+
+            await _context.PatientInformations.AddAsync(patientInfo);
+            var isSuccessSavePatientInfoResult = await _context.SaveChangesAsync() > 0;
+
+            if (!isSuccessSavePatientInfoResult) return Result.Failure("Something went wrong saving patient info");
+
+            await _activityLogger.LogAsync(
+                newUser.Id,
+                UserActivityTypes.Login,
+                newUser.Email
+            );
+
+            return Result.Success();
         }
-
-        // Check if user already exists
-        var existingUser = await _userManager.FindByEmailAsync(registerDTO.UserName);
-        
-        if (existingUser != null)
+        catch(Exception ex)
         {
-            return Result.Failure("A user with that email/username already exists.");
+            Console.WriteLine(ex.Message.ToString());
+            return Result.Failure("Something went wrong.");
         }
-
-        // Map DTO to AppUserIdentity
-
-        var newUser = new AppUserIdentity
-        {
-            UserName = registerDTO.UserName,
-            Email = registerDTO.UserName,
-            FirstName = registerDTO.FirstName,
-            LastName = registerDTO.LastName,
-            MiddleName = registerDTO.MiddleName,
-            DateOfBirth = registerDTO.DateOfBirth,
-            EmailConfirmed = true,      
-            Status = (int)UserStatus.Active,
-            IsActive = true,                    
-            SecurityStamp = Guid.NewGuid().ToString("D")
-        };
-
-        // Create user
-        var result = await _userManager.CreateAsync(newUser, registerDTO.Password);
-        if (!result.Succeeded)
-        {
-            // Collect all error messages into one readable string
-            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            return Result.Failure(errors);
-        }
-
-        result = await _userManager.AddToRoleAsync(newUser, RoleConstants.Patient);
-
-        if (!result.Succeeded)
-        {
-            return Result.Failure("Something Went Wrong.");
-        }
-
-        await _activityLogger.LogAsync(
-            newUser.Id,
-            UserActivityTypes.Login,
-            newUser.Email
-        );
-
-        return Result.Success();
     }
 
     public async Task<Result> ResetPassword(ResetPasswordDTO resetPasswordDTO)
@@ -567,6 +657,301 @@ internal class UserManagerService : IUserManagerService
         catch (Exception)
         {
             return Result<string>.Failure("Something Went Wrong!");
+        }
+    }
+
+    public async Task<Result<UserDetailsResponseDTO>> GetUserDetailsByUserId(int userId)
+    {
+        try
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) return Result<UserDetailsResponseDTO>.Failure("User not found.");
+
+            var patientInfo = await _context.PatientInformations
+                .Include(p => p.PatientPastMedicalRecord)
+                .Include(p => p.PatientFamilyHistory)
+                .Include(p => p.PatientPersonalHistory)
+                .AsNoTracking()
+                .Where(p => p.UserId == userId && p.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (patientInfo is null)
+            {
+                var result = new UserDetailsResponseDTO
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    MiddleName = user.MiddleName,
+                    DateOfBirth = user.DateOfBirth
+                };
+
+                return Result<UserDetailsResponseDTO>.Success(result);
+            }
+
+            var patientDetailsResult = new UserDetailsResponseDTO
+            {
+                PatientInfoId = patientInfo.Id,
+                FirstName = patientInfo.FirstName,
+                LastName = patientInfo.LastName,
+                MiddleName = patientInfo.MiddleName,
+                DateOfBirth = patientInfo.DateOfBirth,
+                Religion = patientInfo.Religion,
+                Gender = patientInfo.Gender,
+                Address = patientInfo.Address,
+                CivilStatus = patientInfo.CivilStatus,
+                Occupation = patientInfo.Occupation,
+                Nationality = patientInfo.Nationality,
+            };
+
+            if (patientInfo.PatientPastMedicalRecord is not null)
+            {
+                var pastMedicalRecord = patientInfo.PatientPastMedicalRecord;
+
+                patientDetailsResult = patientDetailsResult with
+                {
+                    PatientPastMedicalRecord = new PatientPastMedicalRecordDTO
+                    {
+                        PreviousHospitalization = pastMedicalRecord.PreviousHospitalization,
+                        PastSurgery = pastMedicalRecord.PastSurgery,
+                        Diabetes = pastMedicalRecord.Diabetes,
+                        Hypertension = pastMedicalRecord.Hypertension,
+                        AllergyToMeds = pastMedicalRecord.AllergyToMeds,
+                        HeartProblem = pastMedicalRecord.HeartProblem,
+                        Asthma = pastMedicalRecord.Asthma,
+                        FoodAllergies = pastMedicalRecord.AllergyToMeds,
+                        Cancer = pastMedicalRecord.Cancer,
+                        OtherIllnesses = pastMedicalRecord.OtherIllnesses,
+                        MaintenanceMeds = pastMedicalRecord.MaintenanceMeds,
+                        OBGyneHistory = pastMedicalRecord.OBGyneHistory
+                    }
+                };
+            }
+
+            if (patientInfo.PatientFamilyHistory is not null)
+            {
+                var famHistory = patientInfo.PatientFamilyHistory;
+                patientDetailsResult = patientDetailsResult with
+                {
+                    PatientFamilyHistory = new PatientFamilyHistoryDTO
+                    {
+                        PTB = famHistory.PTB,
+                        Hypertension = famHistory.Hypertension,
+                        Cardiac = famHistory.Cardiac,
+                        None = famHistory.None,
+                        Diabetes = famHistory.Diabetes,
+                        Asthma = famHistory.Asthma,
+                        Cancer = famHistory.Cancer,
+                        Others = famHistory.Others,
+                    }
+                };
+            }
+
+            if (patientInfo.PatientPersonalHistory is not null)
+            {
+                var personalHistory = patientInfo.PatientPersonalHistory;
+                patientDetailsResult = patientDetailsResult with
+                {
+                    PatientPersonalHistory = new PatientPersonalHistoryDTO
+                    {
+                        Smoker = personalHistory.Smoker,
+                        AlchoholBeverageDrinker = personalHistory.AlchoholBeverageDrinker,
+                        IllicitDrugUser = personalHistory.IllicitDrugUser,
+                        Others = personalHistory.Others,
+                    }
+                };
+            }
+
+            return Result<UserDetailsResponseDTO>.Success(patientDetailsResult);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message.ToString());
+            return Result<UserDetailsResponseDTO>.Failure("Something went wrong");
+        }
+    }
+
+    public async Task<Result> InsertOrUpdateUserDetails(SaveUserDetailsRequest request)
+    {
+        try
+        {
+            var userId = await GetUserId();
+            var userAccount = await _userManager.FindByIdAsync(userId.ToString());
+
+            var patientInfo = await _context.PatientInformations
+                .Include(p => p.PatientPastMedicalRecord)
+                .Include(p => p.PatientFamilyHistory)
+                .Include(p => p.PatientPersonalHistory)
+                .Where(p => p.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (patientInfo is not null)
+            {
+                patientInfo.UserId = userAccount.Id;
+                patientInfo.LastName = request.LastName;
+                patientInfo.FirstName = request.FirstName;
+                patientInfo.MiddleName = request.MiddleName;
+                patientInfo.DateOfBirth = request.DateOfBirth.Value;
+                patientInfo.Religion = request.Religion;
+                patientInfo.Gender = request.Gender;
+                patientInfo.Address = request.Address;
+                patientInfo.CivilStatus = request.CivilStatus;
+                patientInfo.Occupation = request.Occupation;
+                patientInfo.Nationality = request.Nationality;
+                patientInfo.UpdatedOn = DateTime.UtcNow;
+
+                if (request.PatientPastMedicalRecord is not null)
+                {
+                    var pastMedRec = request.PatientPastMedicalRecord;
+
+                    patientInfo.PatientPastMedicalRecord.PreviousHospitalization = pastMedRec.PreviousHospitalization;
+                    patientInfo.PatientPastMedicalRecord.PastSurgery = pastMedRec.PastSurgery;
+                    patientInfo.PatientPastMedicalRecord.Diabetes = pastMedRec.Diabetes;
+                    patientInfo.PatientPastMedicalRecord.Hypertension = pastMedRec.Hypertension;
+                    patientInfo.PatientPastMedicalRecord.AllergyToMeds = pastMedRec.AllergyToMeds;
+                    patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
+                    patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
+                    patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;
+                    patientInfo.PatientPastMedicalRecord.Cancer = pastMedRec.Cancer;
+                    patientInfo.PatientPastMedicalRecord.OtherIllnesses = pastMedRec.OtherIllnesses ?? string.Empty;
+                    patientInfo.PatientPastMedicalRecord.MaintenanceMeds = pastMedRec.MaintenanceMeds;
+                    patientInfo.PatientPastMedicalRecord.OBGyneHistory = pastMedRec.OBGyneHistory;
+                    patientInfo.PatientPastMedicalRecord.UpdatedOn = DateTime.UtcNow;
+                }
+
+                if (request.PatientFamilyHistory is not null)
+                {
+                    var famHistory = request.PatientFamilyHistory;
+
+                    patientInfo.PatientFamilyHistory.PTB = famHistory.PTB;
+                    patientInfo.PatientFamilyHistory.Hypertension = famHistory.Hypertension;
+                    patientInfo.PatientFamilyHistory.Cardiac = famHistory.Cardiac;
+                    patientInfo.PatientFamilyHistory.None = famHistory.None;
+                    patientInfo.PatientFamilyHistory.Diabetes = famHistory.Diabetes;
+                    patientInfo.PatientFamilyHistory.Asthma = famHistory.Asthma;
+                    patientInfo.PatientFamilyHistory.Cancer = famHistory.Cancer;
+                    patientInfo.PatientFamilyHistory.Others = famHistory.Others;
+                    patientInfo.PatientFamilyHistory.UpdatedOn = DateTime.UtcNow;
+                }
+
+                if (request.PatientPersonalHistory is not null)
+                {
+                    var personalHistory = request.PatientPersonalHistory;
+
+                    patientInfo.PatientPersonalHistory.Smoker = personalHistory.Smoker;
+                    patientInfo.PatientPersonalHistory.AlchoholBeverageDrinker = personalHistory.AlchoholBeverageDrinker;
+                    patientInfo.PatientPersonalHistory.IllicitDrugUser = personalHistory.IllicitDrugUser;
+                    patientInfo.PatientPersonalHistory.Others = personalHistory.Others;
+                    patientInfo.PatientPersonalHistory.UpdatedOn = DateTime.UtcNow;
+                }
+            }
+            else
+            {
+                patientInfo = new PatientInformationEntity();
+                patientInfo.UserId = userAccount.Id;
+                patientInfo.LastName = request.LastName;
+                patientInfo.FirstName = request.FirstName;
+                patientInfo.MiddleName = request.MiddleName;
+                patientInfo.DateOfBirth = request.DateOfBirth.Value;
+                patientInfo.Religion = request.Religion;
+                patientInfo.Gender = request.Gender;
+                patientInfo.Address = request.Address;
+                patientInfo.CivilStatus = request.CivilStatus;
+                patientInfo.Occupation = request.Occupation;
+                patientInfo.Nationality = request.Nationality;
+                patientInfo.UpdatedOn = DateTime.UtcNow;
+                patientInfo.IsActive = true;
+
+                var pastMedRec = request.PatientPastMedicalRecord;
+                patientInfo.PatientPastMedicalRecord = new();
+
+                patientInfo.PatientPastMedicalRecord.PatientInfoId = patientInfo.Id;
+                patientInfo.PatientPastMedicalRecord.PreviousHospitalization = pastMedRec.PreviousHospitalization;
+                patientInfo.PatientPastMedicalRecord.PastSurgery = pastMedRec.PastSurgery;
+                patientInfo.PatientPastMedicalRecord.Diabetes = pastMedRec.Diabetes;
+                patientInfo.PatientPastMedicalRecord.Hypertension = pastMedRec.Hypertension;
+                patientInfo.PatientPastMedicalRecord.AllergyToMeds = pastMedRec.AllergyToMeds;
+                patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
+                patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
+                patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;
+                patientInfo.PatientPastMedicalRecord.Cancer = pastMedRec.Cancer;
+                patientInfo.PatientPastMedicalRecord.OtherIllnesses = pastMedRec.OtherIllnesses ?? string.Empty;
+                patientInfo.PatientPastMedicalRecord.MaintenanceMeds = pastMedRec.MaintenanceMeds;
+                patientInfo.PatientPastMedicalRecord.OBGyneHistory = pastMedRec.OBGyneHistory;
+                patientInfo.PatientPastMedicalRecord.CreatedOn = DateTime.UtcNow;
+                patientInfo.PatientPastMedicalRecord.IsActive = true;
+
+                var famHistory = request.PatientFamilyHistory;
+                patientInfo.PatientFamilyHistory = new();
+
+                patientInfo.PatientFamilyHistory.PatientInfoId = patientInfo.Id;
+                patientInfo.PatientFamilyHistory.PTB = famHistory.PTB;
+                patientInfo.PatientFamilyHistory.Hypertension = famHistory.Hypertension;
+                patientInfo.PatientFamilyHistory.Cardiac = famHistory.Cardiac;
+                patientInfo.PatientFamilyHistory.None = famHistory.None;
+                patientInfo.PatientFamilyHistory.Diabetes = famHistory.Diabetes;
+                patientInfo.PatientFamilyHistory.Asthma = famHistory.Asthma;
+                patientInfo.PatientFamilyHistory.Cancer = famHistory.Cancer;
+                patientInfo.PatientFamilyHistory.Others = famHistory.Others;
+                patientInfo.PatientFamilyHistory.CreatedOn = DateTime.UtcNow;
+                patientInfo.PatientFamilyHistory.IsActive = true;
+
+                var personalHistory = request.PatientPersonalHistory;
+                patientInfo.PatientPersonalHistory = new();
+
+                patientInfo.PatientPersonalHistory.PatientInfoId = patientInfo.Id;
+                patientInfo.PatientPersonalHistory.Smoker = personalHistory.Smoker;
+                patientInfo.PatientPersonalHistory.AlchoholBeverageDrinker = personalHistory.AlchoholBeverageDrinker;
+                patientInfo.PatientPersonalHistory.IllicitDrugUser = personalHistory.IllicitDrugUser;
+                patientInfo.PatientPersonalHistory.Others = personalHistory.Others;
+                patientInfo.PatientPersonalHistory.CreatedOn = DateTime.UtcNow;
+                patientInfo.PatientPersonalHistory.IsActive = true;
+
+                await _context.PatientInformations.AddAsync(patientInfo);
+            }
+
+            var isUpdateSuccess = await _context.SaveChangesAsync() > 0;
+
+            if (!isUpdateSuccess) return Result.Failure("Something went wrong.");
+
+            userAccount.FirstName = patientInfo.FirstName;
+            userAccount.LastName = patientInfo.LastName;
+            userAccount.MiddleName = patientInfo.MiddleName;
+            userAccount.DateOfBirth = patientInfo.DateOfBirth;
+
+            var accountUpdateResult = await _userManager.UpdateAsync(userAccount);
+
+            if (!accountUpdateResult.Succeeded) return Result.Failure("Something went wrong during account updates");
+
+            return Result.Success();
+        }
+        catch (Exception)
+        {
+            return Result.Failure("Something went wrong");
+        }
+    }
+
+    public async Task<Result<UserDetailsResponseDTO>> GetUserDetailsByUserInfoId(int userInfoId)
+    {
+        try
+        {
+            var userInfoResponse = await _context.PatientInformations
+            .AsNoTracking()
+            .Where(p => p.Id == userInfoId)
+            .Select(p => new { p.Id, p.UserId })
+            .FirstOrDefaultAsync();
+
+            if (userInfoResponse is null) return Result<UserDetailsResponseDTO>.Failure("User Info does not exists");
+
+            var result = await GetUserDetailsByUserId(userInfoResponse.UserId);
+
+            if (result.IsFailure) return Result<UserDetailsResponseDTO>.Failure(result.Error);
+
+            return Result<UserDetailsResponseDTO>.Success(result.Value);
+        }
+        catch (Exception)
+        {
+            return Result<UserDetailsResponseDTO>.Failure("Something went wrong");
         }
     }
 }

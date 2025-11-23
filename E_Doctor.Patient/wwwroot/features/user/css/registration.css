@@ -1,0 +1,141 @@
+﻿body {
+    overflow: visible;
+}
+
+#auth-container {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: start !important;
+    height: 100vh;
+}
+
+.register-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: fit-content;
+    width: 90vw !important;
+    padding: 1.5rem 1.3rem 1rem;
+}
+
+.register-form-container__header {
+    text-align: center;
+}
+
+.register-form-subtitle {
+    opacity: .7;
+}
+.register-form-title {
+}
+
+.register-form-container .registration-header {
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+}
+
+.register-form {
+    padding-bottom: 4rem;
+}
+
+.register-form-content {
+    background-color: var(--surface-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+.page-header {
+    margin-block: 2rem;
+}
+
+.registration-form__group {
+/*    background-color: var(--surface-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);*/
+    padding: 2rem 2rem 2.5rem;
+    width: 100%;
+    height: fit-content;
+}
+
+.registration-form__group-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.registration-form__group-header h3 {
+    padding: .5rem 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem !important;
+}
+
+.form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.form-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group-field:not(.flex) {
+    display: flex;
+    gap: .5rem;
+    text-wrap: nowrap;
+    align-items: center;
+}
+
+
+.form-group-field input,
+.form-group-field select {
+    margin-top: 5px;
+}
+
+.form-group-field .form-input,
+.form-group-field .form-select,
+.form-group-field .form-textarea {
+    padding: .5rem;
+}
+
+
+.register-form label,
+.register-form span,
+.register-form h1,
+.register-form h2,
+.register-form h3 {
+    text-transform: uppercase;
+}
+
+.form-grid .grid-span {
+    grid-column: span 2;
+}
+
+.text-nowrap {
+    text-wrap: nowrap;
+}
+
+.sub-form-group-field {
+    padding: 0 2rem;
+}
+
+.form-group-buttons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-items: center;
+    align-items: center;
+}
+
+.form-btn-register {
+    padding-inline: 4rem;
+    border-radius: 10rem;
+}

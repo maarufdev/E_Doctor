@@ -430,8 +430,16 @@ a {
     display: flex;
 }
 
+.gap-1 {
+    gap: 0.25rem;
+}
+
 .gap-2 {
     gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 0.75rem;
 }
 
 .gap-4 {
@@ -442,12 +450,20 @@ a {
     align-items: center;
 }
 
+.items-start {
+    align-items: flex-start;
+}
+
 .items-end {
     align-items: flex-end;
 }
 
 .justify-between {
     justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
 }
 
 .justify-end {
@@ -457,6 +473,10 @@ a {
 
 .flex-column {
     flex-direction: column;
+}
+
+.flex-grow {
+    flex-grow: 1;
 }
 
 .text-center {
@@ -519,3 +539,84 @@ a {
     .pagination-controls label {
         font-weight: 500;
     }
+
+.custom-checkbox {
+    display: inline-flex;
+    align-items: center;
+    padding: .5rem 1rem;
+    position: relative;
+}
+
+/* 1. HIDE THE NATIVE INPUT */
+.custom-checkbox-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    /* Important for accessibility: ensure it's still tabbable */
+    width: 24px; 
+    height: 24px;
+    /*    width: 0;
+    height: 0;*/
+    outline: none;
+    scroll-margin: 0 !important;
+    z-index: 2; /* make it clickable */
+}
+
+.custom-checkbox-label {
+    position: relative;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    color: #1f2937;
+}
+
+    /* 2. DRAW THE UNCHECKED BOX (::before) */
+    .custom-checkbox-label::before {
+        content: '';
+        display: block;
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        border: 2px solid #6b7280;
+        border-radius: 6px;
+        background-color: #ffffff;
+        transition: all 0.2s ease-in-out;
+        flex-shrink: 0;
+    }
+
+    /* 3. DRAW THE CHECKMARK (::after) */
+    .custom-checkbox-label::after {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 45%;
+        width: 6px;
+        height: 12px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        transform: translateY(-50%) rotate(45deg);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+/* --- 4. THE MAGIC: TARGETING THE ADJACENT LABEL WHEN INPUT IS CHECKED --- */
+
+/* Change background and border color */
+.custom-checkbox-input:checked ~ .custom-checkbox-label::before {
+    background-color: var(--primary-color); /* Emerald 600 */
+    border-color: var(--primary-color);
+}
+
+/* Show the checkmark */
+.custom-checkbox-input:checked ~ .custom-checkbox-label::after {
+    opacity: 1;
+}
+
+/* Accessibility Focus State */
+.custom-checkbox-input:focus-visible ~ .custom-checkbox-label::before {
+    box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.4);
+}

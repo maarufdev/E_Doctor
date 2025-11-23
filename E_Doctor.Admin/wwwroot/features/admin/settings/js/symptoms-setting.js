@@ -12,7 +12,7 @@
             saveSymptom: {
                 symptomId: null,
                 symptomName: "",
-                questionText: "",
+                //questionText: "",
             },
             symptomId: null,
         },
@@ -76,7 +76,7 @@
                 const { symptomsModal } = elementHolders.modals;
                 $(symptomsModal.fields.symptomId).val(symptom.symptomId ?? "");
                 $(symptomsModal.fields.symptomName).val(symptom.symptomName ?? "");
-                $(symptomsModal.fields.questionText).val(symptom.questionText ?? "");
+                //$(symptomsModal.fields.questionText).val(symptom.questionText ?? "");
             },
             handleOnClickEditSymptom: async function (symptomId) {
                 const { apiService, eventHandlers } = services;
@@ -119,9 +119,17 @@
 
                 symptoms.forEach(symptom => {
                     const row = document.createElement('tr');
+                    //row.innerHTML = `
+                    //    <td>${symptom.symptomName}</td>
+                    //    <td>${symptom.questionText ?? ""}</td>
+                    //    <td class="actions-cell">
+                    //        <button class="btn btn-warning edit-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Edit"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                    //        <button class="btn btn-danger delete-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Delete"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                    //    </td>
+                    //`;
+
                     row.innerHTML = `
                         <td>${symptom.symptomName}</td>
-                        <td>${symptom.questionText ?? ""}</td>
                         <td class="actions-cell">
                             <button class="btn btn-warning edit-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Edit"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
                             <button class="btn btn-danger delete-symptom-btn" style="padding: 0.5rem;" data-symptom-id="${symptom.symptomId}" title="Delete"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
@@ -156,16 +164,16 @@
 
                 const $symptomIdField = $(symptomsModal.fields.symptomId);
                 const $symptomNameField = $(symptomsModal.fields.symptomName);
-                const $questionTextField = $(symptomsModal.fields.questionText);
+                //const $questionTextField = $(symptomsModal.fields.questionText);
 
                 const symptomId = $symptomIdField.val();
                 const symptomName = $symptomNameField.val();
-                const questionText = $questionTextField.val();
+                //const questionText = $questionTextField.val();
 
                 const command = {
                     symptomId: symptomId ? parseInt(symptomId) : 0,
                     symptomName: symptomName,
-                    questionText: questionText 
+                    //questionText: questionText 
                 };
 
                 if (IsNullUndefinedEmpty(symptomName)) return;
@@ -192,7 +200,7 @@
                 const { symptomsModal } = elementHolders.modals;
                 $(symptomsModal.fields.symptomId).val("");
                 $(symptomsModal.fields.symptomName).val("");
-                $(symptomsModal.fields.questionText).val("");
+                //$(symptomsModal.fields.questionText).val("");
             }
         },
         events: {

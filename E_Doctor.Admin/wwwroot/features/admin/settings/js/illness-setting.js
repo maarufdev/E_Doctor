@@ -144,7 +144,6 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${illness.illnessName}</td>
-                        <td style="white-space: normal;">${illness.description}</td>
                         <td>${illness.ruleCount}</td>
                         <td class="actions-cell">
                             <button class="btn btn-warning edit-disease-btn" style="padding: 0.5rem;" data-illness-id="${illnessId}" title="Edit"><svg style="width:1rem; height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
@@ -194,16 +193,16 @@
 
                 commandQueries.saveIllness.illnessId = illnessId;
                 commandQueries.saveIllness.illnessName = illnessName;
-                commandQueries.saveIllness.description = description;
-                commandQueries.saveIllness.prescription = prescription;
-                commandQueries.saveIllness.notes = notes;
+                //commandQueries.saveIllness.description = description;
+                //commandQueries.saveIllness.prescription = prescription;
+                //commandQueries.saveIllness.notes = notes;
                 commandQueries.saveIllness.rules = rules ?? [];
 
                 $(fields.illnessId).val(illnessId);
                 $(fields.illnessName).val(illnessName);
-                $(fields.description).val(description);
-                $(fields.prescription).val(prescription);
-                $(fields.notes).val(notes);
+                //$(fields.description).val(description);
+                //$(fields.prescription).val(prescription);
+                //$(fields.notes).val(notes);
 
                 this.constructSelectedRules();
             },
@@ -422,14 +421,14 @@
                 result = ValidateInput(commandQueries.saveIllness.illnessName, "Illness Name is required.");
                 if (!result) return false;
 
-                result = ValidateInput(commandQueries.saveIllness.description, "Description is required.");
-                if (!result) return false;
+                //result = ValidateInput(commandQueries.saveIllness.description, "Description is required.");
+                //if (!result) return false;
 
-                result = ValidateInput(commandQueries.saveIllness.prescription, "Prescription is required.");
-                if (!result) return false;
+                //result = ValidateInput(commandQueries.saveIllness.prescription, "Prescription is required.");
+                //if (!result) return false;
 
-                result = ValidateInput(commandQueries.saveIllness.notes, "Notes/Referral is required.");
-                if (!result) return false;
+                //result = ValidateInput(commandQueries.saveIllness.notes, "Notes/Referral is required.");
+                //if (!result) return false;
 
                 result = ValidateInput(commandQueries.saveIllness.rules, "Rules Fields is required. Please add config at least 1");
                 if (!result) return false;

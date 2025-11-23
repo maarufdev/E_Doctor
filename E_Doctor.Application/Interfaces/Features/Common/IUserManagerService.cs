@@ -8,7 +8,7 @@ namespace E_Doctor.Application.Interfaces.Features.Common;
 public interface IUserManagerService
 {
     Task<Result<string>> Login(LoginDTO loginDTO);
-    Task<Result> Register(RegisterUserDTO registerDTO);
+    Task<Result> RegisterPatient(RegisterPatientDTO request);
     Task UpdateUserLoginDate();
     Task<Result> Logout();
     Task<string> GetUserNameById(string userId);
@@ -23,4 +23,7 @@ public interface IUserManagerService
     Task<Result> DeleteUserById(int userId);
     Task<Result> ResetUserPasswordByAdmin(ResetPasswordRequest resetPasswordDTO);
     Task<bool> IsUserAdmin();
+    Task<Result<UserDetailsResponseDTO>> GetUserDetailsByUserInfoId(int userInfoId);
+    Task<Result<UserDetailsResponseDTO>> GetUserDetailsByUserId(int userId);
+    Task<Result> InsertOrUpdateUserDetails(SaveUserDetailsRequest request);
 }

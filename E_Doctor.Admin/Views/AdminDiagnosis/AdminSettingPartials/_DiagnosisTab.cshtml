@@ -2,11 +2,15 @@
 <link rel="stylesheet" href="~/features/admin/diagnosis/css/diagnosis.css" asp-append-version="true" />
 
 <div id="test" class="page-content">
-    <div class="flex justify-end mb-4">
-        @* <button id="new-consultation-btn" class="btn btn-secondary self-start">New Consultation</button> *@
+    <div class="flex items-center gap-4 mb-3">
+        <input 
+            class="form-input" 
+            placeholder="Search Patient" 
+            style="width: 300px;" 
+            id="searchConsultationText" />
+        <button id="searchConsultationBtn" class="btn btn-secondary">Search</button>
     </div>
     <div class="card">
-        
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -14,8 +18,9 @@
                         <th>Date</th>
                         <th>User</th>
                         <th>Symptoms</th>
-                        <th>Result</th>
+                        <th>Pre-Result</th>
                         <th>Action</th>
+                        <th>P.E Report Status</th>
                     </tr>
                 </thead>
                 <tbody id="history-table-body">
@@ -34,22 +39,89 @@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
         <div class="modal-header">
-            <h3 class="text-xl font-semibold">Diagnosis Result</h3>
+            <h3 class="text-xl font-semibold">Pre-Result</h3>
             <button id="close-diagnosis-result-modal" class="modal-close-btn">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="diagnosis-content-card text-center">
-                <p id="diagnosis-result" class="text-xl font-medium">Likely Bronchitis.</p>
-                <p id="diagnosis-description" class="text-gray-500 mt-2">Your symptoms suggest bronchitis. Most cases are viral and resolve on their own, but consult a doctor if symptoms are severe.</p>
-                <div class="text-left mt-4">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Prescriptions:</h4>
-                    <p id="diagnosis-prescription" class="text-gray-700">Cough suppressants, Rest, Increased fluid intake.</p>
-                </div>
-                <div class="text-left mt-4">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Doctor's Note / Referral:</h4>
-                    <p id="diagnosis-notes" class="text-gray-700">If your cough lasts for more than three weeks or is accompanied by a high fever, you should see a doctor.</p>
-                </div>
+            <div class="diagnosis-content-card flex justify-center items-center">
+                <h2 id="diagnosis-result" class="font-medium text-center"></h2>
             </div>
+        </div>
+    </div>
+</div>
+
+@* Physical Report *@
+<div id="physicalReportModal" class="modal-backdrop">
+    <div class="modal-content physical-report-modal-content">
+        <div class="modal-header">
+            <h3 class="text-xl font-semibold">PHYSICAL EXAMINATION REPORT</h3>
+            <button id="closePhysicalReportBtn" class="modal-close-btn" data-target-modal="physicalReportModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-4 font-uppercase">
+                Patient Name: <span class="font-bold" id="patientPhysicalReportName"></span>
+            </div>
+            <div class="physical-report-header-form font-uppercase">
+                <p class="mb-3">Vital Signs:</p>
+                <div class="pyhical-report-header-fields">
+                    <div class="header-field flex items-center gap-4">
+                        <label>BP:</label>
+                        <input id="patientBP" name="bp"  class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>HR:</label>
+                        <input id="patientHR" name="hr" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>RR:</label>
+                        <input id="patientRR" name="rr" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>TEMP:</label>
+                        <input id="patientTemp" name="temp" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>WEIGHT:</label>
+                        <input id="patientWeight" name="weight" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                    <div class="header-field flex items-center gap-4">
+                        <label>O2 SAT.:</label>
+                        <input id="patientO2Sat" name="o2Sat" class="form-input physical-exam-vital-sign-field" />
+                    </div>
+                </div>
+                <hr />
+            </div>
+            <div class="table-container mt-4">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>DESCRIBE THE FOLLOWING:</th>
+                            <th>NORMAL</th>
+                            <th>ABNORMAL FINDINGS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pyhsicalReportTableBody" class="font-uppercase">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <button id="savePhysicalExam" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* Patient Details View *@
+<div id="patientInfoModal" class="modal-backdrop">
+    <div class="modal-content physical-report-modal-content">
+        <div class="modal-header">
+            <button id="closePatientInfoModal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body" id="patientInfoView" style="padding: 0;">
+
         </div>
     </div>
 </div>

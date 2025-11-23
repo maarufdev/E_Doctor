@@ -4,11 +4,12 @@
 }
 
 <link rel="stylesheet" href="~/features/admin/settings/css/settings-main.css" asp-append-version="true" />
+<script src="~/common//lib/jspdf/jspdf.min.js" asp-append-version="true"></script>
 
 <div id="settings" class="page-content mb-0 settings-container">
     <h2 class="text-2xl font-semibold mb-4 settings-page-title">@ViewBag.PageTitle</h2>
     <div class="settings-tabs">
-        <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Diagnosis)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Diagnosis ? "active" : "")" data-tab="symptoms-tab">Diagnosis History</a>
+        <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Diagnosis)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Diagnosis ? "active" : "")" data-tab="symptoms-tab">Consultation History</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Symptom)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Symptom ? "active" : "")" data-tab="symptoms-tab">Symptoms</a>
         <a asp-action="Index" asp-route-tabName="@(AdminDiagnosisTab.Illness)" class="settings-tab-btn @(activeTab == AdminDiagnosisTab.Illness ? "active" : "")" data-tab="diseases-tab">Illness</a>
     </div>

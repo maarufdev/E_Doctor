@@ -1,11 +1,12 @@
 ﻿using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Diagnosis;
+using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.UserActivity;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Admin;
+using E_Doctor.Core.Domain.Entities.Patient.PhysicalExam;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +35,24 @@ internal class DiagnosisService : IDiagnosisService
                 .AsNoTracking()
                 .Include(d => d.DiagnosIllnesses)
                 .Include(d => d.DiagnosSymptoms)
-                .Join(_appDbContext.Users, d => d.UserId, u => u.Id, (Diagnosis, User) => new { User, Diagnosis })
+                .Join(
+                    _appDbContext.Users, 
+                    d => d.UserId, 
+                    u => u.Id, 
+                    (Diagnosis, User) => new { User, Diagnosis })
+                .GroupJoin(
+                    _appDbContext.PatientInformations,
+                    du => du.User.Id,
+                    p => p.UserId,
+                    (du, p) => new { du, PatientInformation = p })
+                .SelectMany(
+                    x => x.PatientInformation.DefaultIfEmpty(),
+                    (x, p) => new
+                    {
+                        x.du.User,
+                        x.du.Diagnosis,
+                        PatientInformation = p
+                    })
                 .Where(x => x.User.IsActive && x.Diagnosis.IsActive);
 
             var isAdmin = await _userManager.IsUserAdmin();
@@ -47,8 +65,22 @@ internal class DiagnosisService : IDiagnosisService
                     query = query.Where(u => u.User.Id == currentUserId);
                 }
             }
-                
-            query = query.OrderByDescending(d => d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn);
+            else
+            {
+                if (!string.IsNullOrEmpty(requestParams.SearchText))
+                {
+                    var searchText = requestParams.SearchText.ToLower();
+
+                    query = query.Where(u =>
+                        u.User.UserName.ToLower().Contains(searchText) ||
+                        u.User.FirstName.ToLower().Contains(searchText) ||
+                        u.User.LastName.ToLower().Contains(searchText) ||
+                        u.User.MiddleName.ToLower().Contains(searchText)
+                    );
+                }
+            }
+
+                query = query.OrderByDescending(d => d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn);
             var totalCount = await query.CountAsync();
             var response = new List<DiagnosisListResponse>();
 
@@ -62,21 +94,40 @@ internal class DiagnosisService : IDiagnosisService
                     Symptoms = string.Join(", ", d.Diagnosis.DiagnosSymptoms.Select(s => $"{s.SymptomName}").ToList()),
                     IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
                     UserId = d.User.IsActive,
-                    FullName = $"{d.User.FirstName} {d.User.LastName}"
+                    FullName = $"{d.User.FirstName} {d.User.LastName}",
+                    PatientInfoId = d.PatientInformation != null ? d.PatientInformation.Id : 0
+
                 })
-                .Select(d => new DiagnosisListResponse(
-                    d.Id,
-                    d.UpdatedOn,
-                    d.FullName,
-                    d.Symptoms,
-                    d.IllnessName,
-                    string.Empty
-                 ))
                 .ToListAsync();
+
+            var diagnosisIds = diagnosisResult.Select(x => x.Id).ToList();
+            
+            List<DiagnosisListResponse> diagnosisListResponse = new();
+
+            foreach(var item in diagnosisResult)
+            {
+                var examId = await _appDbContext.PhysicalExams
+                    .AsNoTracking()
+                    .Where(p => p.DiagnosisId == item.Id && p.IsActive)
+                    .Select(p => p.Id)
+                    .FirstOrDefaultAsync();
+
+                diagnosisListResponse.Add(new DiagnosisListResponse(
+                    item.Id,
+                    item.UpdatedOn,
+                    item.FullName,
+                    item.Symptoms,
+                    item.IllnessName,
+                    string.Empty,
+                    examId,
+                    item.PatientInfoId
+                    ));
+            }
+
 
             return new PagedResult<DiagnosisListResponse>
             {
-                Items = diagnosisResult,
+                Items = diagnosisListResponse,
                 TotalCount = totalCount,
                 PageSize = requestParams.PageSize,
                 PageNumber = requestParams.PageNumber,
@@ -347,5 +398,169 @@ internal class DiagnosisService : IDiagnosisService
         }
 
          return Result.Success();
+    }
+
+    public async Task<Result<IEnumerable<PhysicalExamItemDTO>>> GetPhysicalItems()
+    {
+        try
+        {
+            var result = await _appDbContext.PhysicalExamItems
+                .AsNoTracking()
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.SortOrder)
+                .Select(p => new PhysicalExamItemDTO(p.Id, p.Label))
+                .ToListAsync();
+
+            return Result<IEnumerable<PhysicalExamItemDTO>>.Success(result);
+        }
+        catch (Exception)
+        {
+            return Result<IEnumerable<PhysicalExamItemDTO>>.Failure("Something went wrong.");
+        }
+    }
+
+    public async Task<Result<PhysicalExamDTO>> GetPhysicalExamById(int physicalExamId)
+    {
+        try
+        {
+            var result = await _appDbContext.PhysicalExams
+            .Include(p => p.PhysicalExamFindings)
+            .ThenInclude(p => p.PhysicalExamItem)
+            .Where(p => p.Id == physicalExamId && p.IsActive)
+            .FirstOrDefaultAsync();
+
+            if (result is null) return Result<PhysicalExamDTO>.Failure("Physical exam report not found");
+
+            var physicalExamDTO = new PhysicalExamDTO
+            {
+                ExamId = physicalExamId,
+                BP = result.BP ?? string.Empty,
+                HR = result.HR ?? string.Empty,
+                RR = result.RR ?? string.Empty,
+                Temp = result.Temp ?? string.Empty,
+                Weight = result.Weight ?? string.Empty,
+                O2Sat = result.O2Sat ?? string.Empty,
+                PhysicalExamFindings = result.PhysicalExamFindings
+                    .Select(p => new PhysicalExamFindingDTO
+                    {
+                        PhysicalExamId = p.PhysicalExamId,
+                        PhysicalItemId = p.PhysicalItemId,
+                        IsNormal = p.IsNormal,
+                        NormalDescription = p.NormalDescription ?? string.Empty,
+                        AbnormalFindings = p.AbnormalFindings ?? string.Empty
+                    }).ToList()
+            };
+
+            return Result<PhysicalExamDTO>.Success(physicalExamDTO);
+        }
+        catch (Exception)
+        {
+            return Result<PhysicalExamDTO>.Failure("Something went wrong during physical exam report request.");
+        }
+    }
+
+    public async Task<Result> SavePhysicalExamReport(SavePhysicalExamRequest request)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(nameof(request));
+
+            var diagnosisId = request.DiagnosisId;
+            var physicalExamId = request.PhysicalExamId;
+
+            if(physicalExamId == 0)
+            {
+                var physcalExamToCreate = new PhysicalExamEntity
+                {
+                    DiagnosisId = diagnosisId,
+                    BP = request.BP,
+                    HR = request.HR,
+                    RR = request.RR,
+                    Temp = request.Temp,
+                    Weight = request.Weight,
+                    O2Sat = request.O2Sat,
+                    PhysicalExamFindings = new List<PhysicalExamFindingsEntity>(),
+                    IsActive = true,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                var physicalExamFindings = new List<PhysicalExamFindingsEntity>();
+
+                foreach(var item in request.PhysicalExamFindings)
+                {
+                    var physicalExamFindingsToCreate = new PhysicalExamFindingsEntity
+                    {
+                        PhysicalItemId = item.PhysicalItemId,
+                        IsNormal = item.IsNormal,
+                        NormalDescription = item.NormalDescriptions,
+                        AbnormalFindings = item.AbnormalFindings,
+                        IsActive = true,
+                        CreatedOn = DateTime.UtcNow
+                    };
+
+                    physicalExamFindings.Add(physicalExamFindingsToCreate);
+                }
+
+                physcalExamToCreate.PhysicalExamFindings = physicalExamFindings;
+
+                await _appDbContext.PhysicalExams.AddAsync(physcalExamToCreate);
+            } 
+            else
+            {
+                var toUpdatePhysicalExam = await _appDbContext.PhysicalExams
+                    .Include(p => p.PhysicalExamFindings)
+                    .Where(p => p.Id == physicalExamId)
+                    .OrderByDescending(p => p.CreatedOn ?? p.UpdatedOn)
+                    .FirstOrDefaultAsync();
+
+                if (toUpdatePhysicalExam is null) return Result.Failure("Unable to update a physical examination that don't exists.");
+
+                toUpdatePhysicalExam.BP = request.BP;
+                toUpdatePhysicalExam.HR = request.HR;
+                toUpdatePhysicalExam.RR = request.HR;
+                toUpdatePhysicalExam.Temp = request.HR;
+                toUpdatePhysicalExam.Weight = request.HR;
+                toUpdatePhysicalExam.O2Sat = request.HR;
+                toUpdatePhysicalExam.UpdatedOn = DateTime.UtcNow;
+
+                if(toUpdatePhysicalExam.PhysicalExamFindings is not null)
+                {
+                    var newFindings = request.PhysicalExamFindings;
+
+                    foreach(var finding in toUpdatePhysicalExam.PhysicalExamFindings)
+                    {
+                        var newFindingUpdate = newFindings
+                            .Where(x => x.PhysicalItemId == finding.PhysicalItemId)
+                            .FirstOrDefault();
+
+                        if (newFindingUpdate is null) continue;
+
+                        finding.IsNormal = newFindingUpdate.IsNormal;
+                        finding.NormalDescription = newFindingUpdate.NormalDescriptions;
+                        finding.AbnormalFindings = newFindingUpdate.AbnormalFindings;
+                        finding.UpdatedOn = DateTime.UtcNow;
+                    }
+                }
+
+                _appDbContext.PhysicalExams.Update(toUpdatePhysicalExam);
+            }
+
+            var isSuccess = await _appDbContext.SaveChangesAsync() > 0;
+
+            if (!isSuccess)
+            {
+                var operation = physicalExamId == 0 ? "creation" : "updating";
+
+                return Result.Failure($"Something went wrong during {operation} of physical examination report" );
+            }
+
+            return Result.Success();
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return Result.Failure("Something Went Wrong");
+        }
     }
 }

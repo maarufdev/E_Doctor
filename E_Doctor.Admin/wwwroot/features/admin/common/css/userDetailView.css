@@ -1,0 +1,119 @@
+﻿.register-form-container__header {
+    text-align: center;
+}
+
+.register-form-subtitle {
+    opacity: .7;
+}
+
+.register-form-container .registration-header {
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+}
+
+.register-form {
+    padding-bottom: 4rem;
+}
+
+.register-form-content {
+    background-color: var(--surface-color);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.page-header {
+    margin-block: 2rem;
+}
+
+.registration-form__group {
+    border-radius: 0.5rem;
+    width: 100%;
+    height: fit-content;
+    padding: 1rem;
+}
+
+.registration-form__group-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .registration-form__group-header h3 {
+        padding: .5rem 0;
+    }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem !important;
+}
+
+.form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.form-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group-field:not(.flex) {
+    display: flex;
+    gap: .5rem;
+    text-wrap: nowrap;
+    align-items: center;
+}
+
+
+.form-group-field input,
+.form-group-field select {
+    margin-top: 5px;
+    width: fit-content !important;
+}
+
+.form-group-field .form-input,
+.form-group-field .form-select,
+.form-group-field .form-textarea {
+    padding: .5rem;
+}
+
+
+.register-form label,
+.register-form span,
+.register-form h1,
+.register-form h2,
+.register-form h3 {
+    text-transform: uppercase;
+}
+
+.form-grid .grid-span {
+    grid-column: span 2;
+}
+
+.text-nowrap {
+    text-wrap: nowrap;
+}
+
+.sub-form-group-field {
+    padding: 0 2rem;
+}
+
+.form-group-buttons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-items: center;
+    align-items: center;
+}
+
+.form-btn-register {
+    padding-inline: 4rem;
+    border-radius: 10rem;
+}
