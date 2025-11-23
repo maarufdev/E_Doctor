@@ -2,8 +2,13 @@
 <link rel="stylesheet" href="~/features/admin/diagnosis/css/diagnosis.css" asp-append-version="true" />
 
 <div id="test" class="page-content">
-    <div class="flex justify-end mb-4">
-        @* <button id="new-consultation-btn" class="btn btn-secondary self-start">New Consultation</button> *@
+    <div class="flex items-center gap-4 mb-3">
+        <input 
+            class="form-input" 
+            placeholder="Search Patient" 
+            style="width: 300px;" 
+            id="searchConsultationText" />
+        <button id="searchConsultationBtn" class="btn btn-secondary">Search</button>
     </div>
     <div class="card">
         <div class="table-container">

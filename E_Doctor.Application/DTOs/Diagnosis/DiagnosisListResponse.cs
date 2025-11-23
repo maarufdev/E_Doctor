@@ -8,4 +8,4 @@ public sealed record DiagnosisListResponse(
     string IllnessName,
     string Prescription,
     int? PhysicalExamId,
-    int UsernfoId);
+    int UserInfoId);

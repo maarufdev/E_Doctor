@@ -191,3 +191,23 @@
 #pyhsicalReportTableBody {
     pointer-events: none;
 }
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    display: inline-flex;
+    line-height: 1.25rem;
+    align-items: center;
+}
+
+.status-pending {
+    background-color: #fffbeb;
+    color: #92400e;
+}
+
+.status-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}

@@ -26,7 +26,7 @@ namespace E_Doctor.Patient.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var pageTitle = "Diagnosis";
+            var pageTitle = "Consultation History";
             ViewBag.PageTitle = pageTitle;
 
             await _userManagerService.UpdateUserLoginDate();

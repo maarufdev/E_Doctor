@@ -40,11 +40,19 @@ internal class DiagnosisService : IDiagnosisService
                     d => d.UserId, 
                     u => u.Id, 
                     (Diagnosis, User) => new { User, Diagnosis })
-                .Join(
+                .GroupJoin(
                     _appDbContext.PatientInformations,
                     du => du.User.Id,
                     p => p.UserId,
-                    (du, p) => new { du.User, du.Diagnosis, PatientInformation = p })
+                    (du, p) => new { du, PatientInformation = p })
+                .SelectMany(
+                    x => x.PatientInformation.DefaultIfEmpty(),
+                    (x, p) => new
+                    {
+                        x.du.User,
+                        x.du.Diagnosis,
+                        PatientInformation = p
+                    })
                 .Where(x => x.User.IsActive && x.Diagnosis.IsActive);
 
             var isAdmin = await _userManager.IsUserAdmin();
@@ -57,8 +65,22 @@ internal class DiagnosisService : IDiagnosisService
                     query = query.Where(u => u.User.Id == currentUserId);
                 }
             }
-                
-            query = query.OrderByDescending(d => d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn);
+            else
+            {
+                if (!string.IsNullOrEmpty(requestParams.SearchText))
+                {
+                    var searchText = requestParams.SearchText.ToLower();
+
+                    query = query.Where(u =>
+                        u.User.UserName.ToLower().Contains(searchText) ||
+                        u.User.FirstName.ToLower().Contains(searchText) ||
+                        u.User.LastName.ToLower().Contains(searchText) ||
+                        u.User.MiddleName.ToLower().Contains(searchText)
+                    );
+                }
+            }
+
+                query = query.OrderByDescending(d => d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn);
             var totalCount = await query.CountAsync();
             var response = new List<DiagnosisListResponse>();
 
@@ -73,7 +95,7 @@ internal class DiagnosisService : IDiagnosisService
                     IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
                     UserId = d.User.IsActive,
                     FullName = $"{d.User.FirstName} {d.User.LastName}",
-                    PatientInfoId = d.PatientInformation.Id
+                    PatientInfoId = d.PatientInformation != null ? d.PatientInformation.Id : 0
 
                 })
                 .ToListAsync();
