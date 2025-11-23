@@ -20,7 +20,6 @@
 .register-form-content {
     background-color: var(--surface-color);
     border-radius: 0.5rem;
-    /* box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -33,14 +32,12 @@
 
 .registration-form__group {
     border-radius: 0.5rem;
-    /* box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); */ */ padding: 2rem 2rem 2.5rem;
     width: 100%;
     height: fit-content;
     padding: 1rem;
 }
 
 .registration-form__group-header {
-    /* margin-bottom: 1.5rem; */
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -50,7 +47,7 @@
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem !important;
 }
 
@@ -77,6 +74,7 @@
 .form-group-field input,
 .form-group-field select {
     margin-top: 5px;
+    width: fit-content !important;
 }
 
 .form-group-field .form-input,

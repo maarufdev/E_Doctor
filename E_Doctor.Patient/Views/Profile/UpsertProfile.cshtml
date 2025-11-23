@@ -5,7 +5,6 @@
     {
         new SelectListItem { Value = "Single", Text = "Single" , Selected = true },
         new SelectListItem { Value = "Married", Text = "Married" },
-        new SelectListItem { Value = "Divorced", Text = "Divorced" },
         new SelectListItem { Value = "Other", Text = "Other" },
     };
 
@@ -382,4 +381,45 @@
         </div>
     </div>
 }
-<script src="~/features/patient/profile/js/profile.js" asp-append-version="true"></script>
+
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+        $("#closeAlertModal").off("click").on("click", function () {
+            $("#registrationAlert").removeClass("visible");
+        });
+
+
+        const famHistFields = [...$(`[name^="FamilyHistory."]:not(#fh-None)`)];
+        const isDefaultChecked = $("#fh-None").prop("checked");
+
+        famHistFields.forEach(item => {
+            if(!isDefaultChecked){
+                $(item).removeAttr("disabled");
+            } else {
+                $(item).attr("disabled", true);
+            }
+        });
+
+
+        $("#fh-None").off("change").on("change", function (e) {
+            const $this = $(this);
+            const isChecked = $this.prop("checked");
+
+            famHistFields.forEach(item => {
+                $(item).prop("disabled", isChecked);
+
+                if (isChecked) {
+                    $(item).prop("checked", false);
+                }
+
+                if ($(item).attr("type") == "text") {
+                    $(item).val("");
+                }
+            });
+
+            console.log(isChecked);
+        })
+    });
+
+</script>
+@* <script src="~/features/patient/profile/js/profile.js" asp-append-version="true"></script> *@

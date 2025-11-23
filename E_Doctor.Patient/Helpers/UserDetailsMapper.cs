@@ -52,6 +52,7 @@ namespace E_Doctor.Patient.Helpers
                 {
                     PTB = famHistory.PTB,
                     Hypertension = famHistory.Hypertension,
+                    Cardiac = famHistory.Cardiac,
                     None = famHistory.None,
                     Diabetes = famHistory.Diabetes,
                     Asthma = famHistory.Asthma,

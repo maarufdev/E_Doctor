@@ -8,12 +8,12 @@
 
     $("#fh-None").off("change").on("change", function (e) {
         const $this = $(this);
-        const isNoneChecked = $this.prop("checked");
+        const isChecked = $this.prop("checked");
 
         famHistFields.forEach(item => {
-            $(item).prop("disabled", isNoneChecked);
+            $(item).prop("disabled", isChecked);
 
-            if (isNoneChecked) {
+            if (isChecked) {
                 $(item).prop("checked", false);
             }
 

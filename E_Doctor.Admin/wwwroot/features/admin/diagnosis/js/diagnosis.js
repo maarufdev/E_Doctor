@@ -121,7 +121,7 @@
                                     <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 </button>
                                 ${createUserInfoButton(userInfoId) }
-                                <button class="btn btn-warning btn-print-receipt" style="padding: 0.5rem;" title="Print Reciept">
+                                <button class="btn btn-warning btn-print-receipt" style="padding: 0.5rem;" title="Print Receipt">
                                     <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0 0h10M5 11h14M5 17a2 2 0 01-2-2v-2a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 01-2 2M5 17v4h14v-4"></path></svg>
                                 </button>
                                 <button class="btn btn-primary btn-view-diagnosis" style="padding: 0.5rem;" title="View Consultation Pre-Result">

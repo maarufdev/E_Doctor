@@ -556,7 +556,7 @@ a {
     opacity: 0;
     cursor: pointer;
     /* Important for accessibility: ensure it's still tabbable */
-    width: 24px; /* set size, just hidden */
+    width: 24px; 
     height: 24px;
     /*    width: 0;
     height: 0;*/
@@ -606,17 +606,17 @@ a {
 /* --- 4. THE MAGIC: TARGETING THE ADJACENT LABEL WHEN INPUT IS CHECKED --- */
 
 /* Change background and border color */
-.custom-checkbox-input:checked + .custom-checkbox-label::before {
+.custom-checkbox-input:checked ~ .custom-checkbox-label::before {
     background-color: var(--primary-color); /* Emerald 600 */
     border-color: var(--primary-color);
 }
 
 /* Show the checkmark */
-.custom-checkbox-input:checked + .custom-checkbox-label::after {
+.custom-checkbox-input:checked ~ .custom-checkbox-label::after {
     opacity: 1;
 }
 
 /* Accessibility Focus State */
-.custom-checkbox-input:focus-visible + .custom-checkbox-label::before {
+.custom-checkbox-input:focus-visible ~ .custom-checkbox-label::before {
     box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.4);
 }

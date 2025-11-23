@@ -673,8 +673,8 @@ internal class UserManagerService : IUserManagerService
                 .Include(p => p.PatientFamilyHistory)
                 .Include(p => p.PatientPersonalHistory)
                 .AsNoTracking()
-                .Where(p => p.UserId == userId)
-                .FirstOrDefaultAsync(p => p.IsActive);
+                .Where(p => p.UserId == userId && p.IsActive)
+                .FirstOrDefaultAsync();
 
             if (patientInfo is null)
             {
@@ -812,6 +812,7 @@ internal class UserManagerService : IUserManagerService
                     patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
                     patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
                     patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;
+                    patientInfo.PatientPastMedicalRecord.Cancer = pastMedRec.Cancer;
                     patientInfo.PatientPastMedicalRecord.OtherIllnesses = pastMedRec.OtherIllnesses ?? string.Empty;
                     patientInfo.PatientPastMedicalRecord.MaintenanceMeds = pastMedRec.MaintenanceMeds;
                     patientInfo.PatientPastMedicalRecord.OBGyneHistory = pastMedRec.OBGyneHistory;
@@ -824,7 +825,7 @@ internal class UserManagerService : IUserManagerService
 
                     patientInfo.PatientFamilyHistory.PTB = famHistory.PTB;
                     patientInfo.PatientFamilyHistory.Hypertension = famHistory.Hypertension;
-                    patientInfo.PatientFamilyHistory.Cancer = famHistory.Cardiac;
+                    patientInfo.PatientFamilyHistory.Cardiac = famHistory.Cardiac;
                     patientInfo.PatientFamilyHistory.None = famHistory.None;
                     patientInfo.PatientFamilyHistory.Diabetes = famHistory.Diabetes;
                     patientInfo.PatientFamilyHistory.Asthma = famHistory.Asthma;
@@ -859,6 +860,7 @@ internal class UserManagerService : IUserManagerService
                 patientInfo.Occupation = request.Occupation;
                 patientInfo.Nationality = request.Nationality;
                 patientInfo.UpdatedOn = DateTime.UtcNow;
+                patientInfo.IsActive = true;
 
                 var pastMedRec = request.PatientPastMedicalRecord;
                 patientInfo.PatientPastMedicalRecord = new();
@@ -872,6 +874,7 @@ internal class UserManagerService : IUserManagerService
                 patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
                 patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
                 patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;
+                patientInfo.PatientPastMedicalRecord.Cancer = pastMedRec.Cancer;
                 patientInfo.PatientPastMedicalRecord.OtherIllnesses = pastMedRec.OtherIllnesses ?? string.Empty;
                 patientInfo.PatientPastMedicalRecord.MaintenanceMeds = pastMedRec.MaintenanceMeds;
                 patientInfo.PatientPastMedicalRecord.OBGyneHistory = pastMedRec.OBGyneHistory;
@@ -884,7 +887,7 @@ internal class UserManagerService : IUserManagerService
                 patientInfo.PatientFamilyHistory.PatientInfoId = patientInfo.Id;
                 patientInfo.PatientFamilyHistory.PTB = famHistory.PTB;
                 patientInfo.PatientFamilyHistory.Hypertension = famHistory.Hypertension;
-                patientInfo.PatientFamilyHistory.Cancer = famHistory.Cardiac;
+                patientInfo.PatientFamilyHistory.Cardiac = famHistory.Cardiac;
                 patientInfo.PatientFamilyHistory.None = famHistory.None;
                 patientInfo.PatientFamilyHistory.Diabetes = famHistory.Diabetes;
                 patientInfo.PatientFamilyHistory.Asthma = famHistory.Asthma;

@@ -3,7 +3,6 @@ using E_Doctor.Patient.Helpers;
 using E_Doctor.Patient.ViewModels.PatientVM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace E_Doctor.Patient.Controllers
 {

@@ -5,7 +5,6 @@
     {
         new SelectListItem { Value = "Single", Text = "Single" , Selected = true },
         new SelectListItem { Value = "Married", Text = "Married" },
-        new SelectListItem { Value = "Divorced", Text = "Divorced" },
         new SelectListItem { Value = "Other", Text = "Other" },
     };
 
@@ -35,34 +34,34 @@
 
         <div class="registration-form__group-field-container mt-2 form-grid">
             <div class="form-group-field">
-                <label asp-for="LastName">Last Name (*)</label>
+                <label asp-for="LastName">Last Name:</label>
                 <input asp-for="LastName" class="form-input" />
             </div>
 
             <div class="form-group-field">
-                <label asp-for="FirstName">First Name (*)</label>
+                <label asp-for="FirstName">First Name:</label>
                 <input asp-for="FirstName" class="form-input" />
             </div>
 
             <div class="form-group-field">
-                <label asp-for="MiddleName">Middle Name (*)</label>
+                <label asp-for="MiddleName">Middle Name:</label>
                 <input asp-for="MiddleName" class="form-input" />
             </div>
         </div>
 
         <div class="registration-form__group-field-container mt-2 form-grid">
             <div class="form-group-field">
-                <label asp-for="Religion">Religion (*)</label>
+                <label asp-for="Religion">Religion:</label>
                 <input asp-for="Religion" class="form-input" />
             </div>
 
             <div class="form-group-field">
-                <label asp-for="DateOfBirth">Date Of Birth (*)</label>
+                <label asp-for="DateOfBirth">Date Of Birth:</label>
                 <input type="date" asp-for="DateOfBirth" class="form-input" />
             </div>
 
             <div class="form-group-field">
-                <label asp-for="CivilStatus">Civil Status (*)</label>
+                <label asp-for="CivilStatus">Civil Status:</label>
                 <select asp-for="CivilStatus" asp-items="civilStatOptions" class="form-select">
                 </select>
             </div>
@@ -70,7 +69,7 @@
 
         <div class="registration-form__group-field-container mt-2 form-grid">
             <div class="form-group-field">
-                <label asp-for="Gender">Sex (*)</label>
+                <label asp-for="Gender">Sex:</label>
                 <select asp-for="Gender" asp-items="genderOptions" class="form-select">
                 </select>
             </div>
@@ -80,13 +79,13 @@
                 <input asp-for="Occupation" class="form-input" />
             </div>
             <div class="form-group-field">
-                <label asp-for="Nationality">Nationality (*)</label>
+                <label asp-for="Nationality">Nationality:</label>
                 <input asp-for="Nationality" class="form-input" />
             </div>
         </div>
         <div class="registration-form__group-field-container mt-2 form-grid">
             <div class="form-group-field">
-                <label asp-for="Address">Address (*)</label>
+                <label asp-for="Address">Address:</label>
                 <input asp-for="Address" class="form-input" />
             </div>
         </div>
@@ -103,7 +102,7 @@
                            id="past-PrevHospitalization"
                            class="custom-checkbox-input form-checkbox"
                            asp-for="PatientPastMedicalRecord.PreviousHospitalization" />
-                    <label for="past-PrevHospitalization" class="custom-checkbox-label">Previous Hospitalization?</label>
+                    <label for="past-PrevHospitalization" class="custom-checkbox-label">Previous Hospitalization</label>
                 </div>
             </div>
 
@@ -113,7 +112,7 @@
                            id="past-Surgery"
                            class="custom-checkbox-input form-checkbox"
                            asp-for="PatientPastMedicalRecord.PastSurgery" />
-                    <label for="past-Surgery" class="custom-checkbox-label">Past Surgery?</label>
+                    <label for="past-Surgery" class="custom-checkbox-label">Past Surgery</label>
                 </div>
             </div>
 
@@ -210,7 +209,7 @@
 
         <div class="registration-form__group-field-container mt-4">
             <div class="registration-form__sub-group-field-container flex flex-column gap-2">
-                <div class="flex items-center">
+                <div class="flex items-center gap-3">
                     <span>Family History:</span>
                     <div class="custom-checkbox">
                         <input type="checkbox"
@@ -298,7 +297,7 @@
                                    id="ph-AlchoholBeverageDrinker"
                                    class="custom-checkbox-input form-checkbox"
                                    asp-for="PatientPersonalHistory.AlchoholBeverageDrinker" />
-                            <label for="ph-AlchoholBeverageDrinker" class="custom-checkbox-label">AlchoholBeverageDrinker</label>
+                            <label for="ph-AlchoholBeverageDrinker" class="custom-checkbox-label">Alchohol Beverage Drinker</label>
                         </div>
                     </div>
 
@@ -308,7 +307,7 @@
                                    id="ph-IllicitDrugUser"
                                    class="custom-checkbox-input form-checkbox"
                                    asp-for="PatientPersonalHistory.IllicitDrugUser" />
-                            <label for="ph-IllicitDrugUser" class="custom-checkbox-label">IllicitDrugUser</label>
+                            <label for="ph-IllicitDrugUser" class="custom-checkbox-label">Illicit Drug User</label>
                         </div>
                     </div>
 
