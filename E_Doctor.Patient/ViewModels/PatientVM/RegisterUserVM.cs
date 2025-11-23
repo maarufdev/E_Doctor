@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace E_Doctor.Patient.ViewModels.RegisterPatientVM;
+namespace E_Doctor.Patient.ViewModels.PatientVM;
 public class RegisterUserVM
 {
     [Required(ErrorMessage = "Last Name Is Required")]

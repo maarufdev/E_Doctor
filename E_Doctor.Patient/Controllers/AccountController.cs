@@ -1,7 +1,7 @@
 ﻿using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Patient.Helpers;
-using E_Doctor.Patient.ViewModels.RegisterPatientVM;
+using E_Doctor.Patient.ViewModels.PatientVM;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Doctor.Patient.Controllers
@@ -58,12 +58,13 @@ namespace E_Doctor.Patient.Controllers
 
             if (result.IsFailure)
             {
-                return RedirectToAction("Register", registerVM);
-                //return BadRequest(result.Error);
+                ViewData["Error"] = result.Error;
+                return View("Register", registerVM);
             }
-
+            
+            ViewData["Error"] = null;
+            ViewData["MissingFields"] = null;
             return RedirectToAction("Login");
-            //return Ok(result.IsSuccess);
         }
 
         public async Task<IActionResult> Logout()

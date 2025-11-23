@@ -1,16 +1,16 @@
 ﻿namespace E_Doctor.Application.DTOs.Common.UserAccountDTOs;
 public sealed record PatientPastMedicalRecordDTO
 {
-    public string? PreviousHospitalization { get; init; }
-    public string? PastSurgery { get; init; }
-    public string? Diabetes { get; init; }
-    public string? Hypertension { get; init; }
-    public string? AllergyToMeds { get; init; }
-    public string? HeartProblem { get; init; }
-    public string? Asthma { get; init; }
-    public string? FoodAllergies { get; init; }
-    public string? Cancer { get; init; }
-    public string? OtherIllnesses { get; init; }
-    public string? MaintenanceMeds { get; init; }
-    public string? OBGyneHistory { get; init; }
+    public bool PreviousHospitalization { get; init; }
+    public bool PastSurgery { get; init; }
+    public bool Diabetes { get; init; }
+    public bool Hypertension { get; init; }
+    public bool AllergyToMeds { get; init; }
+    public bool HeartProblem { get; init; }
+    public bool Asthma { get; init; }
+    public bool FoodAllergies { get; init; }
+    public bool Cancer { get; init; }
+    public string? OtherIllnesses { get; init; } = string.Empty;
+    public string? MaintenanceMeds { get; init; } = string.Empty;
+    public string? OBGyneHistory { get; init; } = string.Empty;
 }

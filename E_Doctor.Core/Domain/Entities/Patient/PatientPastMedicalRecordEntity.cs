@@ -3,16 +3,16 @@ public class PatientPastMedicalRecordEntity : BaseEntity
 {
     public int PatientInfoId { get; set; }
     public PatientInformationEntity? PatientInformation { get; set; }
-    public string? PreviousHospitalization { get; set; } = string.Empty;
-    public string? PastSurgery { get; set; } = string.Empty;
-    public string? Diabetes { get; set; } = string.Empty;
-    public string? Hypertension { get; set; } = string.Empty;
-    public string? AllergyToMeds { get; set; } = string.Empty;
-    public string? HeartProblem { get; set; } = string.Empty;
-    public string? Asthma { get; set; } = string.Empty;
-    public string? FoodAllergies { get; set; } = string.Empty;
-    public string? Cancer { get; set; } = string.Empty;
-    public string? OtherIllnesses { get; set; } = string.Empty;
+    public bool PreviousHospitalization { get; set; }
+    public bool PastSurgery { get; set; }
+    public bool Diabetes { get; set; }
+    public bool Hypertension { get; set; }
+    public bool AllergyToMeds { get; set; }
+    public bool HeartProblem { get; set; }
+    public bool Asthma { get; set; }
+    public bool FoodAllergies { get; set; }
+    public bool Cancer { get; set; }
+    public string OtherIllnesses { get; set; } = string.Empty;
     public string? MaintenanceMeds { get; set; } = string.Empty;
     public string? OBGyneHistory { get; set; } = string.Empty;
 }

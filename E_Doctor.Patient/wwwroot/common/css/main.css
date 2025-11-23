@@ -544,6 +544,7 @@ a {
     display: inline-flex;
     align-items: center;
     padding: .5rem 1rem;
+    position: relative;
 }
 
 /* 1. HIDE THE NATIVE INPUT */
@@ -557,8 +558,11 @@ a {
     /* Important for accessibility: ensure it's still tabbable */
     width: 24px; /* set size, just hidden */
     height: 24px;
-/*    width: 0;
+    /*    width: 0;
     height: 0;*/
+    outline: none;
+    scroll-margin: 0 !important;
+    z-index: 2; /* make it clickable */
 }
 
 .custom-checkbox-label {

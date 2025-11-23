@@ -1,4 +1,4 @@
-﻿namespace E_Doctor.Patient.ViewModels.RegisterPatientVM
+﻿namespace E_Doctor.Patient.ViewModels.PatientVM
 {
     public class PersonalHistoryVM
     {

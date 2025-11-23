@@ -1,4 +1,4 @@
-﻿@model E_Doctor.Patient.ViewModels.PatientVM.RegisterUserVM;
+﻿@model E_Doctor.Patient.ViewModels.PatientVM.UpsertProfileVM;
 
 @{
     var civilStatOptions = new List<SelectListItem>
@@ -27,16 +27,22 @@
 
 <link rel="stylesheet" href="~/features/user/css/registration.css" asp-append-version="true" />
 
-<div class="register-form-container">
-    <div class="register-form-container__header">
-        <h1 class="register-form-title">Patient Registration Form</h1>
-        <p class="text-lg mt-2 register-form-subtitle">Please complete all required fields (*).</p>
+<style>
+    body {
+        overflow-y: hidden;
+    }
+</style>
+
+<div class="page-content">
+    <div class="flex justify-between  mb-4">
+        <h2 class="text-2xl font-semibold">Edit Profile</h2>
+        <a class="btn btn-primary" asp-action="Index">Back To Profile</a>
     </div>
     <form id="register-form"
           autocomplete="off"
           class="register-form"
-          asp-controller="Account"
-          asp-action="RegisterUser"
+          asp-controller="Profile"
+          asp-action="UpsertProfile"
           method="POST">
 
         <div class="register-form-content">
@@ -233,7 +239,7 @@
                                 <label for="fh-None" class="custom-checkbox-label">None</label>
                             </div>
                         </div>
-                        
+
                         <div class="sub-form-group-field form-grid form-grid-4 w-full family-history-fields-section">
 
                             <div class="custom-checkbox">
@@ -294,9 +300,7 @@
                 <div class="registration-form__group-field-container mt-4">
                     <div class="registration-form__sub-group-field-container flex flex-column gap-2">
                         <span>Personal History:</span>
-
                         <div class="sub-form-group-field form-grid form-grid-4 w-full">
-
                             <div class="form-group-field">
                                 <div class="custom-checkbox">
                                     <input type="checkbox"
@@ -335,29 +339,10 @@
                     </div>
                 </div>
             </div>
-
-            <div class="registration-form__group">
-                <div class="registration-form__group-header">
-                    <h3>Patient Account</h3>
-                </div>
-
-                <div class="registration-form__group-field-container mt-2 form-grid">
-                    <div class="form-group-field">
-                        <label asp-for="Username">Username (Email) (*)</label>
-                        <input asp-for="Username" type="email" class="form-input" />
-                    </div>
-
-                    <div class="form-group-field">
-                        <label asp-for="Password">Password (*)</label>
-                        <input asp-for="Password" type="password" class="form-input" />
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="form-group-buttons">
-            <button type="submit" class="btn btn-primary form-btn-register">Register Patient</button>
-            <p class="auth-link">Already have an account? <a asp-controller="Account" asp-action="Login">Login</a></p>
+            <button class="btn btn-primary form-btn-register" >Save Changes</button>
         </div>
     </form>
 </div>
@@ -397,5 +382,4 @@
         </div>
     </div>
 }
-
-<script src="~/features/user/js/register.js" asp-append-version="true"></script>
+<script src="~/features/patient/profile/js/profile.js" asp-append-version="true"></script>

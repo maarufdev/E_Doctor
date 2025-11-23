@@ -4,13 +4,11 @@ using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
 using E_Doctor.Application.Interfaces.Features.Common;
 using E_Doctor.Application.Interfaces.Features.Diagnosis;
-using E_Doctor.Application.Interfaces.Features.UserActivity;
 using E_Doctor.Core.Constants.Enums;
 using E_Doctor.Core.Domain.Entities.Admin;
 using E_Doctor.Core.Domain.Entities.Patient.PhysicalExam;
 using E_Doctor.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace E_Doctor.Infrastructure.Services.Features.Diagnosis;
 
@@ -37,7 +35,16 @@ internal class DiagnosisService : IDiagnosisService
                 .AsNoTracking()
                 .Include(d => d.DiagnosIllnesses)
                 .Include(d => d.DiagnosSymptoms)
-                .Join(_appDbContext.Users, d => d.UserId, u => u.Id, (Diagnosis, User) => new { User, Diagnosis })
+                .Join(
+                    _appDbContext.Users, 
+                    d => d.UserId, 
+                    u => u.Id, 
+                    (Diagnosis, User) => new { User, Diagnosis })
+                .Join(
+                    _appDbContext.PatientInformations,
+                    du => du.User.Id,
+                    p => p.UserId,
+                    (du, p) => new { du.User, du.Diagnosis, PatientInformation = p })
                 .Where(x => x.User.IsActive && x.Diagnosis.IsActive);
 
             var isAdmin = await _userManager.IsUserAdmin();
@@ -65,17 +72,14 @@ internal class DiagnosisService : IDiagnosisService
                     Symptoms = string.Join(", ", d.Diagnosis.DiagnosSymptoms.Select(s => $"{s.SymptomName}").ToList()),
                     IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
                     UserId = d.User.IsActive,
-                    FullName = $"{d.User.FirstName} {d.User.LastName}"
+                    FullName = $"{d.User.FirstName} {d.User.LastName}",
+                    PatientInfoId = d.PatientInformation.Id
+
                 })
                 .ToListAsync();
 
             var diagnosisIds = diagnosisResult.Select(x => x.Id).ToList();
-            //var diagnosisPhysicalExamIds = await _appDbContext.PhysicalExams
-            //    .AsNoTracking()
-            //    .Where(p => diagnosisIds.Contains(p.DiagnosisId))
-            //    .Select(p => new { p.DiagnosisId, PhysicalExamId = p.Id })
-            //    .ToListAsync();
-
+            
             List<DiagnosisListResponse> diagnosisListResponse = new();
 
             foreach(var item in diagnosisResult)
@@ -93,7 +97,8 @@ internal class DiagnosisService : IDiagnosisService
                     item.Symptoms,
                     item.IllnessName,
                     string.Empty,
-                    examId
+                    examId,
+                    item.PatientInfoId
                     ));
             }
 

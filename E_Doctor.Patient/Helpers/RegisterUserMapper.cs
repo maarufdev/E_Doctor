@@ -1,5 +1,5 @@
 ﻿using E_Doctor.Application.DTOs.Common.UserAccountDTOs;
-using E_Doctor.Patient.ViewModels.RegisterPatientVM;
+using E_Doctor.Patient.ViewModels.PatientVM;
 
 namespace E_Doctor.Patient.Helpers
 {
@@ -7,9 +7,9 @@ namespace E_Doctor.Patient.Helpers
     {
         public static RegisterPatientDTO ToDto(this RegisterUserVM vm)
         {
-            var registerDTO = new RegisterPatientDTO();
+            var dto = new RegisterPatientDTO();
 
-            registerDTO = registerDTO with
+            dto = dto with
             {
                 FirstName = vm.FirstName,
                 LastName = vm.LastName,
@@ -44,7 +44,7 @@ namespace E_Doctor.Patient.Helpers
                     OBGyneHistory = medRecord.OBGyneHistory,
                 };
 
-                registerDTO = registerDTO with
+                dto = dto with
                 {
                     PatientPastMedicalRecord = patientPastMedRecord,
                 };
@@ -65,7 +65,7 @@ namespace E_Doctor.Patient.Helpers
                     Others = famHistory.Others,
                 };
 
-                registerDTO = registerDTO with
+                dto = dto with
                 {
                     PatientFamilyHistory = patientFamilyHistoryDTO,
                 };
@@ -82,13 +82,13 @@ namespace E_Doctor.Patient.Helpers
                     Others = pHistory.Others,
                 };
 
-                registerDTO = registerDTO with
+                dto = dto with
                 {
                     PatientPersonalHistory = pHistoryDTO,
                 };
             }
 
-            return registerDTO;
+            return dto;
         }
 
         public static string GetMissingFields(this RegisterUserVM vm)

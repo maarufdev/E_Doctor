@@ -7,4 +7,5 @@ public sealed record DiagnosisListResponse(
     string Symptoms,
     string IllnessName,
     string Prescription,
-    int? PhysicalExamId);
+    int? PhysicalExamId,
+    int UsernfoId);

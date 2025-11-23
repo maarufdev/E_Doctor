@@ -2,7 +2,10 @@
 @model UserProfileDTO;
 
 <div id="profile" class="page-content">
-    <h2 class="text-2xl font-semibold mb-4">User Profile</h2>
+    <div class="flex justify-between align-center mb-2" style="margin-bottom: 20px;">
+        <h2 class="text-2xl font-semibold mb-4">User Profile</h2>
+        <a class="btn btn-primary" asp-action="UpsertProfile">Edit Profile</a>
+    </div>
     <div id="profile-card" class="card">
         <div class="flex items-center" style="gap: 1.5rem;">
             <div class="user-avatar" style="width: 6rem; height: 6rem; font-size: 2.25rem;">
@@ -20,4 +23,27 @@
             </dl>
         </div>
     </div>
+  @*   <div class="card mt-4" >
+        <h4 class="text-center">Profile Details</h4>
+        <div class="">
+
+        </div>
+    </div> *@
 </div>
+@* 
+
+<div id="editProfileModal" class="modal-backdrop visible">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="consultation-modal-title" class="text-xl font-semibold">Edit Profile</h3>
+            <button id="closeAlertModal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="flex">
+                <div class="">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@

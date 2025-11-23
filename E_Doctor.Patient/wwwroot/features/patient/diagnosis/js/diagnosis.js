@@ -130,9 +130,6 @@
                             <td>${item.illnessName}</td>
                             <td>
                                 ${item.physicalExamId > 0 ? createPhysicalExamBtn() : ""}
-                                <button class="btn btn-warning btn-print-receipt" style="padding: 0.5rem;" title="Print Reciept">
-                                    <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0 0h10M5 11h14M5 17a2 2 0 01-2-2v-2a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 01-2 2M5 17v4h14v-4"></path></svg>
-                                </button>
                                 <button class="btn btn-primary btn-view-diagnosis" style="padding: 0.5rem;" title="View Consultation Pre-Result">
                                     <svg style="width:1rem; height:1rem;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 </button>
@@ -192,84 +189,84 @@
                     );
 
                     // Print Receipt
-                    registerEvent(
-                        $tr.find(".btn-print-receipt"),
-                        "click",
-                        async function (event) {
-                            // Assume jsPDF is loaded globally
-                            const { jsPDF } = window.jspdf;
+                    //registerEvent(
+                    //    $tr.find(".btn-print-receipt"),
+                    //    "click",
+                    //    async function (event) {
+                    //        // Assume jsPDF is loaded globally
+                    //        const { jsPDF } = window.jspdf;
 
-                            // --- CONFIGURATION ---
-                            const imagePath = "/print_receipt.png";
-                            const pdfFilename = "Print Receipt.pdf";
-                            // ---------------------
+                    //        // --- CONFIGURATION ---
+                    //        const imagePath = "/print_receipt.png";
+                    //        const pdfFilename = "Print Receipt.pdf";
+                    //        // ---------------------
 
-                            /**
-                             * Creates the jsPDF document and adds the loaded Image object, filling the entire page.
-                             * * @param {HTMLImageElement} img - The fully loaded Image object.
-                             * @param {string} filename - The desired name for the PDF file.
-                             */
-                            function createPDF(img, filename) {
-                                // Initialize jsPDF document (Portrait, millimeters, A4 size is default)
-                                const doc = new jsPDF({
-                                    orientation: 'portrait',
-                                    unit: 'mm',
-                                    format: 'a4'
-                                });
+                    //        /**
+                    //         * Creates the jsPDF document and adds the loaded Image object, filling the entire page.
+                    //         * * @param {HTMLImageElement} img - The fully loaded Image object.
+                    //         * @param {string} filename - The desired name for the PDF file.
+                    //         */
+                    //        function createPDF(img, filename) {
+                    //            // Initialize jsPDF document (Portrait, millimeters, A4 size is default)
+                    //            const doc = new jsPDF({
+                    //                orientation: 'portrait',
+                    //                unit: 'mm',
+                    //                format: 'a4'
+                    //            });
 
-                                if (!(img instanceof HTMLImageElement)) {
-                                    console.error("PDF creation failed: Image object is invalid or not fully loaded.");
-                                    return;
-                                }
+                    //            if (!(img instanceof HTMLImageElement)) {
+                    //                console.error("PDF creation failed: Image object is invalid or not fully loaded.");
+                    //                return;
+                    //            }
 
-                                // --- KEY CHANGE: FORCING IMAGE TO FILL PAGE ---
-                                const pageHeight = doc.internal.pageSize.getHeight();
-                                const pageWidth = doc.internal.pageSize.getWidth();
+                    //            // --- KEY CHANGE: FORCING IMAGE TO FILL PAGE ---
+                    //            const pageHeight = doc.internal.pageSize.getHeight();
+                    //            const pageWidth = doc.internal.pageSize.getWidth();
 
-                                // The image's new dimensions are set directly to the page's dimensions.
-                                // This will stretch or squash the image to fit the entire page.
-                                const newWidth = pageWidth;
-                                const newHeight = pageHeight;
+                    //            // The image's new dimensions are set directly to the page's dimensions.
+                    //            // This will stretch or squash the image to fit the entire page.
+                    //            const newWidth = pageWidth;
+                    //            const newHeight = pageHeight;
 
-                                // Since the image fills the page, it starts at the top-left corner (0, 0).
-                                const x = 0;
-                                const y = 0;
-                                // --- END KEY CHANGE ---
+                    //            // Since the image fills the page, it starts at the top-left corner (0, 0).
+                    //            const x = 0;
+                    //            const y = 0;
+                    //            // --- END KEY CHANGE ---
 
-                                // Add the image to the PDF
-                                // The image is added with no margin and fills the page completely.
-                                doc.addImage(img, 'PNG', x, y, newWidth, newHeight);
+                    //            // Add the image to the PDF
+                    //            // The image is added with no margin and fills the page completely.
+                    //            doc.addImage(img, 'PNG', x, y, newWidth, newHeight);
 
-                                // Save the PDF and trigger the client-side download
-                                doc.save(filename);
-                                console.log(`PDF successfully generated and saved as: ${filename}`);
-                            }
+                    //            // Save the PDF and trigger the client-side download
+                    //            doc.save(filename);
+                    //            console.log(`PDF successfully generated and saved as: ${filename}`);
+                    //        }
 
 
-                            /**
-                             * Function to start the PDF generation process from a hosted image path.
-                             * Loads the image asynchronously, and calls createPDF upon success.
-                             */
-                            function generatePDFFromHostedImage(imagePath, pdfFilename) {
-                                const img = new Image();
-                                img.crossOrigin = '';
+                    //        /**
+                    //         * Function to start the PDF generation process from a hosted image path.
+                    //         * Loads the image asynchronously, and calls createPDF upon success.
+                    //         */
+                    //        function generatePDFFromHostedImage(imagePath, pdfFilename) {
+                    //            const img = new Image();
+                    //            img.crossOrigin = '';
 
-                                img.onload = function () {
-                                    createPDF(img, pdfFilename);
-                                };
+                    //            img.onload = function () {
+                    //                createPDF(img, pdfFilename);
+                    //            };
 
-                                img.onerror = function () {
-                                    console.error(`ERROR: Failed to load image from: ${imagePath}. Check the path.`);
-                                };
+                    //            img.onerror = function () {
+                    //                console.error(`ERROR: Failed to load image from: ${imagePath}. Check the path.`);
+                    //            };
 
-                                img.src = imagePath;
-                            }
+                    //            img.src = imagePath;
+                    //        }
 
-                            // --- EXECUTION ---
-                            // Call the main function that handles image loading and then PDF creation
-                            generatePDFFromHostedImage(imagePath, pdfFilename);
-                        }
-                    );
+                    //        // --- EXECUTION ---
+                    //        // Call the main function that handles image loading and then PDF creation
+                    //        generatePDFFromHostedImage(imagePath, pdfFilename);
+                    //    }
+                    //);
                     $diagnosisTblBody.append($tr);
                 });
 

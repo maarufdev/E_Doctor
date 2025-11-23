@@ -3,7 +3,6 @@
         $("#registrationAlert").removeClass("visible");
     });
 
-
     const famHistFields = [...$(`[name^="FamilyHistory."]:not(#fh-None)`)];
 
     $("#fh-None").off("change").on("change", function (e) {
@@ -22,6 +21,12 @@
             }
         });
     })
+
+    $("#saveChangesButton").off("click").on("click", function () {
+        // Manually trigger the form submission when the button is clicked
+        // This will post the form data to the server as defined by asp-action.
+        $("#register-form").submit();
+    });
 
     famHistFields.forEach(item => $(item).prop("disabled", true));
 });
