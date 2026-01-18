@@ -3,7 +3,6 @@
 <div class="flex justify-between flex-column gap-2 mb-4">
     <div class="flex justify-end gap-2">
         <button id="new-consultation-btn" class="btn btn-secondary">New Consultation</button>
-        @* <button id="import-rules-btn" class="btn btn-secondary">Import Rules</button> *@
     </div>
 </div>
 <div class="card">
@@ -12,7 +11,7 @@
             <tr>
                 <th>Date</th>
                 <th>Symptoms</th>
-                <th>Pre-Result</th>
+                <th>Result</th>
                 <th>Action</th>
                 <th>P.E Report Status</th>
             </tr>
@@ -31,12 +30,22 @@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
         <div class="modal-header">
-            <h3 class="text-xl font-semibold">Pre-Result</h3>
+            <h3 class="text-xl font-semibold">Consultation Result</h3>
             <button id="close-diagnosis-result-modal" class="modal-close-btn">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="diagnosis-content-card flex justify-center items-center">
-                <h2 id="diagnosis-result" class="font-medium text-center"></h2>
+            <div class="diagnosis-content-card">
+                <div class="diagnosis-illnes-section">
+                    <h1 id="diagnosis-result">Cold</h1>
+                </div>
+                <div class="patient-symptoms-section">
+                    <span class="symptoms-section-label">PATIENT SYMPTOMS</span>
+                    <ul class="patient-symptoms-list">
+                        <li class="patient-symptom-tag">Fever</li>
+                        <li class="patient-symptom-tag">Cough</li>
+                        <li class="patient-symptom-tag">He he</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

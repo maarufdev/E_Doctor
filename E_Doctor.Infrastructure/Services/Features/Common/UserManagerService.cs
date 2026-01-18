@@ -636,6 +636,7 @@ internal class UserManagerService : IUserManagerService
                 userAccountToUpdate.LastName = saveManageUserRequest.LastName;
                 userAccountToUpdate.Status = saveManageUserRequest.UserStatusId;
                 userAccountToUpdate.DateOfBirth = saveManageUserRequest.DateOfBirth;
+                userAccountToUpdate.LastLogInDate = DateTime.UtcNow;
 
                 identityResult = await _userManager.UpdateAsync(userAccountToUpdate);
 

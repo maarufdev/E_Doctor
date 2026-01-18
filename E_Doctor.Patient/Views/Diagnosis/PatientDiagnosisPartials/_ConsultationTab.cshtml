@@ -32,32 +32,77 @@
 <div id="symptoms-modal" class="modal-backdrop">
     <div class="modal-content modal-symptom-content">
         <div class="modal-header">
-            <h3 class="text-sm" id="symptoms-modal-title"></h3>
+            <h3 class="text-sm" id="symptoms-modal-title">New Consultation</h3>
+            <button class="modal-close-btn" id="close-symptom-selection-symptom-btn">&times;</button>
         </div>
-        <button id="quest-back-btn" class="card-slider-btn back question-btn" type="button" title="Card Slide Back">
-            <span id="back-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6 text-gray-700">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path>
-                </svg>
-            </span>
-        </button>
         <div class="modal-body">
             <div class="symptoms-content" id="symptom-question-content">
+                <div class="search-container">
+                    <input class="form-input" type="text" id="search-symptoms" placeholder="Search symptoms..." />
+
+                </div>
+                <div class="symptoms-checklist-title-container">
+                    <p>Do you have a:</p>
+                </div>
+                <div class="symptoms-checklist-container">
+                    <ul class="symptoms-list">
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-1"
+                                       class="custom-checkbox-input form-checkbox"
+                                       />
+                                <label for="symptom-1" class="custom-checkbox-label">Diabetes</label>
+                            </div>
+                        </li> 
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-2"
+                                       class="custom-checkbox-input form-checkbox" />
+                                <label for="symptom-2" class="custom-checkbox-label">This is a very long text.</label>
+                            </div>
+                        </li>
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-3"
+                                       class="custom-checkbox-input form-checkbox" />
+                                <label for="symptom-3" class="custom-checkbox-label">This is a very long text.</label>
+                            </div>
+                        </li>
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-4"
+                                       class="custom-checkbox-input form-checkbox" />
+                                <label for="symptom-4" class="custom-checkbox-label">Diabetes</label>
+                            </div>
+                        </li>
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-5"
+                                       class="custom-checkbox-input form-checkbox" />
+                                <label for="symptom-5" class="custom-checkbox-label">This is a very long text.</label>
+                            </div>
+                        </li>
+                        <li class="symptom-item">
+                            <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-6"
+                                       class="custom-checkbox-input form-checkbox" />
+                                <label for="symptom-6" class="custom-checkbox-label">This is a very long text.</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <button id="quest-next-btn" class="card-slider-btn next question-btn" type="button" title="Card Slide Next">
-            <span id="next-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
-                </svg>
-            </span>
-        </button>
         <div class="modal-footer">
-            <div class="navigation-symptom-buttons flex justify-between mt-2">
-                <button class="btn btn-secondary get-diagnosis-button question-btn" id="quest-get-diagnosis-btn" disabled>Get Diagnosis</button>
-            </div>
-            <div class="flex mt-2 justify-center">
+            <div class="symptom-footer-buttons">
                 <button class="btn cancel-symptom-btn" id="cancel-diagnosis">Cancel Diagnosis</button>
+                <button class="btn btn-primary get-diagnosis-button question-btn" id="quest-get-diagnosis-btn">Run Diagnosis</button>
             </div>
         </div>
     </div>
@@ -66,21 +111,19 @@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
         <div class="modal-header">
-            <h3 class="text-sm font-semibold">Consultation Pre-Result</h3>
+            <h3 class="text-sm font-semibold">Consultation Result</h3>
             <button class="modal-close-btn" id="close-result-modal-btn">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="diagnosis-content-card flex justify-center items-center">
-                <h1 id="diagnosis-result" class="font-medium text-center"></h1>
-                @* <p id="diagnosis-description" class="text-gray-500 mt-2"></p>
-                <div class="text-left mt-4">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Prescriptions:</h4>
-                    <p id="diagnosis-prescription" class="text-gray-700"></p>
+            <div class="diagnosis-content-card">
+                <div class="diagnosis-illnes-section">
+                    <h1 id="diagnosis-result">Cold</h1>
                 </div>
-                <div class="text-left mt-4">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Doctor's Note / Referral:</h4>
-                    <p id="diagnosis-notes" class="text-gray-700"></p>
-                </div> *@
+                <div class="patient-symptoms-section">
+                    <span class="symptoms-section-label">PATIENT SYMPTOMS</span>
+                    <ul class="patient-symptoms-list">
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="modal-footer">

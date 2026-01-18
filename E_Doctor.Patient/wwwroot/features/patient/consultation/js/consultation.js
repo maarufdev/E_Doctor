@@ -14,6 +14,7 @@
         currentIllnessId: null,
         illnessList: [],
         symptoms: [],
+        selectedSymptoms: [],
         currentSymptomIndex: 0,
         symptomModalTitle: ""
     }
@@ -44,6 +45,7 @@
                     getDiagnosis: "#quest-get-diagnosis-btn",
                     yesNo: ".yes-no-button",
                     cancel: "#cancel-diagnosis",
+                    close: "#close-symptom-selection-symptom-btn"
                 },
                 question: {
                     symptom: "#symptom-quest-name",
@@ -67,6 +69,7 @@
     const services = {
         initialize: function () {
             services.eventHandlers.illness.setIllnessList();
+            services.eventHandlers.illness.setCommonSymptoms();
             services.events.initMain();
         },
         eventHandlers: {
@@ -78,7 +81,7 @@
                 toggleSymptom: function (flag = false) {
                     const { modals } = elementHolders;
                     $(modals.symptoms.root).toggleClass("visible", flag);
-                    $(modals.symptoms.title).text(stateHolders.symptomModalTitle ?? "");
+                    stateHolders.symptomModalTitle ? $(modals.symptoms.title).text(stateHolders.symptomModalTitle) : null;
                 },
 
                 toggleDiagnosisResult: function (flag = false) {
@@ -90,15 +93,7 @@
                 setCommonSymptoms: async function () {
                     const symptomResult = await services.apiService.getSymptomsByIllnessId(null) ?? [];
 
-                    //stateHolders.currentIllnessId = item.illnessId;
-                    stateHolders.symptomModalTitle = "Please Select symptoms";
-
-                    stateHolders.symptoms = symptomResult.map(item => {
-                        const obj = { ...item, active: false, selectType: SELECTION_TYPES.NONE };
-                        return obj;
-                    });
-                    stateHolders.currentSymptomIndex = 0;
-                    services.eventHandlers.modal.toggleSymptom(true);
+                    stateHolders.symptoms = symptomResult;
                     services.eventHandlers.symptom.populateSymptomQuestion();
                 },
                 populateIllnessList: function () {
@@ -140,11 +135,6 @@
                         $illnessList.append($illnessItem);
                     })
                 },
-                handleOnShowIllness: function () {
-                    const handlers = services.eventHandlers;
-                    handlers.modal.toggleIllness(true);
-                    this.populateIllnessList();
-                },
                 handleOnSearchIllness: function (searchText = null) {
                     const { modals } = elementHolders;
                     const $illnessList = $(modals.illness.illnessList);
@@ -160,157 +150,87 @@
             },
             symptom: {
                 elements: elementHolders.modals.symptoms,
-                handleOnNext: function () {
-                    if (stateHolders.currentSymptomIndex == stateHolders.symptoms.length) return;
-                    stateHolders.currentSymptomIndex += 1;
-
-                    this.populateSymptomQuestion(1);
-                },
-                handleOnBack: function () {
-                    if (stateHolders.currentSymptomIndex == 0) return;
-                    stateHolders.currentSymptomIndex -= 1;
-
-                    this.populateSymptomQuestion(-1);
-                },
-                populateSymptomQuestion: function (direction = 0) {
+                
+                populateSymptomQuestion: function () {
                     const { question, buttons, questionContent } = this.elements;
-                    const symptom = stateHolders.symptoms[stateHolders.currentSymptomIndex];
+                    const symptoms = stateHolders.symptoms;
 
-                    if (!symptom) return;
+                    const $symptomList = $(".symptoms-list");
+                    $symptomList.empty();
 
-                    const $questionContentElmt = $(questionContent);
-                    $questionContentElmt.empty();
-
-
-                    let animateDirectionClass = "";
-
-                    if (direction != 0) {
-                        animateDirectionClass = (direction == 1) ? "move-right" : "move-left"
-                    }
-
-                    const $card = $(`
-                        <div class="symptom-card-container text-center ${animateDirectionClass}">
-                            <p class="text-xl">${symptom.symptomName}</p>
-                            <div class="flex symptom-yes-no-buttons">
-                                <button class="btn btn-danger no-button yes-no-button" id="quest-no-btn">No</button>
-                                <button class="btn btn-secondary yes-button yes-no-button" id="quest-yes-btn">Yes</button>
+                    symptoms.map(symptom => {
+                        const $symptomCard = $('<li>').addClass("symptom-item");
+                        const $customCheckbox = $(`
+                         <div class="custom-checkbox">
+                                <input type="checkbox"
+                                       id="symptom-${symptom.symptomId}"
+                                       class="custom-checkbox-input form-checkbox"
+                                       data-id=${symptom.symptomId}
+                                       />
+                                <label for="symptom-${symptom.symptomId}" class="custom-checkbox-label">${symptom.symptomName}</label>
                             </div>
-                        </div>
-                    `);
+                        `);
 
-                    setTimeout(() => {
-                        $card.removeClass("move-right");
-                        $card.removeClass("move-left");
-                    }, 5);
+                        $symptomCard.append($customCheckbox);
+                        $symptomList.append($symptomCard);
 
-                    $questionContentElmt.append($card);
+                        $customCheckbox.find("input").off("change").on("change", handleOnCheckboxChanged);
+                    });
 
-                    const isLastItem = (stateHolders.symptoms.length - 1 == stateHolders.currentSymptomIndex);
-                    const isFirstItem = (stateHolders.currentSymptomIndex == 0);
+                    function handleOnCheckboxChanged(event) {
+                        const { target } = event;
 
-                    $(buttons.back).prop("disabled", isFirstItem);
+                        const symptomId = parseInt(target.getAttribute("data-id"));
+                        const isSelected = $(target).is(":checked");
 
-                    $(buttons.next)
-                        .prop("disabled", isLastItem);
+                        if (isSelected) {
+                            const isSelectedAlreadyExist = stateHolders.selectedSymptoms.some(item => item == symptomId);
+                            if (isSelectedAlreadyExist) return;
 
-
-                    $(this.elements.buttons.yesNo).removeClass("selected");
-
-                    switch (symptom.selectType) {
-                        case SELECTION_TYPES.NONE:
-                            $(this.elements.buttons.yesNo).removeClass("selected");
-                            break;
-                        case SELECTION_TYPES.YES:
-                            $(this.elements.buttons.yes).addClass("selected");
-                            break;
-                        case SELECTION_TYPES.NO:
-                            $(this.elements.buttons.no).addClass("selected");
-                            break;
-                        default:
-                            $(this.elements.buttons.yesNo).removeClass("selected");
-                    };
-
-
-                    registerEvent(
-                        this.elements.buttons.yes,
-                        "click",
-                        function (e) {
-                            services.eventHandlers.symptom.handleOnYes();
+                            stateHolders.selectedSymptoms.push(symptomId);
+                        } else {
+                            stateHolders.selectedSymptoms = stateHolders.selectedSymptoms.filter(item => item != symptomId);
                         }
-                    );
-
-                    registerEvent(
-                        this.elements.buttons.no,
-                        "click",
-                        function (e) {
-                            services.eventHandlers.symptom.handleOnNo();
-                        }
-                    );
-                },
-                handleOnYes: function () {
-                    const { buttons } = this.elements;
-
-                    const symptom = stateHolders.symptoms[stateHolders.currentSymptomIndex];
-                    if (!symptom) return;
-
-                    stateHolders.symptoms[stateHolders.currentSymptomIndex].active = true;
-                    stateHolders.symptoms[stateHolders.currentSymptomIndex].selectType = SELECTION_TYPES.YES;
-
-                    $(this.elements.buttons.yesNo).removeClass("selected");
-                    $(this.elements.buttons.yes).addClass("selected");
-
-                    const hasSelected = stateHolders.symptoms.some(s => s.active);
-
-                    $(buttons.getDiagnosis)
-                        .prop("disabled", !hasSelected);
-                },
-                handleOnNo: function () {
-                    const symptom = stateHolders.symptoms[stateHolders.currentSymptomIndex];
-                    if (!symptom) return;
-
-                    stateHolders.symptoms[stateHolders.currentSymptomIndex].active = false;
-                    stateHolders.symptoms[stateHolders.currentSymptomIndex].selectType = SELECTION_TYPES.NO;
-
-                    $(this.elements.buttons.yesNo).removeClass("selected");
-                    $(this.elements.buttons.no).addClass("selected");
+                    }
                 },
                 handleOnCancel: function () {
                     if (confirm("Are you sure to cancel diagnosis?")) {
-                        stateHolders.symptoms = [];
-                        stateHolders.currentSymptomIndex = 0;
-
+                        stateHolders.selectedSymptoms = [];
                         services.eventHandlers.modal.toggleSymptom(false);
                         services.eventHandlers.modal.toggleIllness(false);
                     }
+                },
+                handleOnShowSymptomsSelections: () => {
+                    const { eventHandlers } = services;
+
+                    stateHolders.symptomModalTitle = "New Consultation";
+                    eventHandlers.modal.toggleSymptom(true);
+                    eventHandlers.illness.setCommonSymptoms();
                 }
             },
             diagnosis: {
                 elements: elementHolders.modals.diagnosis,
                 handleOnGetDiagnosis: async function () {
-                    const hasSelectedItem = stateHolders.symptoms.filter(item => item.active == true).length > 0;
-                    const illnessId = stateHolders.currentIllnessId;
+                    const hasSelectedItem = stateHolders.selectedSymptoms.length > 0;
 
                     if (!hasSelectedItem) {
                         alert("No symptom selected.\nPlease select at least 1 symptom.");
                         return;
                     }
 
-                    const selectedSymptoms = stateHolders.symptoms
-                        .filter(item => item.active === true)
-                        .map(item => parseInt(item.symptomId));
-
                     const command = {
-                        symptomIds: selectedSymptoms
+                        symptomIds: stateHolders.selectedSymptoms
                     }
 
                     const result = await services.apiService.runDiagnosis(command);
 
                     if (result) {
                         this.populateDiagnosisResult(result);
+                        stateHolders.selectedSymptoms = [];
                     }
 
                 },
-                populateDiagnosisResult: function ({ result, description, prescription, notes, isSuccess }) {
+                populateDiagnosisResult: function ({ result, description, prescription, notes, isSuccess, symptoms = [] }) {
                     services.eventHandlers.modal.toggleDiagnosisResult(true);
 
                     const { diagnosisInfo: elmt } = this.elements;
@@ -322,6 +242,18 @@
                     $(elmt.notes)
                         .text(notes ?? "")
                         .toggleClass("warning-text", !isSuccess);
+
+                    const $symptomsContainer = $(".patient-symptoms-list");
+                    $symptomsContainer.empty();
+
+                    symptoms.map(s => {
+                        const $item = $(`
+                            <li class="patient-symptom-tag">${s}</li>
+                        `);
+
+                        $symptomsContainer.append($item);
+                    })
+
                 },
                 clearDiagnosisText: function () {
                     const { diagnosisInfo: elmt } = this.elements;
@@ -334,7 +266,8 @@
                     this.clearDiagnosisText();
                     services.eventHandlers.modal.toggleSymptom(false);
                     services.eventHandlers.modal.toggleDiagnosisResult(false);
-                }
+                },
+                
             }
         },
         events: {
@@ -346,43 +279,28 @@
                     buttons.startNewConsultation,
                     "click",
                     function (e) {
-                        eventHandlers.illness.setCommonSymptoms();
-                        //eventHandlers.illness.handleOnShowIllness();
+                        eventHandlers.symptom.handleOnShowSymptomsSelections();
                     }
                 );
 
-                registerEvent(
-                    modals.illness.buttons.close,
-                    "click",
-                    function (e) {
-                        eventHandlers.modal.toggleIllness(false);
-                        stateHolders.currentIllnessId = null;
-                    }
-                );
+                //registerEvent(
+                //    modals.illness.buttons.close,
+                //    "click",
+                //    function (e) {
+                //        eventHandlers.modal.toggleIllness(false);
+                //        stateHolders.currentIllnessId = null;
+                //    }
+                //);
 
-                registerEvent(
-                    modals.illness.search,
-                    "input",
-                    function (e) {
-                        eventHandlers.illness.handleOnSearchIllness(e.target.value);
-                    }
-                );
+                //registerEvent(
+                //    modals.illness.search,
+                //    "input",
+                //    function (e) {
+                //        eventHandlers.illness.handleOnSearchIllness(e.target.value);
+                //    }
+                //);
 
                 // symptoms
-                registerEvent(
-                    modals.symptoms.buttons.next,
-                    "click",
-                    function (e) {
-                        eventHandlers.symptom.handleOnNext();
-                    }
-                );
-                registerEvent(
-                    modals.symptoms.buttons.back,
-                    "click",
-                    function (e) {
-                        eventHandlers.symptom.handleOnBack();
-                    }
-                );
                 registerEvent(
                     modals.symptoms.buttons.getDiagnosis,
                     "click",
@@ -393,6 +311,14 @@
 
                 registerEvent(
                     modals.symptoms.buttons.cancel,
+                    "click",
+                    function (e) {
+                        eventHandlers.symptom.handleOnCancel();
+                    }
+                );
+
+                registerEvent(
+                    modals.symptoms.buttons.close,
                     "click",
                     function (e) {
                         eventHandlers.symptom.handleOnCancel();

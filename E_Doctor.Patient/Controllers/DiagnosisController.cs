@@ -62,7 +62,7 @@ namespace E_Doctor.Patient.Controllers
 
             var result = await _diagnosisService.RunDiagnosis(requestDTO);
 
-            if (result.IsFailure) return BadRequest(result.Value);
+            if (result.IsFailure) return BadRequest(result.Error);
 
             return Ok(result.Value);
         }
