@@ -314,14 +314,22 @@
 
                 $pagination.val(stateHolders.searchParams.pageNumber);
             },
-            populateDiagnosisResult: function ({ result, description, prescription, notes }) {
+            populateDiagnosisResult: function ({ result, description, prescription, notes, symptoms = []}) {
                 const { diagnosis } = elementHolders.modals;
 
-                $(diagnosis.diagnosisInfo.result).text("");
+                $(diagnosis.diagnosisInfo.result).text(result ?? " ");
 
-                if (result) {
-                    $(diagnosis.diagnosisInfo.result).text(result ?? " ");
-                } 
+                const $symptomsContainer = $(".patient-symptoms-list");
+                $symptomsContainer.empty();
+
+                symptoms.map(s => {
+                    const $item = $(`
+                            <li class="patient-symptom-tag">${s}</li>
+                        `);
+
+                    $symptomsContainer.append($item);
+                })
+
             },
             handleOnShowDiagnosisResult: function (result) {
                 this.populateDiagnosisResult(result);

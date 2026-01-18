@@ -18,7 +18,7 @@
                         <th>Date</th>
                         <th>User</th>
                         <th>Symptoms</th>
-                        <th>Pre-Result</th>
+                        <th>Result</th>
                         <th>Action</th>
                         <th>P.E Report Status</th>
                     </tr>
@@ -39,12 +39,19 @@
 <div id="diagnosis-result-modal" class="modal-backdrop">
     <div class="modal-content modal-diagnosis-content">
         <div class="modal-header">
-            <h3 class="text-xl font-semibold">Pre-Result</h3>
+            <h3 class="text-sm font-semibold">Consultation Result</h3>
             <button id="close-diagnosis-result-modal" class="modal-close-btn">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="diagnosis-content-card flex justify-center items-center">
-                <h2 id="diagnosis-result" class="font-medium text-center"></h2>
+            <div class="diagnosis-content-card">
+                <div class="diagnosis-illnes-section">
+                    <h1 id="diagnosis-result">Cold</h1>
+                </div>
+                <div class="patient-symptoms-section">
+                    <span class="symptoms-section-label">PATIENT SYMPTOMS</span>
+                    <ul class="patient-symptoms-list">
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
