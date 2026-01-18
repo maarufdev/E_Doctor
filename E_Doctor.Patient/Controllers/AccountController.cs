@@ -52,6 +52,12 @@ namespace E_Doctor.Patient.Controllers
                 return View("Register", registerVM);
             }
 
+            if(registerVM.Password != registerVM.ConfirmPassword)
+            {
+                ViewData["Error"] = "Please make sure password and confirm password fields are equal.";
+                return View("Register", registerVM);
+            }
+
             RegisterPatientDTO register = registerVM.ToDto();
 
             var result = await _userService.RegisterPatient(register);

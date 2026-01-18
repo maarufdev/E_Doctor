@@ -235,32 +235,6 @@ internal class UserManagerService : IUserManagerService
     {
         try
         {
-            // var user = await _userManager.FindByEmailAsync(loginDTO.Username);
-
-            // if (user is null)
-            //     return Result<string>.Failure("User does not exist.");
-
-            // var isUserAdmin = await IsUserAdmin();
-            // if (!isUserAdmin)
-            // {
-            //     var isArchived = user.Status == (int)UserStatus.Archived;
-            //     if (isArchived) return Result<string>.Failure("You're account is not active. Please go to system admin to re-activate your account.");
-            // }
-
-            // var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
-            // if (!isPasswordValid)
-            //     return Result<string>.Failure("Invalid Credentials.");
-
-            // var claims = new List<Claim>
-            // {
-            //     new Claim("FirstName", user.FirstName ?? string.Empty),
-            //     new Claim("FirstInitial", string.IsNullOrEmpty(user.FirstName) ? string.Empty : user.FirstName[0].ToString())
-            // };
-
-            //await _signInManager.SignInWithClaimsAsync(user, isPersistent: true, claims);
-
-            // return Result<string>.Success("Success");
-
             ArgumentException.ThrowIfNullOrWhiteSpace(loginDTO.Username);
             ArgumentException.ThrowIfNullOrWhiteSpace(loginDTO.Password);
 
@@ -429,10 +403,12 @@ internal class UserManagerService : IUserManagerService
                 var pastRec = request.PatientPastMedicalRecord;
 
                 pastMedRecord.PreviousHospitalization = pastRec.PreviousHospitalization;
+                pastMedRecord.PreviousHospitalizationText = pastRec.PreviousHospitalizationText;
                 pastMedRecord.PastSurgery = pastRec.PastSurgery;
                 pastMedRecord.Diabetes = pastRec.Diabetes;
                 pastMedRecord.Hypertension = pastRec.Hypertension;
                 pastMedRecord.AllergyToMeds = pastRec.AllergyToMeds;
+                pastMedRecord.MedAllergyText = pastRec.MedAllergyText;
                 pastMedRecord.HeartProblem = pastRec.HeartProblem;
                 pastMedRecord.Asthma = pastRec.Asthma;
                 pastMedRecord.FoodAllergies = pastRec.FoodAllergies;
@@ -714,10 +690,12 @@ internal class UserManagerService : IUserManagerService
                     PatientPastMedicalRecord = new PatientPastMedicalRecordDTO
                     {
                         PreviousHospitalization = pastMedicalRecord.PreviousHospitalization,
+                        PreviousHospitalizationText = pastMedicalRecord.PreviousHospitalizationText,
                         PastSurgery = pastMedicalRecord.PastSurgery,
                         Diabetes = pastMedicalRecord.Diabetes,
                         Hypertension = pastMedicalRecord.Hypertension,
                         AllergyToMeds = pastMedicalRecord.AllergyToMeds,
+                        MedAllergyText = pastMedicalRecord.MedAllergyText,
                         HeartProblem = pastMedicalRecord.HeartProblem,
                         Asthma = pastMedicalRecord.Asthma,
                         FoodAllergies = pastMedicalRecord.AllergyToMeds,
@@ -806,10 +784,12 @@ internal class UserManagerService : IUserManagerService
                     var pastMedRec = request.PatientPastMedicalRecord;
 
                     patientInfo.PatientPastMedicalRecord.PreviousHospitalization = pastMedRec.PreviousHospitalization;
+                    patientInfo.PatientPastMedicalRecord.PreviousHospitalizationText = pastMedRec.PreviousHospitalizationText;
                     patientInfo.PatientPastMedicalRecord.PastSurgery = pastMedRec.PastSurgery;
                     patientInfo.PatientPastMedicalRecord.Diabetes = pastMedRec.Diabetes;
                     patientInfo.PatientPastMedicalRecord.Hypertension = pastMedRec.Hypertension;
                     patientInfo.PatientPastMedicalRecord.AllergyToMeds = pastMedRec.AllergyToMeds;
+                    patientInfo.PatientPastMedicalRecord.MedAllergyText = pastMedRec.MedAllergyText;
                     patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
                     patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
                     patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;
@@ -868,10 +848,12 @@ internal class UserManagerService : IUserManagerService
 
                 patientInfo.PatientPastMedicalRecord.PatientInfoId = patientInfo.Id;
                 patientInfo.PatientPastMedicalRecord.PreviousHospitalization = pastMedRec.PreviousHospitalization;
+                patientInfo.PatientPastMedicalRecord.PreviousHospitalizationText = pastMedRec.PreviousHospitalizationText;
                 patientInfo.PatientPastMedicalRecord.PastSurgery = pastMedRec.PastSurgery;
                 patientInfo.PatientPastMedicalRecord.Diabetes = pastMedRec.Diabetes;
                 patientInfo.PatientPastMedicalRecord.Hypertension = pastMedRec.Hypertension;
                 patientInfo.PatientPastMedicalRecord.AllergyToMeds = pastMedRec.AllergyToMeds;
+                patientInfo.PatientPastMedicalRecord.MedAllergyText = pastMedRec.MedAllergyText;
                 patientInfo.PatientPastMedicalRecord.HeartProblem = pastMedRec.HeartProblem;
                 patientInfo.PatientPastMedicalRecord.Asthma = pastMedRec.Asthma;
                 patientInfo.PatientPastMedicalRecord.FoodAllergies = pastMedRec.FoodAllergies;

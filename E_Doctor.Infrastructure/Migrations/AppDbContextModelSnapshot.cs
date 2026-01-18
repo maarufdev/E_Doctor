@@ -382,6 +382,10 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Property<string>("MaintenanceMeds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MedAllergyText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OBGyneHistory")
                         .HasColumnType("nvarchar(max)");
 
@@ -397,6 +401,10 @@ namespace E_Doctor.Infrastructure.Migrations
 
                     b.Property<bool>("PreviousHospitalization")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PreviousHospitalizationText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -574,7 +582,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = false,
                             Label = "General",
@@ -583,7 +591,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Head",
@@ -592,7 +600,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Eyes",
@@ -601,7 +609,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Ears",
@@ -610,7 +618,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Nose",
@@ -619,7 +627,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Throat",
@@ -628,7 +636,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Neck",
@@ -637,7 +645,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Breast",
@@ -646,7 +654,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Chest/Lungs",
@@ -655,7 +663,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Heart",
@@ -664,7 +672,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Abdomen",
@@ -673,7 +681,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Gut",
@@ -682,7 +690,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Back",
@@ -691,7 +699,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Extremities",
@@ -700,7 +708,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 15,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Neurologic",
@@ -709,7 +717,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 16,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Skin",
@@ -718,7 +726,7 @@ namespace E_Doctor.Infrastructure.Migrations
                         new
                         {
                             Id = 17,
-                            CreatedOn = new DateTime(2025, 11, 22, 12, 3, 24, 280, DateTimeKind.Utc).AddTicks(1478),
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
                             InputType = "",
                             IsActive = true,
                             Label = "Others",

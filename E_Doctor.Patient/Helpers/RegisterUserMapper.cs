@@ -31,10 +31,12 @@ namespace E_Doctor.Patient.Helpers
                 PatientPastMedicalRecordDTO patientPastMedRecord = new()
                 {
                     PreviousHospitalization = medRecord.PreviousHospitalization,
+                    PreviousHospitalizationText = medRecord.PreviousHospitalization ? medRecord.PreviousHospitalizationText : string.Empty,
                     PastSurgery = medRecord.PastSurgery,
                     Diabetes = medRecord.Diabetes,
                     Hypertension = medRecord.Hypertension,
                     AllergyToMeds = medRecord.AllergyToMeds,
+                    MedAllergyText = medRecord.AllergyToMeds ? medRecord.MedAllergyText : string.Empty,
                     HeartProblem = medRecord.HeartProblem,
                     Asthma = medRecord.Asthma,
                     FoodAllergies = medRecord.FoodAllergies,
@@ -104,9 +106,22 @@ namespace E_Doctor.Patient.Helpers
             if (string.IsNullOrWhiteSpace(vm.CivilStatus)) emptyRequiredFields.Add(nameof(vm.CivilStatus));
             if (string.IsNullOrWhiteSpace(vm.Nationality)) emptyRequiredFields.Add(nameof(vm.Nationality));
             if (string.IsNullOrWhiteSpace(vm.Password)) emptyRequiredFields.Add(nameof(vm.Password));
+            if (string.IsNullOrWhiteSpace(vm.ConfirmPassword)) emptyRequiredFields.Add(nameof(vm.ConfirmPassword));
             if (string.IsNullOrWhiteSpace(vm.Username)) emptyRequiredFields.Add(nameof(vm.Username));
 
             if(vm.DOB == null || vm.DOB == DateTime.MinValue) emptyRequiredFields.Add(nameof(vm.DOB));
+
+            var pastMecicalRecs = vm.PastMedicalRecord;
+
+            if (pastMecicalRecs.PreviousHospitalization && string.IsNullOrWhiteSpace(pastMecicalRecs.PreviousHospitalizationText))
+            {
+                emptyRequiredFields.Add(nameof(pastMecicalRecs.PreviousHospitalizationText));
+            }
+
+            if (pastMecicalRecs.AllergyToMeds && string.IsNullOrWhiteSpace(pastMecicalRecs.MedAllergyText))
+            {
+                emptyRequiredFields.Add(nameof(pastMecicalRecs.MedAllergyText));
+            }
 
             if (emptyRequiredFields.Any())
             {
