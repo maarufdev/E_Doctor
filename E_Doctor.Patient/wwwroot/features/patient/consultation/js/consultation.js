@@ -237,11 +237,13 @@
                     $(elmt.result)
                         .text(result ?? "")
                         .toggleClass("warning-text", !isSuccess);
-                    $(elmt.description).text(description ?? "");
-                    $(elmt.prescription).text(prescription ?? "");
-                    $(elmt.notes)
-                        .text(notes ?? "")
-                        .toggleClass("warning-text", !isSuccess);
+
+                    (!isSuccess) ? $(elmt.result)
+                        .text(`${result} ${notes}`)
+                        .addClass("warning-text") :
+                        $(elmt.result)
+                            .text(result)
+                            .removeClass("warning-text");
 
                     const $symptomsContainer = $(".patient-symptoms-list");
                     $symptomsContainer.empty();

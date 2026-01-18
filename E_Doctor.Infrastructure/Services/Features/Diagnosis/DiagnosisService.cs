@@ -276,16 +276,6 @@ internal class DiagnosisService : IDiagnosisService
                 .Where(x => diagnosisRequest.SymptomIds.Contains(x.Id))
                 .ToListAsync();
 
-            //foreach (var symptom in firstResult.MatchedRules)
-            //{
-            //    toSaveDiagnosis.DiagnosSymptoms.Add(new DiagnosisSymptomsEntity
-            //    {
-            //        DiagnosisId = toSaveDiagnosis.Id,
-            //        SymptomName = symptom.Symptom?.Name ?? string.Empty,
-            //        IsActive = true,
-            //        CreatedOn = DateTime.UtcNow,
-            //    });
-            //}
 
             foreach (var symptom in patientSymptoms)
             {
@@ -302,7 +292,6 @@ internal class DiagnosisService : IDiagnosisService
             await _appDbContext.SaveChangesAsync();
 
             diagnosisResult = DiagnosisDetailsDTO.Create(
-                   //$"{patientIllness.Illness} {score.ToString("F2")}%",
                    $"{patientIllness.Illness}",
                    patientIllness.Description ?? string.Empty,
                    patientIllness.Prescription ?? string.Empty,
