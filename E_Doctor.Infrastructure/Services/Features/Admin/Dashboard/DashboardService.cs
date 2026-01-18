@@ -42,7 +42,7 @@ internal class DashboardService : IDashboardService
                 d.Diagnosis.Id,
                 UpdatedOn = d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn,
                 Symptoms = string.Join(", ", d.Diagnosis.DiagnosSymptoms.Select(s => $"{s.SymptomName}").ToList()),
-                IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
+                IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness}").ToList()),
                 FullName = $"{d.User.FirstName} {d.User.LastName}"
             })
             .Take(10)
