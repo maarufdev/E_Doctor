@@ -471,6 +471,10 @@ a {
     gap: 1rem;
 }
 
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
 .items-center {
     align-items: center;
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Doctor.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251110143208_RemoveUnNecessaryFKOnPatientInfoEntity")]
-    partial class RemoveUnNecessaryFKOnPatientInfoEntity
+    [Migration("20260118115708_IntialMigrations")]
+    partial class IntialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -355,29 +355,29 @@ namespace E_Doctor.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AllergyToMeds")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("AllergyToMeds")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Asthma")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Asthma")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Cancer")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Cancer")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Diabetes")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Diabetes")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("FoodAllergies")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("FoodAllergies")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("HeartProblem")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("HeartProblem")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Hypertension")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Hypertension")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -385,19 +385,28 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Property<string>("MaintenanceMeds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MedAllergyText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OBGyneHistory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OtherIllnesses")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PastSurgery")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("PastSurgery")
+                        .HasColumnType("bit");
 
                     b.Property<int>("PatientInfoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PreviousHospitalization")
+                    b.Property<bool>("PreviousHospitalization")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PreviousHospitalizationText")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -449,6 +458,283 @@ namespace E_Doctor.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("PatientPersonalHistory");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiagnosisId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("O2Sat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Temp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Weight")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhysicalExams");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamFindingsEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AbnormalFindings")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNormal")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NormalDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PhysicalExamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhysicalItemId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhysicalExamId");
+
+                    b.HasIndex("PhysicalItemId");
+
+                    b.ToTable("PhysicalExamFindings");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamItemsEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InputType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhysicalExamItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = false,
+                            Label = "General",
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Head",
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Eyes",
+                            SortOrder = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Ears",
+                            SortOrder = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Nose",
+                            SortOrder = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Throat",
+                            SortOrder = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Neck",
+                            SortOrder = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Breast",
+                            SortOrder = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Chest/Lungs",
+                            SortOrder = 9
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Heart",
+                            SortOrder = 10
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Abdomen",
+                            SortOrder = 11
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Gut",
+                            SortOrder = 12
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Back",
+                            SortOrder = 13
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Extremities",
+                            SortOrder = 14
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Neurologic",
+                            SortOrder = 15
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Skin",
+                            SortOrder = 16
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedOn = new DateTime(2026, 1, 18, 11, 57, 8, 121, DateTimeKind.Utc).AddTicks(7607),
+                            InputType = "",
+                            IsActive = true,
+                            Label = "Others",
+                            SortOrder = 17
+                        });
                 });
 
             modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>
@@ -768,6 +1054,25 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Navigation("PatientInformation");
                 });
 
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamFindingsEntity", b =>
+                {
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamEntity", "PhysicalExam")
+                        .WithMany("PhysicalExamFindings")
+                        .HasForeignKey("PhysicalExamId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamItemsEntity", "PhysicalExamItem")
+                        .WithMany()
+                        .HasForeignKey("PhysicalItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PhysicalExam");
+
+                    b.Navigation("PhysicalExamItem");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -843,6 +1148,11 @@ namespace E_Doctor.Infrastructure.Migrations
                     b.Navigation("PatientPastMedicalRecord");
 
                     b.Navigation("PatientPersonalHistory");
+                });
+
+            modelBuilder.Entity("E_Doctor.Core.Domain.Entities.Patient.PhysicalExam.PhysicalExamEntity", b =>
+                {
+                    b.Navigation("PhysicalExamFindings");
                 });
 
             modelBuilder.Entity("E_Doctor.Infrastructure.Identity.AppUserIdentity", b =>

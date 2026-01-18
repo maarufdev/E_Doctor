@@ -92,7 +92,8 @@ internal class DiagnosisService : IDiagnosisService
                     d.Diagnosis.Id,
                     UpdatedOn = d.Diagnosis.UpdatedOn ?? d.Diagnosis.CreatedOn,
                     Symptoms = string.Join(", ", d.Diagnosis.DiagnosSymptoms.Select(s => $"{s.SymptomName}").ToList()),
-                    IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
+                    IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness}").ToList()),
+                    //IllnessName = string.Join(", ", d.Diagnosis.DiagnosIllnesses.Select(i => $"{i.Illness} {i.Score.ToString("F2")}%").ToList()),
                     UserId = d.User.IsActive,
                     FullName = $"{d.User.FirstName} {d.User.LastName}",
                     PatientInfoId = d.PatientInformation != null ? d.PatientInformation.Id : 0
@@ -143,20 +144,29 @@ internal class DiagnosisService : IDiagnosisService
 
     public async Task<DiagnosisDetailsDTO> GetDiagnosisById(int diagnosisId)
     {
-        var result = new DiagnosisDetailsDTO();
 
         var illness = await _appDbContext.DiagnosisIllnesses
             .AsNoTracking()
             .Where(i => i.IsActive && i.DiagnosisId == diagnosisId)
             .FirstOrDefaultAsync();
 
-        if (illness == null) return result;
+        var selectedSymptoms = await _appDbContext.DiagnosisSymptoms
+            .AsNoTracking()
+            .Where(x => x.DiagnosisId == diagnosisId)
+            .Select(x => x.SymptomName)
+            .ToArrayAsync();
+
+        selectedSymptoms = selectedSymptoms ?? Array.Empty<string>();
+
+        if (illness is null) return DiagnosisDetailsDTO.Create();
 
         return DiagnosisDetailsDTO.Create(
-            $"{illness.Illness} {illness.Score.ToString("F2")}%" ?? string.Empty,
-            illness.Description ?? string.Empty,
-            illness.Prescription ?? string.Empty,
-            illness.Notes ?? string.Empty);
+            $"{illness?.Illness}" ?? string.Empty,
+            illness?.Description ?? string.Empty,
+            illness?.Prescription ?? string.Empty,
+            illness?.Notes ?? string.Empty,
+            selectedSymptoms
+            );
     }
     public async Task<Result<DiagnosisDetailsDTO>> RunDiagnosis(RunDiagnosisDTO diagnosisRequest)
     {
@@ -166,7 +176,7 @@ internal class DiagnosisService : IDiagnosisService
             var userName = await _userManager.GetUserNameById(userId.ToString());
 
             var result = new List<DiagnosisResultDTO>();
-            var diagnosisResult = new DiagnosisDetailsDTO();
+            var diagnosisResult = DiagnosisDetailsDTO.Create();
 
             var potentialIllnessResult = await _appDbContext.Illnesses
                .AsNoTracking()
@@ -189,7 +199,7 @@ internal class DiagnosisService : IDiagnosisService
                .OrderByDescending(o => o.MatchedRuleCount)
                .ToListAsync();
 
-            if (!potentialIllnessResult.Any()) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found.");
+            if (!potentialIllnessResult.Any()) return Result<DiagnosisDetailsDTO>.Failure("Illness cannot be found. It’s advised to consult a doctor for a proper diagnosis.");
 
             var potentialResultWithScore = potentialIllnessResult
                 .Select(illness =>
@@ -261,12 +271,18 @@ internal class DiagnosisService : IDiagnosisService
 
             toSaveDiagnosis.DiagnosIllnesses.Add(patientIllness);
 
-            foreach (var symptom in firstResult.MatchedRules)
+            var patientSymptoms = await _appDbContext.Symptoms
+                .AsNoTracking()
+                .Where(x => diagnosisRequest.SymptomIds.Contains(x.Id))
+                .ToListAsync();
+
+
+            foreach (var symptom in patientSymptoms)
             {
                 toSaveDiagnosis.DiagnosSymptoms.Add(new DiagnosisSymptomsEntity
                 {
                     DiagnosisId = toSaveDiagnosis.Id,
-                    SymptomName = symptom.Symptom?.Name ?? string.Empty,
+                    SymptomName = symptom.Name ?? string.Empty,
                     IsActive = true,
                     CreatedOn = DateTime.UtcNow,
                 });
@@ -276,10 +292,11 @@ internal class DiagnosisService : IDiagnosisService
             await _appDbContext.SaveChangesAsync();
 
             diagnosisResult = DiagnosisDetailsDTO.Create(
-                   $"{patientIllness.Illness} {score.ToString("F2")}%",
+                   $"{patientIllness.Illness}",
                    patientIllness.Description ?? string.Empty,
                    patientIllness.Prescription ?? string.Empty,
-                   patientIllness.Notes ?? string.Empty
+                   patientIllness.Notes ?? string.Empty,
+                   toSaveDiagnosis.DiagnosSymptoms?.Select(item => item.SymptomName).ToArray() ?? Array.Empty<string>()
                    );
 
             await _activityLoggerService

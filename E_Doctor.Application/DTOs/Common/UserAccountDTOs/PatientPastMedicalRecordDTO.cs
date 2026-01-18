@@ -2,10 +2,12 @@
 public sealed record PatientPastMedicalRecordDTO
 {
     public bool PreviousHospitalization { get; init; }
+    public string PreviousHospitalizationText { get; set; } = string.Empty;
     public bool PastSurgery { get; init; }
     public bool Diabetes { get; init; }
     public bool Hypertension { get; init; }
     public bool AllergyToMeds { get; init; }
+    public string MedAllergyText { get; set; } = string.Empty;
     public bool HeartProblem { get; init; }
     public bool Asthma { get; init; }
     public bool FoodAllergies { get; init; }

@@ -139,15 +139,45 @@
 }
 
 .diagnosis-content-card {
-    background-color: #F3F4F6;
-    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 70px;
     border-radius: 15px;
     padding: 10px 20px;
-    --tw-ring-offset-shadow: 0 0 #0000;
-    --tw-ring-shadow: 0 0 #0000;
-    --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
-    --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.diagnosis-illnes-section {
+    text-align: center;
+    padding-block: 20px;
+    border-radius: 15px;
+    background-color: #eff6ff;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+    .diagnosis-illnes-section h1 {
+        color: var(--primary-color);
+        font-weight: bold !important;
+    }
+
+.patient-symptoms-list {
+    list-style-type: none;
+    display: flex;
+    padding-top: 10px;
+    padding-left: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.patient-symptom-tag {
+    background: #f1f5f9;
+    color: var(--text-dark);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-weight: bold;
+    border: 1px solid #e2e8f0;
 }
 
 .start-diagnosis-modal-btn {

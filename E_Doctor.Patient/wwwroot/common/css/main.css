@@ -470,6 +470,9 @@ a {
     justify-content: flex-end;
 }
 
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
 
 .flex-column {
     flex-direction: column;

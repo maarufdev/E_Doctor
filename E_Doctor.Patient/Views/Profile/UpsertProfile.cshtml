@@ -114,15 +114,21 @@
                 <div class="registration-form__group-header">
                     <h3>PAST MEDICAL RECORD</h3>
                 </div>
-                <div class="registration-form__group-field-container mt-2 form-grid form-grid-4">
-                    <div class="form-group-field">
-                        <div class="custom-checkbox">
+                <div class="registration-form__group-field-container mt-2 form-grid form-grid-4 align-start">
+                    <div class="form-group-field flex flex-column">
+                        <div class="custom-checkbox flex-nowrap">
                             <input type="checkbox"
                                    id="past-PrevHospitalization"
                                    class="custom-checkbox-input form-checkbox"
                                    asp-for="PastMedicalRecord.PreviousHospitalization" />
                             <label for="past-PrevHospitalization" class="custom-checkbox-label">Previous Hospitalization?</label>
                         </div>
+
+                        <input class="form-input"
+                               placeholder="Type Hospitalization here ..."
+                               asp-for="PastMedicalRecord.PreviousHospitalizationText"
+                               disabled />
+
                     </div>
 
                     <div class="form-group-field">
@@ -155,7 +161,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group-field">
+                    <div class="form-group-field flex flex-column">
                         <div class="custom-checkbox">
                             <input type="checkbox"
                                    id="past-AllergyToMeds"
@@ -163,6 +169,10 @@
                                    asp-for="PastMedicalRecord.AllergyToMeds" />
                             <label for="past-AllergyToMeds" class="custom-checkbox-label">Allergy to Meds</label>
                         </div>
+                        <input class="form-input"
+                               placeholder="Type Meds here ..."
+                               asp-for="PastMedicalRecord.MedAllergyText"
+                               disabled />
                     </div>
 
                     <div class="form-group-field">
@@ -388,6 +398,53 @@
             $("#registrationAlert").removeClass("visible");
         });
 
+        const prevHospitalizationElmts = {
+        prevHospitalizationCkbx: $(`#past-PrevHospitalization`),
+        previousHosptlTxt: $(`#PastMedicalRecord_PreviousHospitalizationText`),
+    };
+
+    prevHospitalizationElmts.previousHosptlTxt.prop(
+        "disabled",
+        !prevHospitalizationElmts.prevHospitalizationCkbx.prop("checked"))
+
+    prevHospitalizationElmts.prevHospitalizationCkbx.off("change").on("change", function (e) {
+        const $this = $(this);
+        const isChecked = $this.prop("checked");
+
+        if (isChecked) {
+            prevHospitalizationElmts.previousHosptlTxt.removeAttr("disabled");
+            prevHospitalizationElmts.previousHosptlTxt.trigger("focus");
+        } else {
+            prevHospitalizationElmts.previousHosptlTxt.attr("disabled");
+            prevHospitalizationElmts.previousHosptlTxt.val("");
+        }
+    });
+
+
+    // setup allergyToMeds
+    const prevHostAllergyToMedsElmts = {
+        pastAllergyToMedsCkbx: $(`#past-AllergyToMeds`),
+        pastAllergyToMedsTxt: $(`#PastMedicalRecord_MedAllergyText`),
+    }
+
+    prevHostAllergyToMedsElmts.pastAllergyToMedsTxt.prop(
+        "disabled",
+        !prevHostAllergyToMedsElmts.pastAllergyToMedsCkbx.prop("checked")
+    );
+
+    prevHostAllergyToMedsElmts.pastAllergyToMedsCkbx.off("change").on("change", function (e) {
+        const $this = $(this);
+        const isChecked = $this.prop("checked");
+
+        if (isChecked) {
+            prevHostAllergyToMedsElmts.pastAllergyToMedsTxt.removeAttr("disabled");
+            prevHostAllergyToMedsElmts.pastAllergyToMedsTxt.trigger("focus");
+        } else {
+            prevHostAllergyToMedsElmts.pastAllergyToMedsTxt.attr("disabled");
+            prevHostAllergyToMedsElmts.pastAllergyToMedsTxt.val("");
+        }
+
+    });
 
         const famHistFields = [...$(`[name^="FamilyHistory."]:not(#fh-None)`)];
         const isDefaultChecked = $("#fh-None").prop("checked");

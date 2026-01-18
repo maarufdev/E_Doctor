@@ -57,16 +57,25 @@
 
 /*Symptoms styles*/
 .modal-symptom-content {
-    max-width: 35rem;
+    max-width: 75vw;
     padding-bottom: 10px;
+}
+
+.modal-symptom-content .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-symptom-content .modal-header .modal-close-btn {
+    position: static;
+    font-size: 2rem;
 }
 
 .symptoms-content {
     min-height: 150px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 20px;
     position: relative;
     overflow: hidden;
@@ -106,8 +115,7 @@
 }
 
 .cancel-symptom-btn {
-    background-color: #fff;
-    color: var(--danger-color);
+    background-color: rgb(107 114 128);
     margin-inline: auto;
 }
 
@@ -128,21 +136,46 @@
         }
 
 /*Diagnosis Result styles*/
-.modal-diagnosis-content .modal-header,
-.modal-diagnosis-content .modal-footer {
-    border: none;
-}
-
 .diagnosis-content-card {
-    background-color: #F3F4F6;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     min-height: 70px;
     border-radius: 15px;
     padding: 10px 20px;
-    --tw-ring-offset-shadow: 0 0 #0000;
-    --tw-ring-shadow: 0 0 #0000;
-    --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
-    --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.diagnosis-illnes-section {
+    text-align: center;
+    padding-block: 20px;
+    border-radius: 15px;
+    background-color: #eff6ff;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.diagnosis-illnes-section h1 {
+    color: var(--primary-color);
+    font-weight: bold !important;
+}
+
+.patient-symptoms-list {
+    list-style-type: none;
+    display: flex;
+    padding-top: 10px;
+    padding-left: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.patient-symptom-tag {
+    background: #f1f5f9;
+    color: var(--text-dark);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-weight: bold;
+    border: 1px solid #e2e8f0;
 }
 
 .start-diagnosis-modal-btn {
@@ -198,4 +231,52 @@
 
 .warning-text {
     color: red;
+}
+
+
+.symptoms-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 5px;
+    gap: 10px;
+}
+
+.symptom-item {
+    display: flex;
+    border-radius: 10px;
+    border: 1px solid rgb(229 231 235 / 1);
+}
+
+.symptom-item .custom-checkbox {
+    width: 100%;
+    padding: 0;
+}
+
+
+.symptom-item .custom-checkbox label {
+    width: 100%;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.symptom-item .custom-checkbox label.custom-checkbox-label::before {
+    width: 20px;
+    height: 20px;
+}
+
+.symptom-item .custom-checkbox label.custom-checkbox-label::after {
+    left: 24px;
+    top: 48%;
+}
+
+.symptom-footer-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.symptom-footer-buttons .btn {
+    width: fit-content;
+    margin: 5px;
+    padding: .5rem 1rem;
 }

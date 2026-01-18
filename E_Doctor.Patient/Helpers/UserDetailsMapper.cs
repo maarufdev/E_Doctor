@@ -30,10 +30,12 @@ namespace E_Doctor.Patient.Helpers
                 vm.PastMedicalRecord = new PastMedicalRecordsVM
                 {
                     PreviousHospitalization = pastRecord.PreviousHospitalization,
+                    PreviousHospitalizationText = pastRecord.PreviousHospitalizationText,
                     PastSurgery = pastRecord.PastSurgery,
                     Diabetes = pastRecord.Diabetes,
                     Hypertension = pastRecord.Hypertension,
                     AllergyToMeds = pastRecord.AllergyToMeds,
+                    MedAllergyText = pastRecord.MedAllergyText,
                     HeartProblem = pastRecord.HeartProblem,
                     Asthma = pastRecord.Asthma,
                     FoodAllergies = pastRecord.FoodAllergies,
@@ -92,6 +94,16 @@ namespace E_Doctor.Patient.Helpers
 
             if (vm.DOB == null || vm.DOB == DateTime.MinValue) emptyRequiredFields.Add(nameof(vm.DOB));
 
+            if (vm.PastMedicalRecord.PreviousHospitalization && string.IsNullOrWhiteSpace(vm.PastMedicalRecord.PreviousHospitalizationText))
+            {
+                emptyRequiredFields.Add(vm.PastMedicalRecord.PreviousHospitalizationText);
+            }
+
+            if (vm.PastMedicalRecord.AllergyToMeds && string.IsNullOrWhiteSpace(vm.PastMedicalRecord.MedAllergyText))
+            {
+                emptyRequiredFields.Add(vm.PastMedicalRecord.MedAllergyText);
+            }
+
             if (emptyRequiredFields.Any())
             {
                 result = string.Join(", ", emptyRequiredFields.Select(f => f));
@@ -124,10 +136,12 @@ namespace E_Doctor.Patient.Helpers
                 PatientPastMedicalRecordDTO patientPastMedRecord = new()
                 {
                     PreviousHospitalization = medRecord.PreviousHospitalization,
+                    PreviousHospitalizationText = medRecord.PreviousHospitalization ? medRecord.PreviousHospitalizationText : string.Empty,
                     PastSurgery = medRecord.PastSurgery,
                     Diabetes = medRecord.Diabetes,
                     Hypertension = medRecord.Hypertension,
                     AllergyToMeds = medRecord.AllergyToMeds,
+                    MedAllergyText = medRecord.AllergyToMeds ? medRecord.MedAllergyText : string.Empty,
                     HeartProblem = medRecord.HeartProblem,
                     Asthma = medRecord.Asthma,
                     FoodAllergies = medRecord.FoodAllergies,
