@@ -1,9 +1,7 @@
 ﻿namespace E_Doctor.Application.DTOs.Diagnosis;
 public sealed record DiagnosisDetailsDTO
 {
-    public string? Result { get; init; }
-    public string? Description { get; init; }
-    public string? Prescription { get; init; }
+    public IEnumerable<DiagnosisResultDTO> Result { get; init; } = [];
     public string? Notes { get; init; }
     public bool IsSuccess { get; set; } = true;
 
@@ -14,31 +12,23 @@ public sealed record DiagnosisDetailsDTO
         
     }
     private DiagnosisDetailsDTO(
-        string illnessResult, 
-        string description, 
-        string prescription, 
+        IEnumerable<DiagnosisResultDTO> result, 
         string notes, 
         bool isSuccess = true)
     {
-        Result = illnessResult;
-        Description = description;
-        Prescription = prescription;
+        Result = result;
         Notes = notes;
         Symptoms = Array.Empty<string>();
         IsSuccess = isSuccess;
     }
 
     private DiagnosisDetailsDTO(
-        string illnessResult,
-        string description,
-        string prescription,
+        IEnumerable<DiagnosisResultDTO> result,
         string notes,
         string[] symptoms,
         bool isSuccess = true)
     {
-        Result = illnessResult;
-        Description = description;
-        Prescription = prescription;
+        Result = result;
         Notes = notes;
         Symptoms = symptoms ?? Array.Empty<string>();
         IsSuccess = isSuccess;
@@ -48,24 +38,20 @@ public sealed record DiagnosisDetailsDTO
     {
         return new DiagnosisDetailsDTO();
     }
-    public static DiagnosisDetailsDTO Create(
-        string illnessResult, 
-        string description, 
-        string prescription, 
-        string notes, 
-        bool isSuccess = true)
-    {
-        return new DiagnosisDetailsDTO(illnessResult, description ,prescription, notes, isSuccess);
-    }
+    //public static DiagnosisDetailsDTO Create(
+    //    IEnumerable<DiagnosisResultDTO> result,
+    //    string notes, 
+    //    bool isSuccess = true)
+    //{
+    //    return new DiagnosisDetailsDTO(result, notes, isSuccess);
+    //}
 
     public static DiagnosisDetailsDTO Create(
-        string illnessResult, 
-        string description, 
-        string prescription, 
+       IEnumerable<DiagnosisResultDTO> result,
         string notes, 
         string[] symptoms, 
         bool isSuccess = true)
     {
-        return new DiagnosisDetailsDTO(illnessResult, description, prescription, notes, symptoms, isSuccess);
+        return new DiagnosisDetailsDTO(result, notes, symptoms, isSuccess);
     }
 }

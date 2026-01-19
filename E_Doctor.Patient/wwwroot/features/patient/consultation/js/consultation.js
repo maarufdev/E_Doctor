@@ -230,20 +230,22 @@
                     }
 
                 },
-                populateDiagnosisResult: function ({ result, description, prescription, notes, isSuccess, symptoms = [] }) {
+                populateDiagnosisResult: function ({ result = [], notes, symptoms = [] }) {
                     services.eventHandlers.modal.toggleDiagnosisResult(true);
 
-                    const { diagnosisInfo: elmt } = this.elements;
+                    const $illnessSection = $("#potential-illness-container");
+                    $illnessSection.empty();
 
-                    $(elmt.result).removeClass("warning-text");
-
-                    (!isSuccess) ? $(elmt.result)
-                        .text(`${result} ${notes}`)
-                        .addClass("warning-text") :
-                        $(elmt.result)
-                            .text(result)
-                            .removeClass("warning-text");
-
+                    if (result.length > 0) {
+                        result.map(item => {
+                            const $card = potentialMatchesCard(item.illness, item.description);
+                            $illnessSection.append($card);
+                        });
+                    } else {
+                        const $card = potentialMatchesCard(item.notes, "");
+                        $illnessSection.append($card);
+                    }
+                    
                     const $symptomsContainer = $(".patient-symptoms-list");
                     $symptomsContainer.empty();
 
@@ -253,7 +255,20 @@
                         `);
 
                         $symptomsContainer.append($item);
-                    })
+                    });
+
+                    function potentialMatchesCard(title, desc) {
+                        const $card = $(`<div class="diagnosis-result-card"></div>`);
+
+                        const $resultTxt = $(`<h3>${title}</h3>`);
+                        $card.append($resultTxt);
+
+                        if (desc) {
+                            const $desc = $(`<span class="diagnosis-result-desc">${desc}</span>`);
+                            $card.append($desc);
+                        }
+                        return $card;
+                    }
 
                 },
                 clearDiagnosisText: function () {

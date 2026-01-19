@@ -317,7 +317,18 @@
             populateDiagnosisResult: function ({ result, description, prescription, notes, symptoms = []}) {
                 const { diagnosis } = elementHolders.modals;
 
-                $(diagnosis.diagnosisInfo.result).text(result ?? " ");
+                const $illnessSection = $("#potential-illness-container");
+                $illnessSection.empty();
+
+                if (result.length > 0) {
+                    result.map(item => {
+                        const $card = potentialMatchesCard(item.illness, item.description);
+                        $illnessSection.append($card);
+                    });
+                } else {
+                    const $card = potentialMatchesCard(item.notes, "");
+                    $illnessSection.append($card);
+                }
 
                 const $symptomsContainer = $(".patient-symptoms-list");
                 $symptomsContainer.empty();
@@ -328,8 +339,20 @@
                         `);
 
                     $symptomsContainer.append($item);
-                })
+                });
 
+                function potentialMatchesCard(title, desc) {
+                    const $card = $(`<div class="diagnosis-result-card"></div>`);
+
+                    const $resultTxt = $(`<h3>${title}</h3>`);
+                    $card.append($resultTxt);
+
+                    if (desc) {
+                        const $desc = $(`<span class="diagnosis-result-desc">${desc}</span>`);
+                        $card.append($desc);
+                    }
+                    return $card;
+                }
             },
             handleOnShowDiagnosisResult: function (result) {
                 this.populateDiagnosisResult(result);

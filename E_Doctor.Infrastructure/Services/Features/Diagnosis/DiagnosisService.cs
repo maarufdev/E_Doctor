@@ -148,7 +148,12 @@ internal class DiagnosisService : IDiagnosisService
         var illness = await _appDbContext.DiagnosisIllnesses
             .AsNoTracking()
             .Where(i => i.IsActive && i.DiagnosisId == diagnosisId)
-            .FirstOrDefaultAsync();
+            .Select(x => new DiagnosisResultDTO(
+                x.Illness,
+                $"Matches {x.MatchedRulesCount} out of {x.ExpectedRulesCount}"
+                )
+            )
+            .ToListAsync();
 
         var selectedSymptoms = await _appDbContext.DiagnosisSymptoms
             .AsNoTracking()
@@ -161,39 +166,27 @@ internal class DiagnosisService : IDiagnosisService
         if (illness is null) return DiagnosisDetailsDTO.Create();
 
         return DiagnosisDetailsDTO.Create(
-            $"{illness?.Illness}" ?? string.Empty,
-            illness?.Description ?? string.Empty,
-            illness?.Prescription ?? string.Empty,
-            illness?.Notes ?? string.Empty,
+            illness,
+            string.Empty,
             selectedSymptoms
             );
     }
-    
+
     public async Task<Result<DiagnosisDetailsDTO>> RunDiagnosis(RunDiagnosisDTO diagnosisRequest)
     {
         try
         {
             int? userId = await _userManager.GetUserId();
+            var userName = await _userManager.GetUserNameById(userId.ToString());
 
-            // 1. Validate Input
-            var uniqueUserSymptomIds = diagnosisRequest.SymptomIds?.Distinct().ToList() ?? new List<int>();
-            int userSymptomCount = uniqueUserSymptomIds.Count;
-            
-            // Save selected symptoms
-            var patientSymptoms = await _appDbContext.Symptoms
-                .AsNoTracking()
-                .Where(s => uniqueUserSymptomIds.Contains(s.Id))
-                .ToListAsync();
-
-            if (userSymptomCount == 0)
-                return Result<DiagnosisDetailsDTO>.Failure("No symptoms were provided for diagnosis.");
-
+            // Prepare result containers
             var diagnosisResult = DiagnosisDetailsDTO.Create();
 
-            // 2. Fetch illnesses and rule matches
+            // 1️⃣ Fetch illnesses and their rules
             var potentialIllnessResult = await _appDbContext.Illnesses
                 .AsNoTracking()
-                .Include(i => i.Rules)
+                .Include(r => r.Rules)
+                .ThenInclude(s => s.Symptom)
                 .Where(i => i.IsActive)
                 .Select(i => new
                 {
@@ -202,33 +195,29 @@ internal class DiagnosisService : IDiagnosisService
                     i.Prescription,
                     i.Description,
                     i.Notes,
-                    RuleCount = i.Rules.Count(r => r.IsActive),
-                    MatchedRuleCount = i.Rules.Count(r => uniqueUserSymptomIds.Contains(r.SymptomId) && r.IsActive),
+                    Rules = i.Rules.Where(x => x.IsActive).ToList(),
+                    RuleCount = i.Rules.Count(x => x.IsActive && x.Symptom.IsActive),
+                    MatchedRules = i.Rules
+                        .Where(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId) && r.IsActive && r.Symptom.IsActive)
+                        .ToList(),
+                    MatchedRuleCount = i.Rules
+                        .Count(r => diagnosisRequest.SymptomIds.Contains(r.SymptomId) && r.IsActive && r.Symptom.IsActive),
                 })
-                .Where(i => i.MatchedRuleCount > 0)
+                .Where(i => i.MatchedRuleCount > 0) // Only illnesses with at least 1 match
+                .OrderByDescending(o => o.MatchedRuleCount)
                 .ToListAsync();
 
             if (!potentialIllnessResult.Any())
-            {
-                return Result<DiagnosisDetailsDTO>.Success(
-                    DiagnosisDetailsDTO.Create(
-                        "No matching illness found. It’s highly advised to consult a doctor.",
-                        string.Empty,
-                        string.Empty,
-                        string.Empty,
-                        patientSymptoms.Select(x => x.Name).ToArray(),
-                        false
-                    )
+                return Result<DiagnosisDetailsDTO>.Failure(
+                    "Illness cannot be found. It’s advised to consult a doctor for a proper diagnosis."
                 );
-            }
-               
-            // 3. Apply Jaccard Similarity
+
+            // 2️⃣ Calculate Jaccard score for each illness
             var potentialResultWithScore = potentialIllnessResult
                 .Select(illness =>
                 {
-                    double union = (illness.RuleCount + userSymptomCount) - illness.MatchedRuleCount;
-                    double score = union > 0
-                        ? Math.Round((double)illness.MatchedRuleCount / union * 100, 2)
+                    var score = illness.RuleCount > 0
+                        ? (double)illness.MatchedRuleCount / illness.RuleCount * 100
                         : 0;
 
                     return new
@@ -238,61 +227,20 @@ internal class DiagnosisService : IDiagnosisService
                         illness.Prescription,
                         illness.Description,
                         illness.Notes,
-                        illness.RuleCount,
+                        illness.MatchedRules,
                         illness.MatchedRuleCount,
+                        illness.RuleCount,
                         Score = score
                     };
                 })
                 .OrderByDescending(i => i.Score)
+                .Take(3) // Return top 3 illnesses
                 .ToList();
 
-            // ================================
-            // 🛑 SAFETY GATE #1 — Majority Match
-            // ================================
-            // An illness must explain at least 60% of selected symptoms
-            const double MIN_MATCH_RATIO = 0.6;
+            // 3️⃣ Use all top illnesses (avoid filtering by exact maxScore)
+            var topResults = potentialResultWithScore;
 
-            var viableResults = potentialResultWithScore
-                .Where(r => (double)r.MatchedRuleCount / userSymptomCount >= MIN_MATCH_RATIO)
-                .ToList();
-
-            if (!viableResults.Any())
-            {
-                return Result<DiagnosisDetailsDTO>.Success(
-                    DiagnosisDetailsDTO.Create(
-                        "Inconclusive: Mixed Symptoms Detected. Symptoms are distributed across multiple conditions. No single illness sufficiently explains the majority of symptoms. A clinical evaluation is required.",
-                        string.Empty,
-                        string.Empty,
-                        string.Empty,
-                        patientSymptoms.Select(x => x.Name).ToArray(),
-                        false
-                    )
-                );
-            }
-
-            // ================================
-            // 🛑 SAFETY GATE #2 — Cross-Illness Split
-            // ================================
-            // If multiple illnesses explain similar portions → inconclusive
-            if (viableResults.Count > 1)
-            {
-                var illnessNames = string.Join(", ", viableResults.Select(v => v.IllnessName));
-
-                return Result<DiagnosisDetailsDTO>.Success(
-                    DiagnosisDetailsDTO.Create(
-                        "Inconclusive: Overlapping Conditions.",
-                        $"Possible Conditions: {illnessNames}.",
-                        string.Empty,
-                        "The selected symptoms overlap multiple illnesses. A physical examination is required.",
-                        patientSymptoms.Select(x => x.Name).ToArray(),
-                        false
-                    )
-                );
-            }
-
-            // 4. Final Winning Diagnosis
-            var winner = viableResults.First();
-
+            // 4️⃣ Save diagnosis entity
             var toSaveDiagnosis = new DiagnosisEntity
             {
                 CreatedOn = DateTime.UtcNow,
@@ -302,53 +250,72 @@ internal class DiagnosisService : IDiagnosisService
                 UserId = userId ?? 0
             };
 
-            var patientIllness = new DiagnosisIllnessesEntity
+            // Save each illness
+            foreach (var item in topResults)
             {
-                DiagnosisId = toSaveDiagnosis.Id,
-                Illness = winner.IllnessName,
-                Description = winner.Description,
-                Prescription = winner.Prescription ?? string.Empty,
-                Notes = winner.Notes,
-                Score = (decimal)winner.Score,
-                IsActive = true,
-                CreatedOn = DateTime.UtcNow,
-            };
+                var patientIllness = new DiagnosisIllnessesEntity
+                {
+                    DiagnosisId = toSaveDiagnosis.Id,
+                    Illness = item.IllnessName,
+                    Description = item.Description ?? string.Empty,
+                    Prescription = item.Prescription ?? string.Empty,
+                    Notes = item.Notes ?? string.Empty,
+                    Score = (decimal)item.Score,
+                    MatchedRulesCount = item.MatchedRuleCount,
+                    ExpectedRulesCount = item.RuleCount,
+                    IsActive = true,
+                    CreatedOn = DateTime.UtcNow,
+                };
 
-            toSaveDiagnosis.DiagnosIllnesses.Add(patientIllness);
+                toSaveDiagnosis.DiagnosIllnesses.Add(patientIllness);
+            }
+
+            // Save patient symptoms
+            var patientSymptoms = await _appDbContext.Symptoms
+                .AsNoTracking()
+                .Where(x => diagnosisRequest.SymptomIds.Contains(x.Id))
+                .ToListAsync();
 
             foreach (var symptom in patientSymptoms)
             {
                 toSaveDiagnosis.DiagnosSymptoms.Add(new DiagnosisSymptomsEntity
                 {
                     DiagnosisId = toSaveDiagnosis.Id,
+                    SymptomId = symptom.Id,
                     SymptomName = symptom.Name ?? string.Empty,
                     IsActive = true,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow,
                 });
             }
 
             await _appDbContext.Diagnosis.AddAsync(toSaveDiagnosis);
             await _appDbContext.SaveChangesAsync();
 
+            // 5️⃣ Map illnesses to DTO for frontend
+            var illnessMatched = toSaveDiagnosis.DiagnosIllnesses.Select(x => new DiagnosisResultDTO(
+                x.Illness,
+                $"Matches {x.MatchedRulesCount} out of {x.ExpectedRulesCount}"
+            ));
+
             diagnosisResult = DiagnosisDetailsDTO.Create(
-                patientIllness.Illness,
-                patientIllness.Description ?? string.Empty,
-                patientIllness.Prescription ?? string.Empty,
-                patientIllness.Notes ?? string.Empty,
-                toSaveDiagnosis.DiagnosSymptoms.Select(s => s.SymptomName).ToArray()
+                illnessMatched,
+                string.Empty,
+                toSaveDiagnosis.DiagnosSymptoms?.Select(item => item.SymptomName).ToArray() ?? Array.Empty<string>()
             );
 
-            await _activityLoggerService.LogAsync(
-                userId,
-                UserActivityTypes.PatientDiagnosis,
-                $"Diagnosed: {patientIllness.Illness}"
-            );
+            // 6️⃣ Log activity
+            await _activityLoggerService
+                .LogAsync(
+                    userId,
+                    UserActivityTypes.PatientDiagnosis,
+                    string.Join(", ", illnessMatched.Select(x => x.Illness))
+                );
 
             return Result<DiagnosisDetailsDTO>.Success(diagnosisResult);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in RunDiagnosis: {ex}");
+            Console.WriteLine(ex.ToString());
             throw;
         }
     }
