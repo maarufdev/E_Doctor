@@ -75,15 +75,20 @@ namespace E_Doctor.Infrastructure.Services.Features.Admin.Settings
             entity.IsActive = false;
             entity.UpdatedOn = DateTime.UtcNow;
 
+            var isDeleted = await _context.SaveChangesAsync() > 0;
+
             var userId = await _userManagerService.GetUserId();
 
-            await _activityLoggerService.LogAsync(
-                userId,
-                UserActivityTypes.RemoveSymptom,
-                entity.Name
-                );
-
-            return await _context.SaveChangesAsync() > 0;
+            if (isDeleted)
+            {
+                await _activityLoggerService.LogAsync(
+                               userId,
+                               UserActivityTypes.RemoveSymptom,
+                               entity.Name
+                               );
+            }
+           
+            return isDeleted;
         }
 
         public async Task<Result> SaveSymptom(SaveSymptomDTO saveSymptomDto)
