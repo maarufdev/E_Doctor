@@ -230,7 +230,7 @@
 
 
 .warning-text {
-    color: red;
+    color: red !important;
 }
 
 
