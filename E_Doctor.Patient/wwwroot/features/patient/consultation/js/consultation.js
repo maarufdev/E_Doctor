@@ -234,9 +234,8 @@
                     services.eventHandlers.modal.toggleDiagnosisResult(true);
 
                     const { diagnosisInfo: elmt } = this.elements;
-                    $(elmt.result)
-                        .text(result ?? "")
-                        .toggleClass("warning-text", !isSuccess);
+
+                    $(elmt.result).removeClass("warning-text");
 
                     (!isSuccess) ? $(elmt.result)
                         .text(`${result} ${notes}`)
