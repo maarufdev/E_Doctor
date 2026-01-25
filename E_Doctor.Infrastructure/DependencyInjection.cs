@@ -59,9 +59,9 @@ public static class DependencyInjection
         configuration.Bind("MSSQLConnectionStrings", mssqlConfig);
 
         //var conString = $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};User Id={mssqlConfig.Username};Password={mssqlConfig.Password};TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;";
-        var conString = $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;";
+        var conString = $"Server={mssqlConfig.DataSource};Database={mssqlConfig.Database};Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=60;Max Pool Size=100;";
 
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContextPool<AppDbContext>(options =>
         {
             options.UseSqlServer(
                    conString,

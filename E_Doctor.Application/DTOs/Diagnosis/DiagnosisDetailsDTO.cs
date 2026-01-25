@@ -2,9 +2,8 @@
 public sealed record DiagnosisDetailsDTO
 {
     public string? Result { get; init; }
-    public string? Description { get; init; }
-    public string? Prescription { get; init; }
-    public string? Notes { get; init; }
+    public string? DisclaimerTitle { get; init; }
+    public string? DisclaimerDescription { get; init; }
     public bool IsSuccess { get; set; } = true;
 
     public string[] Symptoms { get; init; } = Array.Empty<string>();
@@ -15,31 +14,27 @@ public sealed record DiagnosisDetailsDTO
     }
     private DiagnosisDetailsDTO(
         string illnessResult, 
-        string description, 
-        string prescription, 
-        string notes, 
+        string discliamerTitle, 
+        string disclaimerDesc, 
         bool isSuccess = true)
     {
         Result = illnessResult;
-        Description = description;
-        Prescription = prescription;
-        Notes = notes;
+        DisclaimerTitle = discliamerTitle;
+        DisclaimerDescription = disclaimerDesc;
         Symptoms = Array.Empty<string>();
         IsSuccess = isSuccess;
     }
 
     private DiagnosisDetailsDTO(
         string illnessResult,
-        string description,
-        string prescription,
-        string notes,
+         string discliamerTitle,
+        string disclaimerDesc,
         string[] symptoms,
         bool isSuccess = true)
     {
         Result = illnessResult;
-        Description = description;
-        Prescription = prescription;
-        Notes = notes;
+        DisclaimerTitle = discliamerTitle;
+        DisclaimerDescription = disclaimerDesc;
         Symptoms = symptoms ?? Array.Empty<string>();
         IsSuccess = isSuccess;
     }
@@ -50,22 +45,21 @@ public sealed record DiagnosisDetailsDTO
     }
     public static DiagnosisDetailsDTO Create(
         string illnessResult, 
-        string description, 
-        string prescription, 
+        string disclaimerTitle, 
+        string disclaimerDesc, 
         string notes, 
         bool isSuccess = true)
     {
-        return new DiagnosisDetailsDTO(illnessResult, description ,prescription, notes, isSuccess);
+        return new DiagnosisDetailsDTO(illnessResult, disclaimerTitle ,disclaimerDesc, isSuccess);
     }
 
     public static DiagnosisDetailsDTO Create(
         string illnessResult, 
-        string description, 
-        string prescription, 
-        string notes, 
+        string disclaimerTitle, 
+        string disclaimerDesc, 
         string[] symptoms, 
         bool isSuccess = true)
     {
-        return new DiagnosisDetailsDTO(illnessResult, description, prescription, notes, symptoms, isSuccess);
+        return new DiagnosisDetailsDTO(illnessResult, disclaimerTitle, disclaimerDesc, symptoms, isSuccess);
     }
 }

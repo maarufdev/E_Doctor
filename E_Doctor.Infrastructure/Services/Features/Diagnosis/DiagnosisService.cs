@@ -1,4 +1,5 @@
-﻿using E_Doctor.Application.DTOs.Common;
+﻿using E_Doctor.Application.Constants;
+using E_Doctor.Application.DTOs.Common;
 using E_Doctor.Application.DTOs.Common.CustomResultDTOs;
 using E_Doctor.Application.DTOs.Diagnosis;
 using E_Doctor.Application.DTOs.Diagnosis.PhysicalExams;
@@ -162,9 +163,8 @@ internal class DiagnosisService : IDiagnosisService
 
         return DiagnosisDetailsDTO.Create(
             $"{illness?.Illness}" ?? string.Empty,
-            illness?.Description ?? string.Empty,
-            illness?.Prescription ?? string.Empty,
-            illness?.Notes ?? string.Empty,
+            MedicalInfoConstants.MedicalDisclaimerTitle,
+            MedicalInfoConstants.MedicalDisclaimerDescription,
             selectedSymptoms
             );
     }
@@ -293,9 +293,8 @@ internal class DiagnosisService : IDiagnosisService
 
             diagnosisResult = DiagnosisDetailsDTO.Create(
                    $"{patientIllness.Illness}",
-                   patientIllness.Description ?? string.Empty,
-                   patientIllness.Prescription ?? string.Empty,
-                   patientIllness.Notes ?? string.Empty,
+                   MedicalInfoConstants.MedicalDisclaimerTitle,
+                   MedicalInfoConstants.MedicalDisclaimerDescription,
                    toSaveDiagnosis.DiagnosSymptoms?.Select(item => item.SymptomName).ToArray() ?? Array.Empty<string>()
                    );
 
@@ -578,6 +577,56 @@ internal class DiagnosisService : IDiagnosisService
         {
             Console.WriteLine(ex.ToString());
             return Result.Failure("Something Went Wrong");
+        }
+    }
+
+    public async Task<Result<PrintReceiptInfoDTO>> GetPrintReceiptData(int requestDiagnosisId)
+    {
+        try
+        {
+            var userDiagnosis = await _appDbContext.Diagnosis
+            .AsNoTracking()
+            .Include(x => x.DiagnosIllnesses)
+            .Where(x => x.Id == requestDiagnosisId)
+            .Select(x => new { x.UserId, x.DiagnosIllnesses})
+            .FirstOrDefaultAsync();
+
+            if (userDiagnosis is null) return Result<PrintReceiptInfoDTO>.Failure("Unable to find diagnosis data.");
+
+            var userInfo = await _appDbContext.PatientInformations
+                .AsNoTracking()
+                .Where(x => x.UserId == userDiagnosis.UserId)
+                .Select(x => new { x.DateOfBirth, x.FirstName, x.LastName, x.MiddleName, x.Gender })
+                .FirstOrDefaultAsync();
+
+            if (userInfo is null) return Result<PrintReceiptInfoDTO>.Failure("Unable to find user details.");
+
+            var today = DateTime.Today;
+            var age = today.Year - userInfo.DateOfBirth.Year;
+
+            if (userInfo.DateOfBirth.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            var illness = userDiagnosis.DiagnosIllnesses?.Select(x => x.Illness).FirstOrDefault();
+
+            var disclaimer = $"{MedicalInfoConstants.MedicalDisclaimerTitle}: {MedicalInfoConstants.MedicalDisclaimerDescription}";
+            var userResult = new PrintReceiptInfoDTO(
+                illness ?? string.Empty,
+                $"{userInfo.FirstName} {userInfo.MiddleName[0]}. {userInfo.LastName}",
+                age,
+                userInfo.Gender ?? string.Empty,
+                disclaimer
+                );
+
+            return Result<PrintReceiptInfoDTO>.Success(userResult);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+            return Result<PrintReceiptInfoDTO>.Failure("Something went wrong!");
         }
     }
 }

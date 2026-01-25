@@ -248,3 +248,18 @@
     background-color: #d1fae5;
     color: #065f46;
 }
+
+.disclaimer-container {
+    padding: 1rem;
+    background-color: #fffbeb;
+    border-left: 4px solid var(--warning-color);
+    border-radius: 4px;
+    color: #92400e;
+    font-size: 0.9rem;
+}
+
+.disclaimer-title {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}

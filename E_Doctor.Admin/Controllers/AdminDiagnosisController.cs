@@ -119,5 +119,14 @@ namespace E_Doctor.Web.Controllers
 
             return Ok(result.Value);
         }
+
+        public async Task<IActionResult> GetPrintReceiptData(int diagnosisId)
+        {
+            var result = await _diagnosisService.GetPrintReceiptData(diagnosisId);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            return Ok(result.Value);
+        }
     }
 }

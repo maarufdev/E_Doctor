@@ -12,6 +12,7 @@
         savePhysicalExamReport: `${DIAGNOSIS_BASE_URL}/SavePhysicalExamReport`,
         getPhysicalExamById: `${DIAGNOSIS_BASE_URL}/GetPhysicalExamById`,
         getPatientDetailsView: `${COMMON_BASE_URL}/PatientDetailsView`,
+        getPrintReceiptData: `${DIAGNOSIS_BASE_URL}/GetPrintReceiptData`,
     }
     const stateHolders = {
         symptoms: [],
@@ -89,7 +90,6 @@
     const services = {
         initialize: function () {
             setPhysicalExamState();
-
             services.eventHandlers.renderDiagnosisTable();
             services.events.initDiagnosis();
             services.events.initCommonEvents();
@@ -212,16 +212,21 @@
 
                             // --- CONFIGURATION ---
                             const imagePath = "/print_receipt.png";
-                            const pdfFilename = "Print Receipt.pdf";
+                            const pdfFilename = "Medical_Diagnosis.pdf";
+
+                            // This is the data you want to print. 
+                            const printData = await services.apiService.getPrintReceiptData(diagnosisId);
+
+                            const receiptData = {
+                                name: printData.fullname,
+                                sex: printData.gender,
+                                age: `${printData.age}`,
+                                diagnosis: printData.illness,
+                                disclaimer: printData.disclaimer,
+                            };
                             // ---------------------
 
-                            /**
-                             * Creates the jsPDF document and adds the loaded Image object, filling the entire page.
-                             * * @param {HTMLImageElement} img - The fully loaded Image object.
-                             * @param {string} filename - The desired name for the PDF file.
-                             */
-                            function createPDF(img, filename) {
-                                // Initialize jsPDF document (Portrait, millimeters, A4 size is default)
+                            function createPDF(img, filename, data) {
                                 const doc = new jsPDF({
                                     orientation: 'portrait',
                                     unit: 'mm',
@@ -229,57 +234,87 @@
                                 });
 
                                 if (!(img instanceof HTMLImageElement)) {
-                                    console.error("PDF creation failed: Image object is invalid or not fully loaded.");
+                                    console.error("PDF creation failed: Image object is invalid.");
                                     return;
                                 }
 
-                                // --- KEY CHANGE: FORCING IMAGE TO FILL PAGE ---
                                 const pageHeight = doc.internal.pageSize.getHeight();
                                 const pageWidth = doc.internal.pageSize.getWidth();
 
-                                // The image's new dimensions are set directly to the page's dimensions.
-                                // This will stretch or squash the image to fit the entire page.
-                                const newWidth = pageWidth;
-                                const newHeight = pageHeight;
+                                // DRAW BACKGROUND
+                                doc.addImage(img, 'PNG', 0, 0, pageWidth, pageHeight);
 
-                                // Since the image fills the page, it starts at the top-left corner (0, 0).
-                                const x = 0;
-                                const y = 0;
-                                // --- END KEY CHANGE ---
+                                // DEFAULT FONT SETUP
+                                doc.setFont("helvetica", "bold");
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
 
-                                // Add the image to the PDF
-                                // The image is added with no margin and fills the page completely.
-                                doc.addImage(img, 'PNG', x, y, newWidth, newHeight);
+                                // --- MAPPING COORDINATES ---
+                                doc.text(data.name, 50, 92);
+                                doc.text(data.sex, 30, 102);
+                                doc.text(data.age, 72, 103);
 
-                                // Save the PDF and trigger the client-side download
+                                // --- DIAGNOSIS BODY ---
+                                doc.setFont("helvetica", "normal");
+                                doc.setFontSize(14);
+
+                                const startX = 20;
+                                const startY = 230;
+                                const maxTextWidth = 160;
+
+                                // 1. Split text to fit width (Handles multi-line diagnosis automatically)
+                                // This creates an array of strings, one for each line
+                                const splitDiagnosis = doc.splitTextToSize(data.diagnosis, maxTextWidth);
+
+                                // 2. Calculate the height of the diagnosis block
+                                // We need this to know where to put the disclaimer
+                                const dims = doc.getTextDimensions(splitDiagnosis);
+                                const diagnosisBlockHeight = dims.h;
+
+                                // 3. Draw Diagnosis
+                                doc.text(splitDiagnosis, startX, startY);
+
+                                // --- MEDICAL DISCLAIMER (DYNAMIC POSITION) ---
+
+                                // Calculate Y position: Start of diagnosis + Height of diagnosis + 15mm Padding
+                                let disclaimerY = startY + diagnosisBlockHeight;
+
+                                // Styling for Disclaimer
+                                doc.setTextColor(204, 0, 0); // Dark Red
+                                doc.setFont("helvetica", "bolditalic");
+                                doc.setFontSize(10);
+
+                                if (data.disclaimer) {
+                                    // We align it to the left (same X as diagnosis) so it flows naturally below it
+                                    doc.text(data.disclaimer, startX, disclaimerY, {
+                                        maxWidth: maxTextWidth, // Match the width of the diagnosis
+                                        align: "left"
+                                    });
+                                }
+
+                                // SAVE
                                 doc.save(filename);
-                                console.log(`PDF successfully generated and saved as: ${filename}`);
                             }
 
-
-                            /**
-                             * Function to start the PDF generation process from a hosted image path.
-                             * Loads the image asynchronously, and calls createPDF upon success.
-                             */
-                            function generatePDFFromHostedImage(imagePath, pdfFilename) {
+                            function generatePDFFromHostedImage(imagePath, pdfFilename, data) {
                                 const img = new Image();
-                                img.crossOrigin = '';
+                                img.crossOrigin = 'Anonymous';
 
                                 img.onload = function () {
-                                    createPDF(img, pdfFilename);
+                                    createPDF(img, pdfFilename, data);
                                 };
 
                                 img.onerror = function () {
-                                    console.error(`ERROR: Failed to load image from: ${imagePath}. Check the path.`);
+                                    console.error(`ERROR: Failed to load image from: ${imagePath}`);
                                 };
 
                                 img.src = imagePath;
                             }
 
                             // --- EXECUTION ---
-                            // Call the main function that handles image loading and then PDF creation
-                            generatePDFFromHostedImage(imagePath, pdfFilename);
+                            generatePDFFromHostedImage(imagePath, pdfFilename, receiptData);
                         }
+
                     );
                     $diagnosisTblBody.append($tr);
                 });
@@ -314,10 +349,14 @@
 
                 $pagination.val(stateHolders.searchParams.pageNumber);
             },
-            populateDiagnosisResult: function ({ result, description, prescription, notes, symptoms = []}) {
+            populateDiagnosisResult: function ({ result, disclaimerTitle, disclaimerDescription, symptoms = [] }) {
+
                 const { diagnosis } = elementHolders.modals;
 
                 $(diagnosis.diagnosisInfo.result).text(result ?? " ");
+
+                $(".disclaimer-title").text(disclaimerTitle);
+                $(".disclaimer-desc").text(disclaimerDescription);
 
                 const $symptomsContainer = $(".patient-symptoms-list");
                 $symptomsContainer.empty();
@@ -591,6 +630,15 @@
                     {
                         params: {
                             userInfoId: userInfoId
+                        },
+                    });
+            },
+            getPrintReceiptData: async function (diagnosisId) {
+                return await apiFetch(
+                    URLS.getPrintReceiptData,
+                    {
+                        params: {
+                            diagnosisId: diagnosisId
                         },
                     });
             },

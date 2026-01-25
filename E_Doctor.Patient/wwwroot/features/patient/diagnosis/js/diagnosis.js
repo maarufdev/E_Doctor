@@ -371,20 +371,25 @@
 
                 $pagination.val(stateHolders.searchParams.pageNumber);
             },
-            populateDiagnosisResult: function ({ result, description, prescription, notes }) {
+            populateDiagnosisResult: function ({ result, disclaimerTitle, disclaimerDescription, notes }) {
                 const { diagnosis } = elementHolders.modals;
 
-                $(diagnosis.details.result).text(" ");
-                $(diagnosis.details.prescription).text(" ");
-                $(diagnosis.details.description).text(" ");
-                $(diagnosis.details.notes).text(" ");
+                $(diagnosis.diagnosisInfo.result).text(result ?? " ");
 
-                if (result) {
-                    $(diagnosis.details.result).text(result ?? " ");
-                    $(diagnosis.details.prescription).text(prescription ?? " ");
-                    $(diagnosis.details.description).text(description ?? " ");
-                    $(diagnosis.details.notes).text(notes ?? " ");
-                }
+                $(".disclaimer-title").text(disclaimerTitle);
+                $(".disclaimer-desc").text(disclaimerDescription);
+
+                const $symptomsContainer = $(".patient-symptoms-list");
+                $symptomsContainer.empty();
+
+                symptoms.map(s => {
+                    const $item = $(`
+                            <li class="patient-symptom-tag">${s}</li>
+                        `);
+
+                    $symptomsContainer.append($item);
+                })
+
             },
             handleOnShowDiagnosisResult: function (result) {
                 this.populateDiagnosisResult(result);
