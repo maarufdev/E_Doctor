@@ -22,12 +22,7 @@ internal class PatientDashboardService : IPatientDashboardService
         var userId = await _userServices.GetUserId();
 
         var cardDetails = GetDashboardCardDetailsDTO.Create(
-                await _dbContext.Symptoms.CountAsync(),
-                await _dbContext.Illnesses.CountAsync(),
-                await _dbContext.IllnessRules
-                .Include(r => r.Illness)
-                .Include(r => r.Symptom)
-                .CountAsync(),
+            0,0,
                 1
         );
 

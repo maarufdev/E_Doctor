@@ -21,15 +21,35 @@ internal class DashboardService : IDashboardService
 
     public async Task<Result<GetDashboardDetailsDTO>> GetDashboardDetails()
     {
+
+        var diagnosisPhysicalExams = await _dbContext.Diagnosis
+           .AsNoTracking()
+           .GroupJoin(
+               _dbContext.PhysicalExams,
+               diag => diag.Id,
+               phys => phys.Id,
+               (diag, phys) => new { diag, phys }
+           )
+           .SelectMany(
+               x => x.phys.DefaultIfEmpty(),
+               (x, phys) => new
+               {
+                   DiagnosisId = x.diag.Id,
+                   DiagnosisActive = x.diag.IsActive,
+                   PhysicalExamId = phys != null ? phys.Id : 0,
+                   PhysicalExamActive = phys != null ? phys.IsActive : false,
+               }
+           )
+           .Where(x => x.DiagnosisActive == true)
+           .ToListAsync();
+
+        var pendingPhysicalExaminations = diagnosisPhysicalExams.Count(x => x.PhysicalExamId == 0);
+        var completedPhysicalExaminations = diagnosisPhysicalExams.Count(x => x.PhysicalExamId > 0);
+
         var cardDetails = GetDashboardCardDetailsDTO.Create(
-                await _dbContext.Symptoms.CountAsync(s => s.IsActive),
-                await _dbContext.Illnesses.CountAsync(i => i.IsActive),
-                await _dbContext.IllnessRules
-                .Include(r => r.Illness)
-                .Include(r => r.Symptom)
-                .Where(c => c.Illness.IsActive && c.Symptom.IsActive)
-                .CountAsync(i => i.IsActive),
-                (await _userManager.GetUsersInRoleAsync(RoleConstants.Patient)).Count
+            pendingPhysicalExaminations,
+            completedPhysicalExaminations,
+            (await _userManager.GetUsersInRoleAsync(RoleConstants.Patient)).Count
         );
 
         var recentDiagnosis = await _dbContext.Diagnosis

@@ -1,17 +1,15 @@
 ﻿namespace E_Doctor.Application.DTOs.Dashboard;
 public sealed record GetDashboardCardDetailsDTO(
-    int TotalSymptoms,
-    int TotalIllnesses,
-    int TotalRules,
+    int TotalPendingPhysicalExams,
+    int TotalCompletedPhysicalExams,
     int TotalPatients
     )
 {
     public static GetDashboardCardDetailsDTO Create(
-        int symptomsCount, 
-        int illnessesCount, 
-        int rulesCount,
+        int totalPendingPhysicalExam, 
+        int totalCompletedPhysicalExam,
         int totalPatient)
     {
-        return new GetDashboardCardDetailsDTO(symptomsCount, illnessesCount, rulesCount, totalPatient);
+        return new GetDashboardCardDetailsDTO(totalPendingPhysicalExam, totalCompletedPhysicalExam, totalPatient);
     }
 }

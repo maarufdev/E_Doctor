@@ -355,8 +355,8 @@
 
                 $(diagnosis.diagnosisInfo.result).text(result ?? " ");
 
-                $(".disclaimer-title").text(disclaimerTitle);
-                $(".disclaimer-desc").text(disclaimerDescription);
+                //$(".disclaimer-title").text(disclaimerTitle);
+                //$(".disclaimer-desc").text(disclaimerDescription);
 
                 const $symptomsContainer = $(".patient-symptoms-list");
                 $symptomsContainer.empty();
